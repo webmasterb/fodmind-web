@@ -1,0 +1,70 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaApp from '../../components/CtaApp.astro';
+import { alternatesArticulo, urlArticulo, urlGuia, type Locale } from '../../lib/rutas';
+import { guia } from '../../lib/datos';
+import { t } from '../../i18n/strings';
+import { cuerpo } from '../../lib/cuerpo';
+import type { Lang } from '../../lib/tipos';
+
+interface Props {
+  locale: Locale;
+  articuloId: string;
+}
+
+const { locale, articuloId } = Astro.props;
+const s = t(locale);
+const art = guia.find((a) => a.id === articuloId)!;
+const alternates = alternatesArticulo(articuloId);
+const html = cuerpo(art.body, locale as Lang);
+const otros = guia.filter((a) => a.id !== articuloId);
+const site = Astro.site ?? new URL('https://fodmind.com');
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: art.title[locale],
+    description: art.summary[locale],
+    inLanguage: locale,
+    datePublished: '2026-09-07',
+    author: { '@type': 'Organization', name: 'Fodmind' },
+    publisher: { '@type': 'Organization', name: 'Fodmind' },
+    mainEntityOfPage: new URL(alternates[locale], site).toString(),
+  },
+];
+---
+
+<Base
+  locale={locale}
+  title={`${art.title[locale]} — ${s.guideTitle} Fodmind`}
+  description={art.summary[locale]}
+  canonical={alternates[locale]}
+  alternates={alternates}
+  jsonld={jsonld}
+>
+  <nav class="migas">
+    <a href="/">Fodmind</a> ›
+    <a href={urlGuia(locale)}>{s.guideIndexTitle}</a> ›
+    <span>{art.title[locale]}</span>
+  </nav>
+
+  <article class="articulo entrada" style="padding-top:10px">
+    <h1>{art.title[locale]}</h1>
+    <p class="texto-muted" style="font-size:19px">{art.summary[locale]}</p>
+    <div set:html={html} />
+  </article>
+
+  <div class="aviso">{s.notice}</div>
+
+  <section>
+    <h2 class="subrayado-seccion">{s.guideIndexTitle}</h2>
+    <ul class="mas-lista">
+      {otros.map((o) => (
+        <li><a href={urlArticulo(locale, o.id)}>{o.title[locale]}</a></li>
+      ))}
+    </ul>
+  </section>
+
+  <CtaApp locale={locale} />
+</Base>

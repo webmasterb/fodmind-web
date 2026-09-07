@@ -1,0 +1,29 @@
+---
+import type { Alimento } from '../lib/tipos';
+import { urlAlimento, type Locale } from '../lib/rutas';
+import { fmtPorcion } from '../lib/formatos';
+import { t } from '../i18n/strings';
+import BadgeNivel from './BadgeNivel.astro';
+
+interface Props {
+  food: Alimento;
+  locale: Locale;
+}
+
+const { food, locale } = Astro.props;
+const s = t(locale);
+const unidad = food.servingUnit ?? 'g';
+const racion =
+  food.safeServingG === null
+    ? food.racionGradoC
+      ? s.notEstablished
+      : s.noLimit
+    : `${fmtPorcion(food.safeServingG, locale)} ${unidad}`;
+---
+
+<a class="tarjeta tarjeta-clicable" href={urlAlimento(locale, food.slug[locale])}>
+  <span class="icono" aria-hidden="true">{food.emoji}</span>
+  <h3>{food.names[locale]}</h3>
+  <BadgeNivel level={food.level} locale={locale} />
+  <p class="pie-tarjeta">{s.safeServing}: {racion}</p>
+</a>

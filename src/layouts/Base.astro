@@ -1,0 +1,97 @@
+---
+import { LOCALES, LOCALE_TAG, urlLanding, urlAlimentos, urlGuia, urlBlog, urlLegal, type Locale } from '../lib/rutas';
+import { t, APP_STORE_URL, PLAY_STORE_URL } from '../i18n/strings';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  canonical: string;
+  alternates: Record<Locale, string>;
+  jsonld?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
+}
+
+const { locale, title, description, canonical, alternates, jsonld, noindex } = Astro.props;
+const s = t(locale);
+const site = Astro.site ?? new URL('https://fodmind.com');
+const abs = (ruta: string) => new URL(ruta, site).toString();
+const jsonldFinal = jsonld ? (Array.isArray(jsonld) ? jsonld : [jsonld]) : [];
+
+const nav = [
+  { href: urlAlimentos(locale), label: s.navAlimentos },
+  { href: urlGuia(locale), label: s.navGuia },
+  { href: urlBlog(locale), label: s.navBlog },
+];
+---
+
+<!doctype html>
+<html lang={LOCALE_TAG[locale]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={abs(canonical)} />
+    {LOCALES.map((l) => <link rel="alternate" hreflang={LOCALE_TAG[l]} href={abs(alternates[l])} />)}
+    <link rel="alternate" hreflang="x-default" href={abs(alternates['es'])} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Fodmind" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={abs(canonical)} />
+    <meta property="og:image" content={abs('/icon.png')} />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="theme-color" content="#faf7ef" />
+    {jsonldFinal.map((obj) => <script type="application/ld+json" set:html={JSON.stringify(obj)} />)}
+  </head>
+  <body>
+    <header class="cabecera">
+      <div class="contenedor barra">
+        <a class="logo" href={urlLanding(locale)}>
+          <span aria-hidden="true">🌿</span> <span class="logo-marca">Fodmind</span>
+        </a>
+        <nav class="nav" aria-label="principal">
+          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        </nav>
+        <a class="boton boton-primario" href={`${urlLanding(locale)}#descargar`}>{s.ctaApp}</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="contenedor">
+        <slot />
+      </div>
+    </main>
+
+    <footer class="pie">
+      <div class="contenedor pie-rejilla">
+        <div class="pie-sobre">
+          <p class="pie-marca">🌿 Fodmind</p>
+          <p class="pie-nota">{s.footerDisclaimer}</p>
+          <p class="pie-nota">{s.footerSources}</p>
+        </div>
+        <div>
+          <p class="pie-titulo">{s.ctaApp}</p>
+          <a href={APP_STORE_URL} rel="noopener">App Store</a>
+          <a href={PLAY_STORE_URL} rel="noopener">Google Play</a>
+        </div>
+        <div>
+          <p class="pie-titulo">Legal</p>
+          <a href={urlLegal(locale, 'privacidad')}>{s.privacyTitle}</a>
+          <a href={urlLegal(locale, 'terminos')}>{s.termsTitle}</a>
+          <p class="pie-nota">© 2026 Fodmind</p>
+        </div>
+        <div>
+          <p class="pie-titulo">{s.langSwitch}</p>
+          <div class="pie-idiomas">
+            {LOCALES.map((l) => (
+              <a href={alternates[l]} hreflang={LOCALE_TAG[l]}>{l.toUpperCase()}</a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,50 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaApp from '../../components/CtaApp.astro';
+import { alternatesEstatico, urlPost, type Locale } from '../../lib/rutas';
+import { getCollection } from 'astro:content';
+import { t } from '../../i18n/strings';
+import { LOCALE_TAG } from '../../lib/rutas';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+const alternates = alternatesEstatico('blog');
+
+const posts = (await getCollection('blog', (e) => e.id.startsWith(`${locale}/`)))
+  .map((e) => ({ e, fecha: new Date(e.data.fecha) }))
+  .sort((a, b) => b.fecha.getTime() - a.fecha.getTime());
+
+const formato = new Intl.DateTimeFormat(LOCALE_TAG[locale], { dateStyle: 'long' });
+---
+
+<Base
+  locale={locale}
+  title={`${s.blogTitle} — Fodmind`}
+  description={s.blogText}
+  canonical={alternates[locale]}
+  alternates={alternates}
+>
+  <div class="entrada">
+    <h1>{s.blogIndexTitle}</h1>
+    <p class="texto-muted">{s.blogText}</p>
+  </div>
+
+  <section>
+    <div class="rejilla-3" style="margin-top:14px">
+      {posts.map(({ e }) => (
+        <a class="tarjeta tarjeta-clicable tarjeta-post" href={urlPost(locale, e.id.split('/')[1])}>
+          <p class="fecha">{formato.format(new Date(e.data.fecha))}</p>
+          <h3>{e.data.title}</h3>
+          <p class="pie-tarjeta">{e.data.description}</p>
+          <p class="pie-tarjeta" style="font-weight:700;color:var(--brand);margin-top:10px">{s.readMore} →</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <CtaApp locale={locale} />
+</Base>

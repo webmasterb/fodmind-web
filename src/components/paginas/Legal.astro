@@ -1,0 +1,24 @@
+---
+import Base from '../../layouts/Base.astro';
+import { alternatesEstatico, type Locale } from '../../lib/rutas';
+import { t } from '../../i18n/strings';
+
+interface Props {
+  locale: Locale;
+  cual: 'privacidad' | 'terminos';
+}
+
+const { locale, cual } = Astro.props;
+const s = t(locale);
+const esPrivacidad = cual === 'privacidad';
+const titulo = esPrivacidad ? s.privacyTitle : s.termsTitle;
+const parrafos = esPrivacidad ? s.privacyBody : s.termsBody;
+const alternates = alternatesEstatico(cual);
+---
+
+<Base locale={locale} title={`${titulo} — Fodmind`} description={parrafos[0]} canonical={alternates[locale]} alternates={alternates}>
+  <div class="articulo entrada">
+    <h1>{titulo}</h1>
+    {parrafos.map((p) => <p>{p}</p>)}
+  </div>
+</Base>

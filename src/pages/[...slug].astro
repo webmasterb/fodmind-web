@@ -1,0 +1,116 @@
+---
+import { LOCALES, CAT_SLUG, SEG, type Locale } from '../lib/rutas';
+import { foods, guia, CATEGORIAS } from '../lib/datos';
+import { getCollection } from 'astro:content';
+import Landing from '../components/paginas/Landing.astro';
+import AlimentosIndex from '../components/paginas/AlimentosIndex.astro';
+import Categoria from '../components/paginas/Categoria.astro';
+import Alimento from '../components/paginas/Alimento.astro';
+import GuiaIndex from '../components/paginas/GuiaIndex.astro';
+import Articulo from '../components/paginas/Articulo.astro';
+import BlogIndex from '../components/paginas/BlogIndex.astro';
+import Post from '../components/paginas/Post.astro';
+import Legal from '../components/paginas/Legal.astro';
+
+export async function getStaticPaths() {
+  const rutas: { params: { slug?: string }; props: Record<string, unknown> }[] = [];
+  const prefijo = (l: Locale) => (l === 'es' ? [] : [l]);
+
+  for (const locale of LOCALES) {
+    const pref = prefijo(locale);
+
+    if (locale !== 'es') {
+      rutas.push({ params: { slug: locale }, props: { kind: 'landing', locale } });
+    }
+
+    rutas.push({
+      params: { slug: [...pref, SEG.alimentos[locale]].join('/') },
+      props: { kind: 'alimentos', locale },
+    });
+
+    for (const cat of CATEGORIAS) {
+      rutas.push({
+        params: { slug: [...pref, SEG.alimentos[locale], CAT_SLUG[cat.id][locale]].join('/') },
+        props: { kind: 'categoria', locale, catId: cat.id },
+      });
+    }
+
+    for (const food of foods) {
+      rutas.push({
+        params: { slug: [...pref, SEG.alimentos[locale], food.slug[locale]].join('/') },
+        props: { kind: 'alimento', locale, food },
+      });
+    }
+
+    rutas.push({
+      params: { slug: [...pref, SEG.guia[locale]].join('/') },
+      props: { kind: 'guia', locale },
+    });
+
+    for (const art of guia) {
+      rutas.push({
+        params: { slug: [...pref, SEG.guia[locale], art.id].join('/') },
+        props: { kind: 'articulo', locale, articuloId: art.id },
+      });
+    }
+
+    rutas.push({
+      params: { slug: [...pref, SEG.blog[locale]].join('/') },
+      props: { kind: 'blog', locale },
+    });
+
+    rutas.push({
+      params: { slug: [...pref, SEG.privacidad[locale]].join('/') },
+      props: { kind: 'privacidad', locale },
+    });
+    rutas.push({
+      params: { slug: [...pref, SEG.terminos[locale]].join('/') },
+      props: { kind: 'terminos', locale },
+    });
+  }
+
+  const posts = await getCollection('blog');
+  for (const entrada of posts) {
+    const [dir, slug] = entrada.id.split('/');
+    const locale = dir as Locale;
+    if (!LOCALES.includes(locale)) continue;
+    const pref = prefijo(locale);
+    const alternatesPost = Object.fromEntries(
+      LOCALES.map((l) => {
+        const p = l === 'es' ? '' : `/${l}`;
+        return [l, `${p}/${SEG.blog[l]}/${slug}/`];
+      })
+    ) as Record<Locale, string>;
+    rutas.push({
+      params: { slug: [...pref, SEG.blog[locale], slug].join('/') },
+      props: { kind: 'post', locale, entrada, alternatesPost },
+    });
+  }
+
+  return rutas;
+}
+
+interface Props {
+  kind: string;
+  locale: Locale;
+  catId?: string;
+  food?: unknown;
+  articuloId?: string;
+  entrada?: unknown;
+  alternatesPost?: Record<Locale, string>;
+}
+
+const props = Astro.props as Props;
+const { kind, locale } = props;
+---
+
+{kind === 'landing' && <Landing locale={locale} />}
+{kind === 'alimentos' && <AlimentosIndex locale={locale} />}
+{kind === 'categoria' && <Categoria locale={locale} catId={props.catId!} />}
+{kind === 'alimento' && <Alimento locale={locale} food={props.food as never} />}
+{kind === 'guia' && <GuiaIndex locale={locale} />}
+{kind === 'articulo' && <Articulo locale={locale} articuloId={props.articuloId!} />}
+{kind === 'blog' && <BlogIndex locale={locale} />}
+{kind === 'post' && <Post locale={locale} entrada={props.entrada as never} alternatesPost={props.alternatesPost!} />}
+{kind === 'privacidad' && <Legal locale={locale} cual="privacidad" />}
+{kind === 'terminos' && <Legal locale={locale} cual="terminos" />}

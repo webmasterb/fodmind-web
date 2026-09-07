@@ -1,0 +1,154 @@
+---
+import Base from '../../layouts/Base.astro';
+import BadgeNivel from '../../components/BadgeNivel.astro';
+import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
+import CtaApp from '../../components/CtaApp.astro';
+import { CAT_SLUG, urlAlimentos, urlCategoria, alternatesAlimento, type Locale } from '../../lib/rutas';
+import { catName } from '../../i18n/categorias';
+import { t } from '../../i18n/strings';
+import { resolverSustitutos } from '../../lib/datos';
+import { fmtPorcion, rellenar } from '../../lib/formatos';
+import type { Alimento } from '../../lib/tipos';
+
+interface Props {
+  locale: Locale;
+  food: Alimento;
+}
+
+const { locale, food } = Astro.props;
+const s = t(locale);
+const nombre = food.names[locale];
+const unidad = food.servingUnit ?? 'g';
+const alternates = alternatesAlimento(food.slug);
+const site = Astro.site ?? new URL('https://fodmind.com');
+
+const racionTexto =
+  food.safeServingG === null
+    ? food.racionGradoC
+      ? s.notEstablished
+      : s.noLimit
+    : `${fmtPorcion(food.safeServingG, locale)} ${unidad}`;
+
+const descripcion =
+  food.safeServingG === null
+    ? food.racionGradoC
+      ? rellenar(s.foodMetaDescNoEst, { name: nombre })
+      : rellenar(s.foodMetaDescNull, { name: nombre })
+    : food.level === 'low'
+      ? rellenar(s.foodMetaDescLow, { name: nombre, r: fmtPorcion(food.safeServingG, locale), u: unidad })
+      : food.level === 'moderate'
+        ? rellenar(s.foodMetaDescModerate, { name: nombre, r: fmtPorcion(food.safeServingG, locale), u: unidad })
+        : rellenar(s.foodMetaDescHigh, { name: nombre, r: fmtPorcion(food.safeServingG, locale), u: unidad });
+
+const pregunta = rellenar(s.foodFaqQ, { name: nombre });
+const respuesta =
+  food.safeServingG === null
+    ? food.racionGradoC
+      ? rellenar(s.faqANotEstablished, { name: nombre })
+      : rellenar(s.faqANoLimit, { name: nombre })
+    : food.level === 'low'
+      ? rellenar(s.faqALow, { name: nombre, r: fmtPorcion(food.safeServingG, locale), u: unidad })
+      : food.level === 'moderate'
+        ? rellenar(s.faqAModerate, { name: nombre, r: fmtPorcion(food.safeServingG, locale), u: unidad })
+        : rellenar(s.faqAHigh, { name: nombre, r: fmtPorcion(food.safeServingG, locale), u: unidad });
+
+const sustitutos = resolverSustitutos(food);
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Fodmind', item: site.toString() },
+      { '@type': 'ListItem', position: 2, name: s.foodsIndexTitle, item: new URL(urlAlimentos(locale), site).toString() },
+      { '@type': 'ListItem', position: 3, name: catName(food.category, locale), item: new URL(urlCategoria(locale, CAT_SLUG[food.category][locale]), site).toString() },
+      { '@type': 'ListItem', position: 4, name: nombre },
+    ],
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: pregunta,
+        acceptedAnswer: { '@type': 'Answer', text: respuesta },
+      },
+    ],
+  },
+];
+---
+
+<Base
+  locale={locale}
+  title={rellenar(s.foodMetaTitle, { name: nombre })}
+  description={descripcion}
+  canonical={alternates[locale]}
+  alternates={alternates}
+  jsonld={jsonld}
+>
+  <nav class="migas">
+    <a href="/">Fodmind</a> ›
+    <a href={urlAlimentos(locale)}>{s.foodsIndexTitle}</a> ›
+    <a href={urlCategoria(locale, CAT_SLUG[food.category][locale])}>{catName(food.category, locale)}</a> ›
+    <span>{nombre}</span>
+  </nav>
+
+  <div class="entrada" style="padding-top:10px">
+    <div class="cabecera-alimento">
+      <span class="emoji-grande" aria-hidden="true">{food.emoji}</span>
+      <div>
+        <h1 style="margin-bottom:6px">{nombre}</h1>
+        <BadgeNivel level={food.level} locale={locale} />
+      </div>
+    </div>
+    <p class="texto-muted" style="max-width:640px">{s.levelDescriptions[food.level]}</p>
+  </div>
+
+  <div class="rejilla-raciones">
+    <div class="racion-caja">
+      <p class="etiqueta">{s.safeServing}</p>
+      <p class="valor" style={food.level === 'high' ? 'color:var(--rojo)' : food.level === 'moderate' ? 'color:var(--ambar)' : 'color:var(--verde)'}>{racionTexto}</p>
+    </div>
+    {food.typicalServingG !== undefined && (
+      <div class="racion-caja">
+        <p class="etiqueta">{s.typicalServing}</p>
+        <p class="valor">{fmtPorcion(food.typicalServingG, locale)} {food.servingUnit ?? 'g'}</p>
+      </div>
+    )}
+  </div>
+
+  {food.fodmaps.length > 0 && (
+    <section>
+      <h2 style="font-size:20px">{s.fodmapPresent}</h2>
+      <div class="fichas">
+        {food.fodmaps.map((tipo) => <span class="ficha">{s.fodmapTypes[tipo]}</span>)}
+      </div>
+    </section>
+  )}
+
+  {food.note && (
+    <aside class="aviso">
+      <strong>{nombre}:</strong> {food.note[locale]}
+    </aside>
+  )}
+
+  {sustitutos.length > 0 && (
+    <section>
+      <h2 class="subrayado-seccion">{s.similarTitle}</h2>
+      <p class="texto-muted" style="margin-top:-6px">{s.similarSub}</p>
+      <div class="rejilla-3" style="margin-top:14px">
+        {sustitutos.map((sust) => <TarjetaAlimento food={sust} locale={locale} />)}
+      </div>
+    </section>
+  )}
+
+  <section class="articulo">
+    <h2 class="subrayado-seccion">{pregunta}</h2>
+    <p>{respuesta}</p>
+  </section>
+
+  <div class="aviso">{s.notice}</div>
+
+  <CtaApp locale={locale} />
+</Base>

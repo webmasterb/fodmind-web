@@ -1,0 +1,26 @@
+---
+import { t, APP_STORE_URL, PLAY_STORE_URL } from '../i18n/strings';
+import type { Locale } from '../lib/rutas';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+---
+
+<section class="cta-banda" id="descargar">
+  <h2>Fodmind</h2>
+  <p>{s.metaHomeDesc}</p>
+  <div class="tiendas">
+    <a class="tienda-boton" href={APP_STORE_URL} rel="noopener">
+      <span aria-hidden="true"></span>
+      <span><small>Download on the</small>App Store</span>
+    </a>
+    <a class="tienda-boton" href={PLAY_STORE_URL} rel="noopener">
+      <span aria-hidden="true">▶</span>
+      <span><small>Get it on</small>Google Play</span>
+    </a>
+  </div>
+</section>

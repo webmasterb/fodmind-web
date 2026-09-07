@@ -1,0 +1,105 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaApp from '../CtaApp.astro';
+import { alternatesEstatico, CAT_SLUG, urlAlimentos, urlCategoria, type Locale } from '../../lib/rutas';
+import { CATEGORIAS } from '../../lib/datos';
+import { catName } from '../../i18n/categorias';
+import { t } from '../../i18n/strings';
+import { fmt, rellenar } from '../../lib/formatos';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+const alternates = alternatesEstatico('landing');
+const site = Astro.site ?? new URL('https://fodmind.com');
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Fodmind',
+    applicationCategory: 'HealthApplication',
+    operatingSystem: 'iOS, Android',
+    description: s.metaHomeDesc,
+    url: site.toString(),
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: s.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  },
+];
+---
+
+<Base
+  locale={locale}
+  title={s.metaHomeTitle}
+  description={s.metaHomeDesc}
+  canonical={alternates[locale]}
+  alternates={alternates}
+  jsonld={jsonld}
+>
+  <section class="hero">
+    <span class="insignia">{s.heroBadge}</span>
+    <h1>{s.heroTitle}</h1>
+    <p>{s.heroText}</p>
+    <div class="hero-botones">
+      <a class="boton boton-primario" href="#descargar">{s.heroCta}</a>
+      <a class="boton boton-secundario" href={urlAlimentos(locale)}>{s.heroCtaSecondary}</a>
+    </div>
+    <div class="stats">
+      <span class="stat">🚦 {s.statFoods}</span>
+      <span class="stat">📴 {s.statOffline}</span>
+      <span class="stat">🌍 {s.statLangs}</span>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="subrayado-seccion">{s.featuresTitle}</h2>
+    <div class="rejilla-3">
+      {s.features.map((f) => (
+        <div class="tarjeta">
+          <span class="icono" aria-hidden="true">{f.icon}</span>
+          <h3>{f.t}</h3>
+          <p class="texto-muted" style="margin:0">{f.d}</p>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section>
+    <h2 class="subrayado-seccion">{s.exploreTitle}</h2>
+    <p class="texto-muted">{s.exploreText}</p>
+    <div class="rejilla-categorias" style="margin-top:16px">
+      {CATEGORIAS.map((cat) => (
+        <a class="tarjeta tarjeta-clicable" href={urlCategoria(locale, CAT_SLUG[cat.id][locale])}>
+          <h3>{catName(cat.id, locale)}</h3>
+          <p class="pie-tarjeta">{rellenar(s.nFoods, { n: fmt(cat.alimentos.length, locale) })}</p>
+        </a>
+      ))}
+    </div>
+    <p style="margin-top:18px">
+      <a class="boton boton-secundario" href={urlAlimentos(locale)}>{s.exploreCta}</a>
+    </p>
+  </section>
+
+  <section>
+    <h2 class="subrayado-seccion">{s.faqTitle}</h2>
+    {s.faq.map((f) => (
+      <details>
+        <summary>{f.q}</summary>
+        <p>{f.a}</p>
+      </details>
+    ))}
+  </section>
+
+  <CtaApp locale={locale} />
+</Base>

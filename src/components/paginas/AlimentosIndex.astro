@@ -1,0 +1,96 @@
+---
+import Base from '../../layouts/Base.astro';
+import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
+import CtaApp from '../../components/CtaApp.astro';
+import { alternatesEstatico, CAT_SLUG, base, urlCategoria, type Locale } from '../../lib/rutas';
+import { CATEGORIAS } from '../../lib/datos';
+import { catName } from '../../i18n/categorias';
+import { t } from '../../i18n/strings';
+import { fmt, rellenar, LEVEL_COLOR } from '../../lib/formatos';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+const alternates = alternatesEstatico('alimentos');
+
+const nombresCategorias = Object.fromEntries(CATEGORIAS.map((c) => [c.id, catName(c.id, locale)]));
+const colores = JSON.stringify(LEVEL_COLOR);
+---
+
+<Base
+  locale={locale}
+  title={`${s.foodsIndexTitle} — Fodmind`}
+  description={s.foodsIndexText}
+  canonical={alternates[locale]}
+  alternates={alternates}
+>
+  <div class="entrada">
+    <h1>{s.foodsIndexTitle}</h1>
+    <p class="texto-muted">{s.foodsIndexText}</p>
+  </div>
+
+  <div class="buscador" data-locale={locale} data-base={base(locale)} data-cats={JSON.stringify(nombresCategorias)} data-colores={colores}>
+    <input id="buscador" type="search" placeholder={s.searchPlaceholder} autocomplete="off" aria-label={s.searchPlaceholder} />
+    <div id="resultados" class="resultados" role="listbox"></div>
+  </div>
+
+  <section>
+    <h2 class="subrayado-seccion">{s.categoriesTitle}</h2>
+    <div class="rejilla-categorias">
+      {CATEGORIAS.map((cat) => (
+        <a class="tarjeta tarjeta-clicable" href={urlCategoria(locale, CAT_SLUG[cat.id][locale])}>
+          <h3>{catName(cat.id, locale)}</h3>
+          <p class="pie-tarjeta">{rellenar(s.nFoods, { n: fmt(cat.alimentos.length, locale) })}</p>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <CtaApp locale={locale} />
+</Base>
+
+<script>
+  const caja = document.querySelector<HTMLElement>('.buscador');
+  if (caja) {
+    const input = caja.querySelector<HTMLInputElement>('#buscador')!;
+    const resultados = caja.querySelector<HTMLElement>('#resultados')!;
+    const idioma = caja.dataset.locale ?? 'es';
+    const prefijo = caja.dataset.base ?? '';
+    const cats = JSON.parse(caja.dataset.cats ?? '{}') as Record<string, string>;
+    const colores = JSON.parse(caja.dataset.colores ?? '{}') as Record<string, string>;
+    const normalizar = (texto: string) =>
+      texto.normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+
+    let indice: { n: string; p: string; l: string; c: string }[] | null = null;
+    const cargar = async () => {
+      if (!indice) indice = await (await fetch(`/search/${idioma}.json`)).json();
+      return indice;
+    };
+
+    const pintar = (items: { n: string; p: string; l: string; c: string }[]) => {
+      resultados.innerHTML = items
+        .map(
+          (it) =>
+            `<a href="${prefijo}/${it.p}"><span class="punto" style="background:${colores[it.l] ?? '#999'}"></span><span>${it.n}</span><span class="categoria">${cats[it.c] ?? ''}</span></a>`
+        )
+        .join('');
+      resultados.classList.toggle('abierto', items.length > 0);
+    };
+
+    input.addEventListener('input', async () => {
+      const q = normalizar(input.value.trim());
+      if (q.length < 2) {
+        resultados.classList.remove('abierto');
+        return;
+      }
+      const idx = await cargar();
+      pintar(idx.filter((it) => normalizar(it.n).includes(q)).slice(0, 30));
+    });
+    document.addEventListener('click', (ev) => {
+      if (!caja.contains(ev.target as Node)) resultados.classList.remove('abierto');
+    });
+  }
+</script>

@@ -1,0 +1,14 @@
+---
+import { LEVEL_COLOR } from '../lib/formatos';
+import { t } from '../i18n/strings';
+import type { Locale } from '../lib/rutas';
+
+interface Props {
+  level: 'low' | 'moderate' | 'high';
+  locale: Locale;
+}
+
+const { level, locale } = Astro.props;
+---
+
+<span class={`nivel nivel-${level}`} style={`background:${LEVEL_COLOR[level]}`}>{t(locale).levelNames[level]}</span>

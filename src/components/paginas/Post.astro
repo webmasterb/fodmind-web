@@ -1,0 +1,71 @@
+---
+import Base from '../../layouts/Base.astro';
+import CtaApp from '../../components/CtaApp.astro';
+import { urlBlog, urlPost, type Locale } from '../../lib/rutas';
+import { getCollection, render } from 'astro:content';
+import { t } from '../../i18n/strings';
+import { LOCALE_TAG } from '../../lib/rutas';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  locale: Locale;
+  entrada: CollectionEntry<'blog'>;
+  alternatesPost: Record<Locale, string>;
+}
+
+const { locale, entrada, alternatesPost } = Astro.props;
+const s = t(locale);
+const { Content } = await render(entrada);
+const site = Astro.site ?? new URL('https://fodmind.com');
+const otros = (await getCollection('blog', (e) => e.id.startsWith(`${locale}/`) && e.id !== entrada.id)).slice(0, 4);
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: entrada.data.title,
+    description: entrada.data.description,
+    inLanguage: LOCALE_TAG[locale],
+    datePublished: entrada.data.fecha,
+    author: { '@type': 'Organization', name: 'Fodmind' },
+    publisher: { '@type': 'Organization', name: 'Fodmind' },
+    mainEntityOfPage: new URL(alternatesPost[locale], site).toString(),
+  },
+];
+---
+
+<Base
+  locale={locale}
+  title={`${entrada.data.title} — ${s.blogTitle} Fodmind`}
+  description={entrada.data.description}
+  canonical={alternatesPost[locale]}
+  alternates={alternatesPost}
+  jsonld={jsonld}
+>
+  <nav class="migas">
+    <a href="/">Fodmind</a> ›
+    <a href={urlBlog(locale)}>{s.blogIndexTitle}</a> ›
+    <span>{entrada.data.title}</span>
+  </nav>
+
+  <article class="articulo entrada" style="padding-top:10px">
+    <p class="texto-muted" style="margin-bottom:4px">{new Date(entrada.data.fecha).toISOString().slice(0, 10)}</p>
+    <h1>{entrada.data.title}</h1>
+    <Content />
+  </article>
+
+  <div class="aviso">{s.notice}</div>
+
+  {otros.length > 0 && (
+    <section>
+      <h2 class="subrayado-seccion">{s.blogIndexTitle}</h2>
+      <ul class="mas-lista">
+        {otros.map((o) => (
+          <li><a href={urlPost(locale, o.id.split('/')[1])}>{o.data.title}</a></li>
+        ))}
+      </ul>
+    </section>
+  )}
+
+  <CtaApp locale={locale} />
+</Base>

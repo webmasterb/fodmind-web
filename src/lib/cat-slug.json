@@ -1,0 +1,14 @@
+{
+  "fruits": { "es": "frutas", "en": "fruits", "fr": "fruits", "de": "obst", "it": "frutta", "pt": "frutas" },
+  "vegetables": { "es": "verduras", "en": "vegetables", "fr": "legumes", "de": "gemuese", "it": "verdure", "pt": "vegetais" },
+  "grains": { "es": "cereales", "en": "grains", "fr": "cereales", "de": "getreide", "it": "cereali", "pt": "cereais" },
+  "legumes": { "es": "legumbres", "en": "legumes", "fr": "legumineuses", "de": "huelsenfruechte", "it": "legumi", "pt": "leguminosas" },
+  "dairy": { "es": "lacteos", "en": "dairy", "fr": "produits-laitiers", "de": "milchprodukte", "it": "latticini", "pt": "laticinios" },
+  "protein": { "es": "proteina", "en": "protein", "fr": "proteines", "de": "proteinquellen", "it": "proteine", "pt": "proteinas" },
+  "nuts_seeds": { "es": "frutos-secos", "en": "nuts-seeds", "fr": "noix-graines", "de": "nuesse-samen", "it": "frutta-secca", "pt": "frutos-secos" },
+  "sweeteners": { "es": "edulcorantes", "en": "sweeteners", "fr": "edulcorants", "de": "suessungsmittel", "it": "dolcificanti", "pt": "adoçantes" },
+  "beverages": { "es": "bebidas", "en": "drinks", "fr": "boissons", "de": "getraenke", "it": "bevande", "pt": "bebidas" },
+  "condiments": { "es": "condimentos", "en": "condiments", "fr": "condiments", "de": "wuerzen", "it": "condimenti", "pt": "condimentos" },
+  "snacks": { "es": "snacks", "en": "snacks", "fr": "snacks", "de": "snacks", "it": "snack", "pt": "snacks" },
+  "herbs_spices": { "es": "hierbas-especias", "en": "herbs-spices", "fr": "herbes-epices", "de": "kraeuter-gewuerze", "it": "erbe-spezie", "pt": "ervas-especiarias" }
+}
