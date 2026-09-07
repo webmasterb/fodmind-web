@@ -122,6 +122,18 @@ const nav = [
         </div>
       </div>
     </footer>
+    <!--
+      Medición de visitas. La política de privacidad ya decía «las visitas se
+      miden de forma anónima y agregada con Cloudflare Web Analytics» y el
+      script no estaba en ninguna página: la web afirmaba algo que no pasaba.
+      Sin cookies y sin datos personales, así que no pide consentimiento.
+    -->
+    <script
+      is:inline
+      defer
+      src="https://static.cloudflareinsights.com/beacon.min.js"
+      data-cf-beacon='{"token": "52da165e457a405bb28a45a1a23fe3cb"}'
+    ></script>
     <script is:inline>
       // El botón de la cabecera lleva a la banda de descarga de la propia
       // página, que ahora está en todas. Con JS y en un móvil va directo a su

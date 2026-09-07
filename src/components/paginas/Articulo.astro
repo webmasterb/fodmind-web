@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { alternatesArticulo, urlArticulo, urlGuia, urlLanding, type Locale } from '../../lib/rutas';
 import { guia } from '../../lib/datos';
 import { t } from '../../i18n/strings';
+import { guiaSlug } from '../../i18n/guia-slugs';
 import { cuerpo } from '../../lib/cuerpo';
 import type { Lang } from '../../lib/tipos';
 
@@ -60,7 +61,7 @@ const jsonld = [
     <h2 class="subrayado-seccion">{s.guideIndexTitle}</h2>
     <ul class="mas-lista">
       {otros.map((o) => (
-        <li><a href={urlArticulo(locale, o.id)}>{o.title[locale]}</a></li>
+        <li><a href={urlArticulo(locale, guiaSlug(o.id, locale))}>{o.title[locale]}</a></li>
       ))}
     </ul>
   </section>

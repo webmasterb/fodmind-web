@@ -1,5 +1,7 @@
 import catSlugJson from './cat-slug.json';
-import type { Lang } from './tipos';
+import { NIVEL_SLUG } from '../i18n/niveles';
+import { guiaSlug } from '../i18n/guia-slugs';
+import type { Lang, FodmapLevel } from './tipos';
 
 export const LOCALES = ['en', 'es', 'fr', 'de', 'it', 'pt'] as const;
 export type Locale = (typeof LOCALES)[number];
@@ -108,6 +110,27 @@ export function urlPost(locale: Locale, postSlug: string): string {
   return `${base(locale)}/${SEG.blog[locale]}/${postSlug}/`;
 }
 
+/**
+ * Listas por nivel: `/foods/low-fodmap/` y su corte por categoría,
+ * `/foods/low-fodmap/fruits/`. Cuelgan del segmento de alimentos para que la
+ * miga de pan y el reparto de autoridad sigan el mismo camino que las fichas.
+ */
+export function urlNivel(locale: Locale, nivel: FodmapLevel): string {
+  return `${base(locale)}/${SEG.alimentos[locale]}/${NIVEL_SLUG[nivel][locale]}/`;
+}
+
+export function urlNivelCat(locale: Locale, nivel: FodmapLevel, catId: string): string {
+  return `${base(locale)}/${SEG.alimentos[locale]}/${NIVEL_SLUG[nivel][locale]}/${CAT_SLUG[catId][locale]}/`;
+}
+
+export function alternatesNivel(nivel: FodmapLevel): Record<Locale, string> {
+  return alternatesDeEntidad((l) => urlNivel(l, nivel));
+}
+
+export function alternatesNivelCat(nivel: FodmapLevel, catId: string): Record<Locale, string> {
+  return alternatesDeEntidad((l) => urlNivelCat(l, nivel, catId));
+}
+
 export function urlFuentes(locale: Locale): string {
   return `${base(locale)}/${SEG.fuentes[locale]}/`;
 }
@@ -162,7 +185,7 @@ export function alternatesCategoria(catId: string): Record<Locale, string> {
 }
 
 export function alternatesArticulo(articuloId: string): Record<Locale, string> {
-  return alternatesDeEntidad((l) => `${base(l)}/${SEG.guia[l]}/${articuloId}/`);
+  return alternatesDeEntidad((l) => `${base(l)}/${SEG.guia[l]}/${guiaSlug(articuloId, l)}/`);
 }
 
 /** Slugs de categoría por idioma. Clave = id de categoría en los datos. */

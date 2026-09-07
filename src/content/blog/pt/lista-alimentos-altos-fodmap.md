@@ -1,6 +1,7 @@
 ---
 title: 'Alimentos ricos em FODMAP: a lista, com as suas nuances'
 description: 'Trigo, cebola, alho, leguminosas, mel… Que alimentos concentram mais FODMAP, porque a dose muda tudo e como verificar sem decorar listas.'
+urlSlug: 'lista-alimentos-altos-fodmap'
 fecha: '2026-09-07'
 ---
 

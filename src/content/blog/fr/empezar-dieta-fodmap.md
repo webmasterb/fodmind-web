@@ -1,6 +1,7 @@
 ---
 title: 'Régime pauvre en FODMAP : les 5 erreurs du début'
 description: 'Éliminer sans diagnostic, rester en élimination pour toujours, croire aux listes copiées… Les défaillances les plus courantes et comment les éviter dès le premier jour.'
+urlSlug: 'commencer-regime-fodmap'
 fecha: '2026-09-07'
 ---
 

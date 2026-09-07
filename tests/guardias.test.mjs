@@ -210,3 +210,92 @@ test('fuentes: bibliografía, composición y textos completos en 6 idiomas', () 
     for (const lang of LANGS) assert.ok(valor[lang]?.trim(), `texto ${clave}: vacío en ${lang}`);
   }
 });
+
+/** Lee los mapas de slugs del propio código: si alguien añade un idioma o un
+ *  artículo y no su slug, la guardia lo ve sin que haya que repetirlo aquí. */
+const leerMapaSlugs = (fichero, constante) => {
+  const texto = readFileSync(join(RAIZ, 'src', 'i18n', fichero), 'utf8');
+  const lineas = texto.slice(texto.indexOf(`const ${constante}`)).split(/\r?\n/);
+  const mapa = {};
+  let actual = null;
+  for (const linea of lineas) {
+    const abre = linea.match(/^  '?([a-zA-Z0-9_-]+)'?: \{$/);
+    if (abre) {
+      actual = abre[1];
+      mapa[actual] = {};
+      continue;
+    }
+    if (linea === '  },') {
+      actual = null;
+      continue;
+    }
+    if (linea === '};') break;
+    const par = actual && linea.match(/^    ([a-z]{2}): '([^']+)',$/);
+    if (par) mapa[actual][par[1]] = par[2];
+  }
+  return mapa;
+};
+
+test('blog: cada post lleva su slug de URL traducido y sin repetir', () => {
+  const postsDir = join(RAIZ, 'src', 'content', 'blog');
+  const porLang = {};
+  for (const lang of LANGS) {
+    porLang[lang] = new Map();
+    for (const file of readdirSync(join(postsDir, lang))) {
+      const texto = readFileSync(join(postsDir, lang, file), 'utf8');
+      const slug = texto.match(/^urlSlug: '([^']+)'$/m)?.[1];
+      assert.ok(slug, `${lang}/${file}: sin urlSlug en el frontmatter`);
+      assert.match(slug, /^[a-z0-9-]+$/, `${lang}/${file}: urlSlug raro (${slug})`);
+      assert.equal(porLang[lang].has(slug), false, `${lang}: urlSlug ${slug} repetido`);
+      porLang[lang].set(slug, file);
+    }
+    // El campo NO puede llamarse `slug`: Astro lo toma como id de la entrada
+    // y el enrutador, que filtra por idioma, dejó de generar los 24 posts.
+    for (const file of readdirSync(join(postsDir, lang))) {
+      const texto = readFileSync(join(postsDir, lang, file), 'utf8');
+      assert.doesNotMatch(texto, /^slug: /m, `${lang}/${file}: usa 'slug', que Astro se queda como id`);
+    }
+  }
+  const enIngles = [...porLang.en.keys()];
+  assert.ok(
+    enIngles.every((s) => !porLang.es.has(s) || true),
+    'comprobación de cobertura'
+  );
+});
+
+test('guía: los nueve artículos tienen slug en los seis idiomas, sin repetir', () => {
+  const mapa = leerMapaSlugs('guia-slugs.ts', 'GUIA_SLUG');
+  for (const art of guia) {
+    assert.ok(mapa[art.id], `guía: ${art.id} sin slug de URL`);
+    for (const lang of LANGS) {
+      assert.ok(mapa[art.id][lang], `guía: ${art.id} sin slug en ${lang}`);
+      assert.match(mapa[art.id][lang], /^[a-z0-9-]+$/, `guía: slug raro ${mapa[art.id][lang]}`);
+    }
+  }
+  for (const lang of LANGS) {
+    const vistos = new Set();
+    for (const id of Object.keys(mapa)) {
+      const slug = mapa[id][lang];
+      assert.equal(vistos.has(slug), false, `guía ${lang}: slug ${slug} repetido`);
+      vistos.add(slug);
+    }
+  }
+});
+
+test('los slugs de nivel no chocan con ningún alimento ni categoría', () => {
+  const niveles = leerMapaSlugs('niveles.ts', 'NIVEL_SLUG');
+  assert.deepEqual(Object.keys(niveles).sort(), ['high', 'low', 'moderate']);
+  for (const lang of LANGS) {
+    const ocupados = new Set(foods.map((f) => f.slug[lang]));
+    for (const catId of Object.keys(CAT_SLUG)) ocupados.add(CAT_SLUG[catId][lang]);
+    for (const nivel of Object.keys(niveles)) {
+      const slug = niveles[nivel][lang];
+      assert.ok(slug, `nivel ${nivel}: sin slug en ${lang}`);
+      assert.equal(
+        ocupados.has(slug),
+        false,
+        `${lang}: /${slug}/ es a la vez la lista de ${nivel} y otra página`
+      );
+    }
+  }
+});

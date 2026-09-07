@@ -35,7 +35,7 @@ const formato = new Intl.DateTimeFormat(LOCALE_TAG[locale], { dateStyle: 'long' 
   <section>
     <div class="rejilla-3" style="margin-top:14px">
       {posts.map(({ e }) => (
-        <a class="tarjeta tarjeta-clicable tarjeta-post" href={urlPost(locale, e.id.split('/')[1])}>
+        <a class="tarjeta tarjeta-clicable tarjeta-post" href={urlPost(locale, e.data.urlSlug)}>
           <p class="fecha">{formato.format(new Date(e.data.fecha))}</p>
           <h3>{e.data.title}</h3>
           <p class="pie-tarjeta">{e.data.description}</p>

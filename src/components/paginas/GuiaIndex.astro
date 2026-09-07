@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import { alternatesEstatico, urlArticulo, type Locale } from '../../lib/rutas';
 import { guia } from '../../lib/datos';
 import { t } from '../../i18n/strings';
+import { guiaSlug } from '../../i18n/guia-slugs';
 
 interface Props {
   locale: Locale;
@@ -30,7 +31,7 @@ const preguntas = guia.filter((a) => a.grupo === 'preguntas');
   <section>
     <div class="rejilla-3" style="margin-top:14px">
       {metodo.map((art) => (
-        <a class="tarjeta tarjeta-clicable" href={urlArticulo(locale, art.id)}>
+        <a class="tarjeta tarjeta-clicable" href={urlArticulo(locale, guiaSlug(art.id, locale))}>
           <h3>{art.title[locale]}</h3>
           <p class="pie-tarjeta">{art.summary[locale]}</p>
           <p class="pie-tarjeta" style="font-weight:700;color:var(--brand);margin-top:10px">{s.readMore} →</p>
@@ -44,7 +45,7 @@ const preguntas = guia.filter((a) => a.grupo === 'preguntas');
       <h2 class="subrayado-seccion">{s.faqTitle}</h2>
       <div class="rejilla-3">
         {preguntas.map((art) => (
-          <a class="tarjeta tarjeta-clicable" href={urlArticulo(locale, art.id)}>
+          <a class="tarjeta tarjeta-clicable" href={urlArticulo(locale, guiaSlug(art.id, locale))}>
             <h3>{art.title[locale]}</h3>
             <p class="pie-tarjeta">{art.summary[locale]}</p>
           </a>

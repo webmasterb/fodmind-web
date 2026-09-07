@@ -18,6 +18,32 @@ const base = (lang) => (lang === LOCALE_RAIZ ? '' : `/${lang}`);
 const dir = (lang) => (lang === LOCALE_RAIZ ? [] : [lang]);
 const SEG = {
   alimentos: { es: 'alimentos', en: 'foods', fr: 'aliments', de: 'lebensmittel', it: 'alimenti', pt: 'alimentos' },
+  guia: { es: 'guia', en: 'guide', fr: 'guide', de: 'guide', it: 'guida', pt: 'guia' },
+  blog: { es: 'blog', en: 'blog', fr: 'blog', de: 'blog', it: 'blog', pt: 'blog' },
+};
+
+/** Los mapas de slugs se leen del código, no se repiten aquí. */
+const leerConstante = (fichero, constante) => {
+  const texto = readFileSync(join(RAIZ, 'src', 'i18n', fichero), 'utf8');
+  const lineas = texto.slice(texto.indexOf(`const ${constante}`)).split(/\r?\n/);
+  const mapa = {};
+  let actual = null;
+  for (const linea of lineas) {
+    const abre = linea.match(/^  '?([a-zA-Z0-9_-]+)'?: \{$/);
+    if (abre) {
+      actual = abre[1];
+      mapa[actual] = {};
+      continue;
+    }
+    if (linea === '  },') {
+      actual = null;
+      continue;
+    }
+    if (linea === '};') break;
+    const par = actual && linea.match(/^    ([a-z]{2}): '([^']+)',$/);
+    if (par) mapa[actual][par[1]] = par[2];
+  }
+  return mapa;
 };
 const LOCALE_TAG = { es: 'es-ES', en: 'en', fr: 'fr-FR', de: 'de-DE', it: 'it-IT', pt: 'pt-PT' };
 
@@ -71,18 +97,60 @@ ok(leer(sandiaEs).includes('9,4'), 'sandía es: coma decimal (9,4)');
 ok(leer(sandiaEn).includes('9.4'), 'sandía en: punto decimal (9.4)');
 ok(!leer(sandiaEs).includes('9.4'), 'sandía es: sin punto decimal');
 
-const sitemap = leer('sitemap.xml');
-const urls = (sitemap.match(/<loc>/g) ?? []).length;
-ok(urls >= 11000, `sitemap: ${urls} URLs`);
-ok(sitemap.includes('x-default'), 'sitemap: x-default');
+const indice = leer('sitemap.xml');
+ok(indice.includes('<sitemapindex'), 'sitemap.xml es el índice');
 ok(
-  LANGS.every((lang) => sitemap.includes(`${base(lang)}/${SEG.alimentos[lang]}/${banana.slug[lang]}/`)),
-  'sitemap: las 6 URLs de un alimento'
+  LANGS.every((lang) => indice.includes(`/sitemap-${lang}.xml`)),
+  'sitemap: los 6 sitemaps por idioma en el índice'
 );
-ok(
-  LANGS.every((lang) => sitemap.includes(`<loc>https://fodmind.com${base(lang)}/</loc>`)),
-  'sitemap: una landing por idioma, no seis veces la raíz'
-);
+let urlsTotales = 0;
+for (const lang of LANGS) {
+  const parcial = leer(`sitemap-${lang}.xml`);
+  const urls = (parcial.match(/<loc>/g) ?? []).length;
+  urlsTotales += urls;
+  ok(urls >= 1800, `sitemap-${lang}: ${urls} URLs`);
+  ok(
+    parcial.includes(`<loc>https://fodmind.com${base(lang)}/${SEG.alimentos[lang]}/${banana.slug[lang]}/</loc>`),
+    `sitemap-${lang}: la ficha de un alimento, en su idioma`
+  );
+  ok(parcial.includes('x-default'), `sitemap-${lang}: x-default`);
+  ok(
+    parcial.includes(`<loc>https://fodmind.com${base(lang)}/</loc>`),
+    `sitemap-${lang}: su landing`
+  );
+}
+ok(urlsTotales >= 11000, `sitemap: ${urlsTotales} URLs entre los seis`);
+
+// LAS LISTAS POR NIVEL, que son las que contestan a la búsqueda genérica.
+const NIVEL_SLUG = leerConstante('niveles.ts', 'NIVEL_SLUG');
+for (const nivel of Object.keys(NIVEL_SLUG)) {
+  for (const lang of LANGS) {
+    ok(
+      existsSync(join(DIST, ...dir(lang), SEG.alimentos[lang], NIVEL_SLUG[nivel][lang], 'index.html')),
+      `lista ${nivel} ${lang} existe`
+    );
+  }
+}
+
+// LOS 24 POSTS. Desaparecieron enteros del build sin un solo aviso el día que
+// el campo del frontmatter se llamó `slug`, que Astro se queda como id.
+let postsEnDist = 0;
+for (const lang of LANGS) {
+  const dirBlog = join(DIST, ...dir(lang), SEG.blog[lang]);
+  const entradas = readdirSync(dirBlog).filter((e) => statSync(join(dirBlog, e)).isDirectory());
+  postsEnDist += entradas.length;
+  ok(entradas.length === 4, `blog ${lang}: ${entradas.length} posts (esperados 4)`);
+}
+ok(postsEnDist === 24, `blog: ${postsEnDist} posts en el dist`);
+
+// Y LA GUÍA CON SU SLUG TRADUCIDO: el id es inglés y se servía tal cual.
+const GUIA_SLUG = leerConstante('guia-slugs.ts', 'GUIA_SLUG');
+for (const lang of LANGS) {
+  ok(
+    existsSync(join(DIST, ...dir(lang), SEG.guia[lang], GUIA_SLUG.elimination[lang], 'index.html')),
+    `guía ${lang}: artículo con slug traducido`
+  );
+}
 
 for (const lang of LANGS) ok(existsSync(join(DIST, 'search', `${lang}.json`)), `índice de búsqueda ${lang} desplegado`);
 
@@ -115,6 +183,7 @@ ok(cebollaEn.includes('Muir JG'), 'cebolla en: la nota lleva su cita');
 
 let restos = 0;
 let sinDescarga = 0;
+let sinMedicion = 0;
 let examinadas = 0;
 const APP_STORE = 'https://apps.apple.com/app/id6795241315';
 const PLAY = 'https://play.google.com/store/apps/details?id=com.fodmapguide.app';
@@ -130,12 +199,15 @@ const escanear = (dir) => {
       // tráfico del buscador. Sin esto, basta olvidar el CTA en una plantilla
       // nueva para tener 1.843 fichas sin salida a la tienda.
       if (!contenido.includes(APP_STORE) || !contenido.includes(PLAY)) sinDescarga++;
+      if (!contenido.includes('cloudflareinsights.com/beacon.min.js')) sinMedicion++;
     }
   }
 };
 escanear(DIST);
 ok(restos === 0, `sin restos de plantilla en ${examinadas} HTML`);
 ok(sinDescarga === 0, `las ${examinadas} páginas llevan a las dos tiendas`);
+// La política de privacidad afirma que se mide; que sea verdad en todas.
+ok(sinMedicion === 0, `las ${examinadas} páginas miden visitas, como dice la política`);
 
 console.log(fallos === 0 ? '\nTODO EN VERDE' : `\n${fallos} FALLOS`);
 process.exit(fallos === 0 ? 0 : 1);

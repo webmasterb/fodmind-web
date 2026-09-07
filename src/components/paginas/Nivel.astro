@@ -1,0 +1,154 @@
+---
+/**
+ * La lista por nivel («alimentos bajos en FODMAP») y su corte por categoría.
+ *
+ * La lista general NO pinta sus cientos de alimentos de golpe: los altos son
+ * 1.052 y la página se iba a 300 kB de tarjetas que nadie recorre. Enseña un
+ * tramo de cada categoría y manda al corte, que sí va entero. Así el reparto
+ * de enlaces sigue el camino del lector.
+ */
+import Base from '../../layouts/Base.astro';
+import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
+import {
+  CAT_SLUG,
+  urlLanding,
+  urlAlimentos,
+  urlCategoria,
+  urlGuia,
+  urlNivel,
+  urlNivelCat,
+  alternatesNivel,
+  alternatesNivelCat,
+  type Locale,
+} from '../../lib/rutas';
+import { foods } from '../../lib/datos';
+import { catName, CAT_NAMES } from '../../i18n/categorias';
+import { NIVELES, NIVEL_TEXTOS } from '../../i18n/niveles';
+import { t } from '../../i18n/strings';
+import { fmt, rellenar } from '../../lib/formatos';
+import type { FodmapLevel } from '../../lib/tipos';
+
+interface Props {
+  locale: Locale;
+  nivel: FodmapLevel;
+  catId?: string;
+}
+
+/** Cuántos alimentos de cada categoría se enseñan en la lista general. */
+const MUESTRA = 18;
+
+const { locale, nivel, catId } = Astro.props;
+const s = t(locale);
+const txt = NIVEL_TEXTOS[locale][nivel];
+const site = Astro.site ?? new URL('https://fodmind.com');
+
+const delNivel = foods.filter((f) => f.level === nivel);
+const ordenar = (lista: typeof foods) =>
+  [...lista].sort((a, b) => a.names[locale].localeCompare(b.names[locale], locale));
+
+const lista = catId ? ordenar(delNivel.filter((f) => f.category === catId)) : [];
+const porCategoria = catId
+  ? []
+  : Object.keys(CAT_NAMES)
+      .map((id) => ({ id, alimentos: ordenar(delNivel.filter((f) => f.category === id)) }))
+      .filter((c) => c.alimentos.length > 0);
+
+const total = catId ? lista.length : delNivel.length;
+const nombreCat = catId ? catName(catId, locale) : '';
+
+const h1 = catId ? rellenar(txt.catH1, { cat: nombreCat }) : txt.h1;
+const metaTitle = catId ? rellenar(txt.catMetaTitle, { cat: nombreCat }) : txt.metaTitle;
+const metaDesc = rellenar(catId ? txt.catMetaDesc : txt.metaDesc, {
+  cat: nombreCat.toLowerCase(),
+  n: fmt(total, locale),
+});
+
+const alternates = catId ? alternatesNivelCat(nivel, catId) : alternatesNivel(nivel);
+const otrosNiveles = NIVELES.filter((n) => n !== nivel);
+
+const migas = [
+  { '@type': 'ListItem', position: 1, name: 'Fodmind', item: new URL(urlLanding(locale), site).toString() },
+  { '@type': 'ListItem', position: 2, name: s.foodsIndexTitle, item: new URL(urlAlimentos(locale), site).toString() },
+  { '@type': 'ListItem', position: 3, name: txt.h1, item: new URL(urlNivel(locale, nivel), site).toString() },
+  ...(catId ? [{ '@type': 'ListItem', position: 4, name: nombreCat }] : []),
+];
+
+const jsonld = [
+  { '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: migas },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: h1,
+    numberOfItems: total,
+    itemListElement: (catId ? lista : delNivel).slice(0, 100).map((f, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: f.names[locale],
+      url: new URL(`${urlAlimentos(locale)}${f.slug[locale]}/`, site).toString(),
+    })),
+  },
+];
+---
+
+<Base
+  locale={locale}
+  title={`${metaTitle} — Fodmind`}
+  description={metaDesc}
+  canonical={alternates[locale]}
+  alternates={alternates}
+  jsonld={jsonld}
+>
+  <nav class="migas">
+    <a href={urlLanding(locale)}>Fodmind</a> ›
+    <a href={urlAlimentos(locale)}>{s.foodsIndexTitle}</a> ›
+    {catId ? <a href={urlNivel(locale, nivel)}>{txt.h1}</a> : <span>{txt.h1}</span>}
+    {catId && <> › <span>{nombreCat}</span></>}
+  </nav>
+
+  <div class="entrada" style="padding-top:12px">
+    <h1>{h1}</h1>
+    <p class="texto-muted" style="max-width:720px">
+      {catId ? metaDesc : rellenar(txt.intro, { n: fmt(total, locale) })}
+    </p>
+    <p class="texto-muted" style="margin-top:10px">
+      {otrosNiveles.map((n, i) => (
+        <>
+          {i > 0 && ' · '}
+          <a href={urlNivel(locale, n)}>{NIVEL_TEXTOS[locale][n].h1}</a>
+        </>
+      ))}
+      {' · '}
+      <a href={urlGuia(locale)}>{s.navGuia}</a>
+    </p>
+  </div>
+
+  {catId ? (
+    <section>
+      <div class="rejilla-3">
+        {lista.map((food) => <TarjetaAlimento food={food} locale={locale} />)}
+      </div>
+      <p class="texto-muted" style="margin-top:18px">
+        <a href={urlCategoria(locale, CAT_SLUG[catId][locale])}>{s.seeCategory}: {nombreCat}</a>
+      </p>
+    </section>
+  ) : (
+    porCategoria.map((cat) => (
+      <section>
+        <h2 class="subrayado-seccion">
+          <a href={urlNivelCat(locale, nivel, cat.id)}>{rellenar(txt.catH1, { cat: catName(cat.id, locale) })}</a>
+        </h2>
+        <p class="texto-muted" style="margin-top:-6px">{rellenar(s.nFoods, { n: fmt(cat.alimentos.length, locale) })}</p>
+        <div class="rejilla-3" style="margin-top:14px">
+          {cat.alimentos.slice(0, MUESTRA).map((food) => <TarjetaAlimento food={food} locale={locale} />)}
+        </div>
+        {cat.alimentos.length > MUESTRA && (
+          <p style="margin-top:12px">
+            <a href={urlNivelCat(locale, nivel, cat.id)}>
+              {rellenar(s.nFoods, { n: fmt(cat.alimentos.length, locale) })} ›
+            </a>
+          </p>
+        )}
+      </section>
+    ))
+  )}
+</Base>

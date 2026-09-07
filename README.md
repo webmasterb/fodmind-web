@@ -67,15 +67,28 @@ Después del primer despliegue: alta en Google Search Console y envío de
 
 ## Estructura
 
-- `src/pages/[...slug].astro` — enruta TODO desde una tabla de rutas: español
-  en la raíz, resto prefijado (`/en/`, `/fr/`…), segmentos localizados
-  (`/en/foods/`, `/de/lebensmittel/`…). Slug por idioma, atados con hreflang.
+- `src/pages/[...slug].astro` — enruta TODO desde una tabla de rutas: inglés en
+  la raíz, resto prefijado (`/es/`, `/fr/`…), segmentos localizados
+  (`/foods/`, `/de/lebensmittel/`…). Slug por idioma, atados con hreflang.
+- `src/i18n/niveles.ts` — las listas por nivel (`/foods/low-fodmap/` y su corte
+  por categoría) con sus slugs y textos. Contestan a la búsqueda genérica —«low
+  FODMAP foods»—, que antes no tenía ninguna página en todo el sitio.
+- `src/i18n/guia-slugs.ts` — el slug de cada artículo de la Guía por idioma.
+  A mano y no generado del título: del título salían URLs como
+  `/de/guide/schritt-1-2-6-wochen-weglassen-elimination/`.
+- Los posts del blog llevan `urlSlug` en el frontmatter. **No puede llamarse
+  `slug`**: Astro toma ese campo como id de la entrada y los 24 posts
+  desaparecen del build sin un solo aviso. Hay guardia.
+- `src/pages/sitemap.xml.ts` es el índice y `sitemap-[lang].xml.ts` los seis
+  sitemaps. Partido por idioma para que Search Console diga cuál se indexa.
 - `src/components/paginas/` — una plantilla por tipo de página.
 - `src/i18n/strings.ts` — todos los textos de la web en 6 idiomas. Los que
   describen los datos (grados, rótulos de procedencia, fuentes) NO están aquí:
   vienen de la app en `fuentes.json`.
 - `scripts/og.mjs` — rehace `public/og.png` (1200×630). La imagen va en el repo
   para no meter sharp en el build del contenedor.
+- Las visitas se miden con Cloudflare Web Analytics (sin cookies), que es lo que
+  la política de privacidad ya decía antes de que el script existiera.
 - `tests/guardias.test.mjs` — slugs únicos, rutas sin colisiones, posts completos
   en 6 idiomas, enlaces internos del blog con el prefijo de su idioma, y que los
   1.843 traigan procedencia y sus citas resueltas.

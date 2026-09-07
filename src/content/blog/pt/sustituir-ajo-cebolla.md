@@ -1,6 +1,7 @@
 ---
 title: 'Como substituir o alho e a cebola na cozinha pobre em FODMAP'
 description: 'O refogado não tem de acabar. Azeite infundido, cebolinho, assa-fétida e outros truques que devolvem o sabor sem os frutanos.'
+urlSlug: 'substituir-alho-cebola'
 fecha: '2026-09-07'
 ---
 

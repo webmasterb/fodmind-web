@@ -2,11 +2,13 @@
 import Base from '../../layouts/Base.astro';
 import BadgeNivel from '../../components/BadgeNivel.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
-import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlFuentes, alternatesAlimento, type Locale } from '../../lib/rutas';
+import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlFuentes, urlNivelCat, urlArticulo, alternatesAlimento, type Locale } from '../../lib/rutas';
 import { catName } from '../../i18n/categorias';
 import { t } from '../../i18n/strings';
-import { resolverSustitutos, citasDeNota, texto } from '../../lib/datos';
-import { fmtPorcion, rellenar } from '../../lib/formatos';
+import { resolverSustitutos, citasDeNota, texto, foods, guia } from '../../lib/datos';
+import { NIVEL_TEXTOS } from '../../i18n/niveles';
+import { guiaSlug } from '../../i18n/guia-slugs';
+import { fmt, fmtPorcion, rellenar } from '../../lib/formatos';
 import type { Alimento } from '../../lib/tipos';
 
 interface Props {
@@ -52,6 +54,33 @@ const respuesta =
         : rellenar(s.faqAHigh, { name: nombre, r: fmtPorcion(food.safeServingG, locale), u: unidad });
 
 const sustitutos = resolverSustitutos(food);
+
+// Vecinos: mismo nivel y misma categoría. Son el camino lateral que la ficha
+// no tenía —de aquí solo se salía hacia arriba o hacia los sustitutos— y lo
+// que distingue a las 914 fichas que no llevan nota, que sin esto son la
+// misma plantilla con otro nombre.
+const yaEnlazados = new Set([food.id, ...sustitutos.map((x) => x.id)]);
+const mismoNivel = foods.filter(
+  (f) => f.category === food.category && f.level === food.level && !yaEnlazados.has(f.id)
+);
+const vecinos = [...mismoNivel]
+  .sort((a, b) => a.names[locale].localeCompare(b.names[locale], locale))
+  .slice(0, 6);
+const tituloVecinos = rellenar(NIVEL_TEXTOS[locale][food.level].catH1, {
+  cat: catName(food.category, locale),
+});
+const queSonLosFodmap = guia.find((a) => a.id === 'what-are-fodmaps');
+
+// La ración segura sola no dice nada: 100 g suena mucho hasta que se sabe que
+// de esto se comen 150 g de una sentada.
+const contextoRacion =
+  food.safeServingG !== null && food.typicalServingG !== undefined && food.typicalServingG !== food.safeServingG
+    ? rellenar(s.servingContext, {
+        t: fmtPorcion(food.typicalServingG, locale),
+        r: fmtPorcion(food.safeServingG, locale),
+        u: unidad,
+      })
+    : null;
 const citas = citasDeNota(food.notaCitas);
 
 // DE DÓNDE SALE CADA NÚMERO, con la regla de la ficha de la app: una línea
@@ -136,12 +165,19 @@ const jsonld = [
     )}
   </div>
 
+  {contextoRacion && <p class="texto-muted" style="margin-top:-8px">{contextoRacion}</p>}
+
   {food.fodmaps.length > 0 && (
     <section>
       <h2 style="font-size:20px">{s.fodmapPresent}</h2>
       <div class="fichas">
         {food.fodmaps.map((tipo) => <span class="ficha">{s.fodmapTypes[tipo]}</span>)}
       </div>
+      {queSonLosFodmap && (
+        <p class="texto-muted" style="margin-top:10px">
+          <a href={urlArticulo(locale, guiaSlug(queSonLosFodmap.id, locale))}>{queSonLosFodmap.title[locale]}</a>
+        </p>
+      )}
     </section>
   )}
 
@@ -183,6 +219,22 @@ const jsonld = [
       <div class="rejilla-3" style="margin-top:14px">
         {sustitutos.map((sust) => <TarjetaAlimento food={sust} locale={locale} />)}
       </div>
+    </section>
+  )}
+
+  {vecinos.length > 0 && (
+    <section>
+      <h2 class="subrayado-seccion">{tituloVecinos}</h2>
+      <div class="rejilla-3" style="margin-top:14px">
+        {vecinos.map((v) => <TarjetaAlimento food={v} locale={locale} />)}
+      </div>
+      {mismoNivel.length > vecinos.length && (
+        <p style="margin-top:12px">
+          <a href={urlNivelCat(locale, food.level, food.category)}>
+            {rellenar(s.nFoods, { n: fmt(mismoNivel.length + 1, locale) })} ›
+          </a>
+        </p>
+      )}
     </section>
   )}
 

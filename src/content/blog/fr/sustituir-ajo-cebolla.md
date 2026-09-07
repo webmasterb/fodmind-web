@@ -1,6 +1,7 @@
 ---
 title: 'Comment remplacer l’ail et l’oignon dans la cuisine pauvre en FODMAP'
 description: 'Le sofrito n’a pas de raison de s’arrêter. Huile infusée, ciboule, asa-fétida et autres astuces qui rendent le goût sans les fructanes.'
+urlSlug: 'remplacer-ail-oignon'
 fecha: '2026-09-07'
 ---
 

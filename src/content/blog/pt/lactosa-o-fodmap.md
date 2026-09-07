@@ -1,6 +1,7 @@
 ---
 title: 'Lactose ou FODMAP? Porque é que o queijo curado não dá gases e o leite dá'
 description: 'A lactose é o L de FODMAP, mas nem todos os laticínios a levam da mesma maneira. O que faz a fermentação, como distinguir uma intolerância da dieta e o que testar.'
+urlSlug: 'lactose-ou-fodmap'
 fecha: '2026-09-07'
 ---
 

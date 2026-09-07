@@ -1,6 +1,7 @@
 ---
 title: '¿Lactosa o FODMAP? Por qué el queso curado no da gases y la leche sí'
 description: 'La lactosa es la L de FODMAP, pero no todos los lácteos la llevan igual. Qué hace el fermentado, cómo distinguir una intolerancia de la dieta y qué probar.'
+urlSlug: 'lactosa-o-fodmap'
 fecha: '2026-09-07'
 ---
 

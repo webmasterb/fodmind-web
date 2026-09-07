@@ -1,6 +1,7 @@
 ---
 title: 'Laktose oder FODMAPs? Warum gereifter Käse keine Blähungen macht und Milch schon'
 description: 'Laktose ist das L in FODMAP, aber nicht jedes Milchprodukt trägt sie gleichermaßen. Was Fermentierung bewirkt, wie man eine Unverträglichkeit von der Diät unterscheidet und was man testet.'
+urlSlug: 'laktose-oder-fodmap'
 fecha: '2026-09-07'
 ---
 

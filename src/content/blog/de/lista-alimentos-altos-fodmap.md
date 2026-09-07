@@ -1,6 +1,7 @@
 ---
 title: 'FODMAP-reiche Lebensmittel: die Liste, mit Nuancen'
 description: 'Weizen, Zwiebel, Knoblauch, Hülsenfrüchte, Honig… Welche Lebensmittel die meisten FODMAPs konzentrieren, warum die Portionsgröße alles entscheidet und wie du prüfst, ohne Listen auswendig zu lernen.'
+urlSlug: 'fodmap-reiche-lebensmittel-liste'
 fecha: '2026-09-07'
 ---
 

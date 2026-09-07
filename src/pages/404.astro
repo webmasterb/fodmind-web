@@ -1,25 +1,59 @@
 ---
+/**
+ * Un solo 404.html para todo el sitio —es lo que sirve nginx— pero con los
+ * seis idiomas dentro.
+ *
+ * El de antes estaba siempre en el idioma de la raíz: quien se perdía en
+ * `/de/lebensmittel/loquesea/` leía la disculpa en inglés. Aquí van los seis
+ * bloques y un script mínimo enciende el que toca según el prefijo de la URL.
+ * Sin JS se ve el de la raíz, que es exactamente lo que había antes.
+ */
 import Base from '../layouts/Base.astro';
-import { alternatesEstatico, urlLanding, LOCALE_RAIZ } from '../lib/rutas';
+import { alternatesEstatico, urlLanding, urlAlimentos, urlGuia, LOCALES, LOCALE_RAIZ, LOCALE_TAG } from '../lib/rutas';
 import { t } from '../i18n/strings';
 
-const locale = LOCALE_RAIZ;
-const s = t(locale);
 const alternates = alternatesEstatico('landing');
+const s = t(LOCALE_RAIZ);
 ---
 
 <Base
-  locale={locale}
-  title="404 — Fodmind"
+  locale={LOCALE_RAIZ}
+  title={`404 — Fodmind`}
   description={s.metaHomeDesc}
   canonical="/404"
   alternates={alternates}
   noindex={true}
 >
-  <div class="entrada" style="text-align:center;padding:80px 0">
-    <p style="font-size:64px;margin:0">🥬</p>
-    <h1>404</h1>
-    <p class="texto-muted">{s.foodsIndexText}</p>
-    <p><a class="boton boton-primario" href={urlLanding(locale)}>Fodmind</a></p>
+  <div class="entrada" style="text-align:center;padding:70px 0 40px">
+    <p style="font-size:64px;margin:0" aria-hidden="true">🥬</p>
+    {LOCALES.map((l) => {
+      const st = t(l);
+      return (
+        <div class="bloque-404" data-lang={l} lang={LOCALE_TAG[l]} hidden={l !== LOCALE_RAIZ}>
+          <h1 style="margin-bottom:8px">{st.notFoundTitle}</h1>
+          <p class="texto-muted" style="max-width:520px;margin:0 auto 22px">{st.notFoundText}</p>
+          <p>
+            <a class="boton boton-primario" href={urlAlimentos(l)}>{st.navAlimentos}</a>
+          </p>
+          <p class="texto-muted" style="margin-top:14px">
+            <a href={urlLanding(l)}>Fodmind</a> · <a href={urlGuia(l)}>{st.navGuia}</a>
+          </p>
+        </div>
+      );
+    })}
   </div>
 </Base>
+
+<script is:inline>
+  // El prefijo de la URL manda: /de/… enciende el bloque alemán. La raíz no
+  // lleva prefijo, así que su bloque es el que ya viene encendido.
+  (function () {
+    var trozo = location.pathname.split('/')[1];
+    var bloque = document.querySelector('.bloque-404[data-lang="' + trozo + '"]');
+    if (!bloque) return;
+    var todos = document.querySelectorAll('.bloque-404');
+    for (var i = 0; i < todos.length; i++) todos[i].hidden = true;
+    bloque.hidden = false;
+    document.documentElement.lang = bloque.getAttribute('lang') || document.documentElement.lang;
+  })();
+</script>

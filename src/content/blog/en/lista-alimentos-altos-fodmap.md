@@ -1,6 +1,7 @@
 ---
 title: 'High FODMAP foods: the list, with nuances'
 description: 'Wheat, onion, garlic, legumes, honey… Which foods concentrate the most FODMAPs, why serving size changes everything, and how to check without memorizing lists.'
+urlSlug: 'high-fodmap-foods-list'
 fecha: '2026-09-07'
 ---
 

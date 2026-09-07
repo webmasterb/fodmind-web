@@ -36,6 +36,8 @@ export interface Strings {
   levelDescriptions: Record<'low' | 'moderate' | 'high', string>;
   safeServing: string;
   typicalServing: string;
+  /** Compara la ración habitual con la segura. Admite {t}, {r} y {u}. */
+  servingContext: string;
   fodmapPresent: string;
   fodmapTypes: Record<'fructans' | 'gos' | 'lactose' | 'fructose' | 'sorbitol' | 'mannitol', string>;
   noLimit: string;
@@ -80,6 +82,8 @@ export interface Strings {
   footerSources: string;
   langSwitch: string;
 
+  notFoundTitle: string;
+  notFoundText: string;
   metaHomeTitle: string;
   metaHomeDesc: string;
 }
@@ -175,6 +179,7 @@ export const STR: Record<Locale, Strings> = {
     },
     safeServing: 'Ración segura',
     typicalServing: 'Ración habitual',
+    servingContext: 'Una ración normal son {t} {u} y la segura {r} {u}: la diferencia es lo que decide si sienta bien.',
     fodmapPresent: 'FODMAPs en cantidad relevante',
     fodmapTypes: {
       fructans: 'Fructanos',
@@ -254,6 +259,8 @@ export const STR: Record<Locale, Strings> = {
       'Base de datos propia compilada de literatura científica pública (Monash University, Ciqual, y otras fuentes citadas en la app).',
     langSwitch: 'Idioma',
 
+    notFoundTitle: 'Esta página no existe',
+    notFoundText: 'Puede que el enlace esté mal escrito o que la página se haya movido. Busca el alimento desde aquí:',
     metaHomeTitle: 'Fodmind — Escáner FODMAP: semáforo de alimentos, lector de etiquetas y guía',
     metaHomeDesc:
       'Escanea un producto, fotografía una etiqueta o busca entre 1.843 alimentos y sabrás al instante si es bajo en FODMAP. Guía por fases, diario y recetas. Gratis en iOS y Android.',
@@ -349,6 +356,7 @@ export const STR: Record<Locale, Strings> = {
     },
     safeServing: 'Safe serving',
     typicalServing: 'Typical serving',
+    servingContext: 'A normal serving is {t} {u} and the safe one {r} {u}: that gap is what decides whether it sits well.',
     fodmapPresent: 'FODMAPs in relevant amounts',
     fodmapTypes: {
       fructans: 'Fructans',
@@ -428,6 +436,8 @@ export const STR: Record<Locale, Strings> = {
       'Own database compiled from public scientific literature (Monash University, Ciqual and other sources cited in the app).',
     langSwitch: 'Language',
 
+    notFoundTitle: 'This page does not exist',
+    notFoundText: 'The link may be mistyped, or the page may have moved. Look the food up from here:',
     metaHomeTitle: 'Fodmind — FODMAP scanner: food traffic light, label reader and guide',
     metaHomeDesc:
       'Scan a product, photograph a label or search 1,843 foods and know instantly whether it is low FODMAP. Phase guide, diary and recipes. Free on iOS and Android.',
@@ -523,6 +533,7 @@ export const STR: Record<Locale, Strings> = {
     },
     safeServing: 'Portion sûre',
     typicalServing: 'Portion habituelle',
+    servingContext: 'Une portion normale, c’est {t} {u}, et la portion sûre {r} {u} : c’est cet écart qui décide de la tolérance.',
     fodmapPresent: 'FODMAP en quantité significative',
     fodmapTypes: {
       fructans: 'Fructanes',
@@ -602,6 +613,8 @@ export const STR: Record<Locale, Strings> = {
       'Base de données propre, compilée à partir de la littérature scientifique publique (Monash University, Ciqual et autres sources citées dans l’app).',
     langSwitch: 'Langue',
 
+    notFoundTitle: 'Cette page n’existe pas',
+    notFoundText: 'Le lien est peut-être mal écrit, ou la page a été déplacée. Cherchez l’aliment ici :',
     metaHomeTitle: 'Fodmind — Scanner FODMAP : feu tricolore des aliments, lecteur d’étiquettes et guide',
     metaHomeDesc:
       'Scannez un produit, photographiez une étiquette ou cherchez parmi 1 843 aliments et sachez aussitôt s’il est pauvre en FODMAP. Guide par phases, journal et recettes. Gratuit sur iOS et Android.',
@@ -697,6 +710,7 @@ export const STR: Record<Locale, Strings> = {
     },
     safeServing: 'Sichere Portion',
     typicalServing: 'Übliche Portion',
+    servingContext: 'Eine normale Portion sind {t} {u}, die sichere {r} {u}: dieser Abstand entscheidet, ob es bekommt.',
     fodmapPresent: 'FODMAPs in relevanter Menge',
     fodmapTypes: {
       fructans: 'Fructane',
@@ -776,6 +790,8 @@ export const STR: Record<Locale, Strings> = {
       'Eigene Datenbank aus öffentlicher wissenschaftlicher Literatur (Monash University, Ciqual und weitere in der App genannte Quellen).',
     langSwitch: 'Sprache',
 
+    notFoundTitle: 'Diese Seite gibt es nicht',
+    notFoundText: 'Vielleicht ist der Link falsch geschrieben oder die Seite ist umgezogen. Such das Lebensmittel hier:',
     metaHomeTitle: 'Fodmind — FODMAP-Scanner: Lebensmittel-Ampel, Etiketten-Leser und Anleitung',
     metaHomeDesc:
       'Scanne ein Produkt, fotografiere ein Etikett oder suche unter 1.843 Lebensmitteln und weiß sofort, ob es FODMAP-arm ist. Phasen-Anleitung, Tagebuch und Rezepte. Gratis für iOS und Android.',
@@ -871,6 +887,7 @@ export const STR: Record<Locale, Strings> = {
     },
     safeServing: 'Porzione sicura',
     typicalServing: 'Porzione abituale',
+    servingContext: 'Una porzione normale è {t} {u} e quella sicura {r} {u}: è questa differenza che decide se ti va giù bene.',
     fodmapPresent: 'FODMAP in quantità rilevanti',
     fodmapTypes: {
       fructans: 'Fruttani',
@@ -950,6 +967,8 @@ export const STR: Record<Locale, Strings> = {
       'Base dati propria compilata dalla letteratura scientifica pubblica (Monash University, Ciqual e altre fonti citate nell’app).',
     langSwitch: 'Lingua',
 
+    notFoundTitle: 'Questa pagina non esiste',
+    notFoundText: 'Questo link potrebbe essere sbagliato, o la pagina è stata spostata. Cerca l’alimento da qui:',
     metaHomeTitle: 'Fodmind — Scanner FODMAP: semaforo degli alimenti, lettore di etichette e guida',
     metaHomeDesc:
       'Scansiona un prodotto, fotografa un’etichetta o cerca tra 1.843 alimenti e scopri all’istante se è povero di FODMAP. Guida per fasi, diario e ricette. Gratis su iOS e Android.',
@@ -1045,6 +1064,7 @@ export const STR: Record<Locale, Strings> = {
     },
     safeServing: 'Dose segura',
     typicalServing: 'Dose habitual',
+    servingContext: 'Uma porção normal são {t} {u} e a segura {r} {u}: é essa diferença que decide se cai bem.',
     fodmapPresent: 'FODMAP em quantidade relevante',
     fodmapTypes: {
       fructans: 'Frutanos',
@@ -1124,6 +1144,8 @@ export const STR: Record<Locale, Strings> = {
       'Base de dados própria compilada de literatura científica pública (Monash University, Ciqual e outras fontes citadas na app).',
     langSwitch: 'Idioma',
 
+    notFoundTitle: 'Esta página não existe',
+    notFoundText: 'O link pode estar mal escrito ou a página pode ter mudado. Procura o alimento aqui:',
     metaHomeTitle: 'Fodmind — Scanner FODMAP: semáforo de alimentos, leitor de etiquetas e guia',
     metaHomeDesc:
       'Digitaliza um produto, fotografa uma etiqueta ou pesquisa entre 1 843 alimentos e fica a saber na hora se é pobre em FODMAP. Guia por fases, diário e receitas. Grátis em iOS e Android.',

@@ -60,7 +60,7 @@ const jsonld = [
       <h2 class="subrayado-seccion">{s.blogIndexTitle}</h2>
       <ul class="mas-lista">
         {otros.map((o) => (
-          <li><a href={urlPost(locale, o.id.split('/')[1])}>{o.data.title}</a></li>
+          <li><a href={urlPost(locale, o.data.urlSlug)}>{o.data.title}</a></li>
         ))}
       </ul>
     </section>

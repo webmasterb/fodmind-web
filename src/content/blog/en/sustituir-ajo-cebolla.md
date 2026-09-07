@@ -1,6 +1,7 @@
 ---
 title: 'How to swap garlic and onion in low FODMAP cooking'
 description: 'Your sofrito does not have to end. Infused oil, spring onion greens, asafoetida and other tricks that bring the flavor back without the fructans.'
+urlSlug: 'garlic-onion-substitutes'
 fecha: '2026-09-07'
 ---
 

@@ -1,6 +1,7 @@
 ---
 title: 'Lactose or FODMAPs? Why aged cheese does not cause gas and milk does'
 description: 'Lactose is the L in FODMAP, but not all dairy carries it the same way. What fermentation does, how to tell an intolerance from the diet, and what to test.'
+urlSlug: 'lactose-or-fodmap'
 fecha: '2026-09-07'
 ---
 

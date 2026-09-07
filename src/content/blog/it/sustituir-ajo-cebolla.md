@@ -1,6 +1,7 @@
 ---
 title: 'Come sostituire aglio e cipolla nella cucina povera di FODMAP'
 description: 'Il soffritto non deve finire. Olio infuso, cipollotto, asa-fetida e altri trucchi che restituiscono il sapore senza i fruttani.'
+urlSlug: 'sostituire-aglio-cipolla'
 fecha: '2026-09-07'
 ---
 

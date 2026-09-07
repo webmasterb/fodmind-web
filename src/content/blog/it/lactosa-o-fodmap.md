@@ -1,6 +1,7 @@
 ---
 title: 'Lattosio o FODMAP? Perché il formaggio stagionato non dà gas e il latte sì'
 description: 'Il lattosio è la L di FODMAP, ma non tutti i latticini lo contengono allo stesso modo. Cosa fa la fermentazione, come distinguere un’intolleranza dalla dieta e cosa provare.'
+urlSlug: 'lattosio-o-fodmap'
 fecha: '2026-09-07'
 ---
 

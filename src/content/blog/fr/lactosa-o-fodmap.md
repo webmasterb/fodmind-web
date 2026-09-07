@@ -1,6 +1,7 @@
 ---
 title: 'Lactose ou FODMAP ? Pourquoi le fromage affiné ne donne pas de gaz et le lait si'
 description: 'Le lactose est le L de FODMAP, mais tous les produits laitiers ne le portent pas pareil. Ce que fait la fermentation, comment distoler une intolérance du régime et quoi tester.'
+urlSlug: 'lactose-ou-fodmap'
 fecha: '2026-09-07'
 ---
 

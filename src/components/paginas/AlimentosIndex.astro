@@ -1,9 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
-import { alternatesEstatico, CAT_SLUG, base, urlCategoria, type Locale } from '../../lib/rutas';
-import { CATEGORIAS } from '../../lib/datos';
+import { alternatesEstatico, CAT_SLUG, base, urlCategoria, urlNivel, type Locale } from '../../lib/rutas';
+import { CATEGORIAS, foods } from '../../lib/datos';
 import { catName } from '../../i18n/categorias';
+import { NIVELES, NIVEL_TEXTOS } from '../../i18n/niveles';
 import { t } from '../../i18n/strings';
 import { fmt, rellenar, LEVEL_COLOR } from '../../lib/formatos';
 
@@ -14,6 +15,9 @@ interface Props {
 const { locale } = Astro.props;
 const s = t(locale);
 const alternates = alternatesEstatico('alimentos');
+const porNivel = Object.fromEntries(
+  NIVELES.map((n) => [n, foods.filter((f) => f.level === n).length])
+) as Record<(typeof NIVELES)[number], number>;
 
 const nombresCategorias = Object.fromEntries(CATEGORIAS.map((c) => [c.id, catName(c.id, locale)]));
 const colores = JSON.stringify(LEVEL_COLOR);
@@ -35,6 +39,17 @@ const colores = JSON.stringify(LEVEL_COLOR);
     <input id="buscador" type="search" placeholder={s.searchPlaceholder} autocomplete="off" aria-label={s.searchPlaceholder} />
     <div id="resultados" class="resultados" role="listbox"></div>
   </div>
+
+  <section>
+    <div class="rejilla-3">
+      {NIVELES.map((n) => (
+        <a class="tarjeta tarjeta-clicable" href={urlNivel(locale, n)}>
+          <h3>{NIVEL_TEXTOS[locale][n].h1}</h3>
+          <p class="pie-tarjeta">{rellenar(s.nFoods, { n: fmt(porNivel[n], locale) })}</p>
+        </a>
+      ))}
+    </div>
+  </section>
 
   <section>
     <h2 class="subrayado-seccion">{s.categoriesTitle}</h2>

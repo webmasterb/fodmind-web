@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
-import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, alternatesCategoria, type Locale } from '../../lib/rutas';
+import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlNivelCat, alternatesCategoria, type Locale } from '../../lib/rutas';
 import { categoria } from '../../lib/datos';
 import { catName, CAT_NAMES } from '../../i18n/categorias';
 import { t } from '../../i18n/strings';
@@ -61,7 +61,10 @@ const breadcrumb = {
     (grupo) =>
       grupo.alimentos.length > 0 && (
         <section>
-          <h2 class="subrayado-seccion">{s.levelNames[grupo.nivel]} <span class="texto-muted" style="font-size:17px;font-weight:500">({fmt(grupo.alimentos.length, locale)})</span></h2>
+          <h2 class="subrayado-seccion">
+            <a href={urlNivelCat(locale, grupo.nivel, catId)}>{s.levelNames[grupo.nivel]}</a>
+            <span class="texto-muted" style="font-size:17px;font-weight:500">({fmt(grupo.alimentos.length, locale)})</span>
+          </h2>
           <p class="texto-muted" style="margin-top:-6px">{s.levelDescriptions[grupo.nivel]}</p>
           <div class="rejilla-3">
             {grupo.alimentos.map((food) => <TarjetaAlimento food={food} locale={locale} />)}

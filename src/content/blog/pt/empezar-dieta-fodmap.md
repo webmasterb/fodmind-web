@@ -1,6 +1,7 @@
 ---
 title: 'Dieta pobre em FODMAP: os 5 erros com que se começa'
 description: 'Eliminar sem diagnóstico, ficar na eliminação para sempre, confiar em listas copiadas… Os falhos mais comuns e como os evitar desde o primeiro dia.'
+urlSlug: 'comecar-dieta-fodmap'
 fecha: '2026-09-07'
 ---
 

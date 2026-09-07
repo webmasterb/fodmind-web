@@ -1,6 +1,7 @@
 ---
 title: 'Alimentos altos en FODMAP: la lista, con sus matices'
 description: 'Trigo, cebolla, ajo, legumbres, miel… Qué alimentos concentran más FODMAPs, por qué la ración lo cambia todo y cómo comprobarlo sin memorizar listas.'
+urlSlug: 'lista-alimentos-altos-fodmap'
 fecha: '2026-09-07'
 ---
 

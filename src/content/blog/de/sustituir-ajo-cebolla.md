@@ -1,6 +1,7 @@
 ---
 title: 'Knoblauch und Zwiebel ersetzen in der FODMAP-armen Küche'
 description: 'Die Basis muss nicht sterben. Infundiertes Öl, Frühlingszwiebelgrün, Asafoetida und weitere Tricks, die den Geschmack zurückbringen ohne die Fructane.'
+urlSlug: 'knoblauch-zwiebel-ersetzen'
 fecha: '2026-09-07'
 ---
 

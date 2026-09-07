@@ -1,6 +1,7 @@
 ---
 title: 'Aliments riches en FODMAP : la liste, avec ses nuances'
 description: 'Blé, oignon, ail, légumineuses, miel… Quels aliments concentrent le plus de FODMAP, pourquoi la portion change tout et comment vérifier sans apprendre de listes.'
+urlSlug: 'liste-aliments-riches-fodmap'
 fecha: '2026-09-07'
 ---
 

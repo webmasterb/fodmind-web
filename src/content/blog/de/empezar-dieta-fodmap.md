@@ -1,6 +1,7 @@
 ---
 title: 'FODMAP-arme Ernährung: die 5 Fehler, mit denen man beginnt'
 description: 'Ohne Diagnose eliminieren, für immer in der Eliminierung bleiben, kopierten Listen vertrauen… Die häufigsten Fehler und wie du sie vom ersten Tag an vermeidest.'
+urlSlug: 'fodmap-diaet-starten'
 fecha: '2026-09-07'
 ---
 

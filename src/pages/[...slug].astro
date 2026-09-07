@@ -1,5 +1,7 @@
 ---
 import { LOCALES, LOCALE_RAIZ, CAT_SLUG, SEG, base, type Locale } from '../lib/rutas';
+import { NIVELES, NIVEL_SLUG } from '../i18n/niveles';
+import { guiaSlug } from '../i18n/guia-slugs';
 import { foods, guia, CATEGORIAS } from '../lib/datos';
 import { getCollection } from 'astro:content';
 import Landing from '../components/paginas/Landing.astro';
@@ -12,6 +14,7 @@ import BlogIndex from '../components/paginas/BlogIndex.astro';
 import Post from '../components/paginas/Post.astro';
 import Legal from '../components/paginas/Legal.astro';
 import Fuentes from '../components/paginas/Fuentes.astro';
+import Nivel from '../components/paginas/Nivel.astro';
 
 export async function getStaticPaths() {
   const rutas: { params: { slug?: string }; props: Record<string, unknown> }[] = [];
@@ -36,6 +39,24 @@ export async function getStaticPaths() {
       });
     }
 
+    // Las listas por nivel y sus cortes por categoría: la búsqueda genérica
+    // («low FODMAP foods») no tenía ninguna página en todo el sitio.
+    for (const nivel of NIVELES) {
+      rutas.push({
+        params: { slug: [...pref, SEG.alimentos[locale], NIVEL_SLUG[nivel][locale]].join('/') },
+        props: { kind: 'nivel', locale, nivel },
+      });
+      for (const cat of CATEGORIAS) {
+        if (!cat.alimentos.some((f) => f.level === nivel)) continue;
+        rutas.push({
+          params: {
+            slug: [...pref, SEG.alimentos[locale], NIVEL_SLUG[nivel][locale], CAT_SLUG[cat.id][locale]].join('/'),
+          },
+          props: { kind: 'nivel', locale, nivel, catId: cat.id },
+        });
+      }
+    }
+
     for (const food of foods) {
       rutas.push({
         params: { slug: [...pref, SEG.alimentos[locale], food.slug[locale]].join('/') },
@@ -50,7 +71,7 @@ export async function getStaticPaths() {
 
     for (const art of guia) {
       rutas.push({
-        params: { slug: [...pref, SEG.guia[locale], art.id].join('/') },
+        params: { slug: [...pref, SEG.guia[locale], guiaSlug(art.id, locale)].join('/') },
         props: { kind: 'articulo', locale, articuloId: art.id },
       });
     }
@@ -76,16 +97,27 @@ export async function getStaticPaths() {
   }
 
   const posts = await getCollection('blog');
+  // El fichero identifica el post; el slug de la URL sale del frontmatter y
+  // está traducido, así que los alternates se arman con el de cada idioma.
+  const slugPorPost = new Map<string, Record<string, string>>();
   for (const entrada of posts) {
-    const [dir, slug] = entrada.id.split('/');
+    const [dir, id] = entrada.id.split('/');
+    if (!LOCALES.includes(dir as Locale)) continue;
+    const yaVistos = slugPorPost.get(id) ?? {};
+    yaVistos[dir] = entrada.data.urlSlug;
+    slugPorPost.set(id, yaVistos);
+  }
+  for (const entrada of posts) {
+    const [dir, id] = entrada.id.split('/');
     const locale = dir as Locale;
     if (!LOCALES.includes(locale)) continue;
     const pref = prefijo(locale);
+    const slugs = slugPorPost.get(id)!;
     const alternatesPost = Object.fromEntries(
-      LOCALES.map((l) => [l, `${base(l)}/${SEG.blog[l]}/${slug}/`])
+      LOCALES.filter((l) => slugs[l]).map((l) => [l, `${base(l)}/${SEG.blog[l]}/${slugs[l]}/`])
     ) as Record<Locale, string>;
     rutas.push({
-      params: { slug: [...pref, SEG.blog[locale], slug].join('/') },
+      params: { slug: [...pref, SEG.blog[locale], entrada.data.urlSlug].join('/') },
       props: { kind: 'post', locale, entrada, alternatesPost },
     });
   }
@@ -96,6 +128,7 @@ export async function getStaticPaths() {
 interface Props {
   kind: string;
   locale: Locale;
+  nivel?: 'low' | 'moderate' | 'high';
   catId?: string;
   food?: unknown;
   articuloId?: string;
@@ -110,6 +143,7 @@ const { kind, locale } = props;
 {kind === 'landing' && <Landing locale={locale} />}
 {kind === 'alimentos' && <AlimentosIndex locale={locale} />}
 {kind === 'categoria' && <Categoria locale={locale} catId={props.catId!} />}
+{kind === 'nivel' && <Nivel locale={locale} nivel={props.nivel!} catId={props.catId} />}
 {kind === 'alimento' && <Alimento locale={locale} food={props.food as never} />}
 {kind === 'guia' && <GuiaIndex locale={locale} />}
 {kind === 'articulo' && <Articulo locale={locale} articuloId={props.articuloId!} />}

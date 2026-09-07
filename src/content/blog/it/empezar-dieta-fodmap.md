@@ -1,6 +1,7 @@
 ---
 title: 'Dieta povera di FODMAP: i 5 errori di partenza'
 description: 'Eliminare senza diagnosi, restare nella fase di eliminazione per sempre, fidarsi delle liste copiate… Gli errori più comuni e come evitarli dal primo giorno.'
+urlSlug: 'iniziare-dieta-fodmap'
 fecha: '2026-09-07'
 ---
 

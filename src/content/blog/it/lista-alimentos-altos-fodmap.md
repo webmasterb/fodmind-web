@@ -1,6 +1,7 @@
 ---
 title: 'Alimenti ricchi di FODMAP: la lista, con le sue sfumature'
 description: 'Grano, cipolla, aglio, legumi, miele… Quali alimenti concentrano più FODMAP, perché la porzione cambia tutto e come verificare senza imparare liste a memoria.'
+urlSlug: 'elenco-alimenti-alti-fodmap'
 fecha: '2026-09-07'
 ---
 

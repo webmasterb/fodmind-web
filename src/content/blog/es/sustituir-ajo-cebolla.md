@@ -1,6 +1,7 @@
 ---
 title: 'Cómo sustituir el ajo y la cebolla en la cocina baja en FODMAP'
 description: 'El sofrito no tiene por qué acabar. Aceite infusionado, cebolleta, asa-fétida y otros trucos que devuelven el sabor sin los fructanos.'
+urlSlug: 'sustituir-ajo-cebolla'
 fecha: '2026-09-07'
 ---
 

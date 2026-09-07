@@ -1,6 +1,7 @@
 ---
 title: 'Low FODMAP diet: the 5 mistakes everyone makes at the start'
 description: 'Eliminating without a diagnosis, staying in elimination forever, trusting copied lists… The most common failures and how to avoid them from day one.'
+urlSlug: 'starting-low-fodmap-diet'
 fecha: '2026-09-07'
 ---
 

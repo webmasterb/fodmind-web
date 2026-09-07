@@ -1,6 +1,7 @@
 ---
 title: 'Dieta baja en FODMAP: los 5 errores con los que se empieza'
 description: 'Eliminar sin diagnóstico, quedarse en la fase de eliminación para siempre, confiar en listas copiadas… Los fallos más comunes y cómo evitarlos desde el primer día.'
+urlSlug: 'empezar-dieta-fodmap'
 fecha: '2026-09-07'
 ---
 
