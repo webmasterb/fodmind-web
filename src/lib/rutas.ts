@@ -1,7 +1,7 @@
 import catSlugJson from './cat-slug.json';
 import type { Lang } from './tipos';
 
-export const LOCALES = ['es', 'en', 'fr', 'de', 'it', 'pt'] as const;
+export const LOCALES = ['en', 'es', 'fr', 'de', 'it', 'pt'] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const LOCALE_TAG: Record<Locale, string> = {
@@ -14,7 +14,7 @@ export const LOCALE_TAG: Record<Locale, string> = {
 };
 
 /** Segmentos de ruta por idioma. El exportador de la app repite alimentos. */
-export const SEG: Record<'alimentos' | 'guia' | 'blog' | 'privacidad' | 'terminos', Record<Locale, string>> = {
+export const SEG: Record<'alimentos' | 'guia' | 'blog' | 'fuentes' | 'privacidad' | 'terminos', Record<Locale, string>> = {
   alimentos: {
     es: 'alimentos',
     en: 'foods',
@@ -39,6 +39,14 @@ export const SEG: Record<'alimentos' | 'guia' | 'blog' | 'privacidad' | 'termino
     it: 'blog',
     pt: 'blog',
   },
+  fuentes: {
+    es: 'fuentes',
+    en: 'sources',
+    fr: 'sources',
+    de: 'quellen',
+    it: 'fonti',
+    pt: 'fontes',
+  },
   privacidad: {
     es: 'privacidad',
     en: 'privacy',
@@ -57,9 +65,15 @@ export const SEG: Record<'alimentos' | 'guia' | 'blog' | 'privacidad' | 'termino
   },
 };
 
-/** Prefijo de URL del idioma: el español vive en la raíz. */
+/**
+ * El idioma que vive en la raíz. Único sitio donde se decide: el resto del
+ * repo pregunta por `base()`, nunca compara con un idioma a mano.
+ */
+export const LOCALE_RAIZ: Locale = 'en';
+
+/** Prefijo de URL del idioma. El idioma raíz no lleva prefijo. */
 export function base(locale: Locale): string {
-  return locale === 'es' ? '' : `/${locale}`;
+  return locale === LOCALE_RAIZ ? '' : `/${locale}`;
 }
 
 export function urlLanding(locale: Locale): string {
@@ -94,6 +108,10 @@ export function urlPost(locale: Locale, postSlug: string): string {
   return `${base(locale)}/${SEG.blog[locale]}/${postSlug}/`;
 }
 
+export function urlFuentes(locale: Locale): string {
+  return `${base(locale)}/${SEG.fuentes[locale]}/`;
+}
+
 export function urlLegal(locale: Locale, cual: 'privacidad' | 'terminos'): string {
   return `${base(locale)}/${SEG[cual][locale]}/`;
 }
@@ -102,10 +120,10 @@ export function urlLegal(locale: Locale, cual: 'privacidad' | 'terminos'): strin
  * Alternates de las páginas estáticas (landing, índices y legal), que son las
  * mismas rutas en los 6 idiomas. Alimenta hreflang, sitemap y selector.
  */
-export function alternatesEstatico(tipo: 'landing' | 'alimentos' | 'guia' | 'blog' | 'privacidad' | 'terminos'): Record<Locale, string> {
+export function alternatesEstatico(tipo: 'landing' | 'alimentos' | 'guia' | 'blog' | 'fuentes' | 'privacidad' | 'terminos'): Record<Locale, string> {
   return Object.fromEntries(
     LOCALES.map((l) => {
-      const pref = l === 'es' ? '' : `/${l}`;
+      const pref = base(l);
       switch (tipo) {
         case 'landing':
           return [l, `${pref}/`];
@@ -115,6 +133,8 @@ export function alternatesEstatico(tipo: 'landing' | 'alimentos' | 'guia' | 'blo
           return [l, `${pref}/${SEG.guia[l]}/`];
         case 'blog':
           return [l, `${pref}/${SEG.blog[l]}/`];
+        case 'fuentes':
+          return [l, `${pref}/${SEG.fuentes[l]}/`];
         case 'privacidad':
           return [l, `${pref}/${SEG.privacidad[l]}/`];
         case 'terminos':
@@ -134,15 +154,15 @@ function alternatesDeEntidad(
 export function alternatesAlimento(
   slugPorLocale: Record<Locale, string>
 ): Record<Locale, string> {
-  return alternatesDeEntidad((l) => `${l === 'es' ? '' : `/${l}`}/${SEG.alimentos[l]}/${slugPorLocale[l]}/`);
+  return alternatesDeEntidad((l) => `${base(l)}/${SEG.alimentos[l]}/${slugPorLocale[l]}/`);
 }
 
 export function alternatesCategoria(catId: string): Record<Locale, string> {
-  return alternatesDeEntidad((l) => `${l === 'es' ? '' : `/${l}`}/${SEG.alimentos[l]}/${CAT_SLUG[catId][l]}/`);
+  return alternatesDeEntidad((l) => `${base(l)}/${SEG.alimentos[l]}/${CAT_SLUG[catId][l]}/`);
 }
 
 export function alternatesArticulo(articuloId: string): Record<Locale, string> {
-  return alternatesDeEntidad((l) => `${l === 'es' ? '' : `/${l}`}/${SEG.guia[l]}/${articuloId}/`);
+  return alternatesDeEntidad((l) => `${base(l)}/${SEG.guia[l]}/${articuloId}/`);
 }
 
 /** Slugs de categoría por idioma. Clave = id de categoría en los datos. */

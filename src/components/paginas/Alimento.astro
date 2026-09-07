@@ -2,11 +2,10 @@
 import Base from '../../layouts/Base.astro';
 import BadgeNivel from '../../components/BadgeNivel.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
-import CtaApp from '../../components/CtaApp.astro';
-import { CAT_SLUG, urlAlimentos, urlCategoria, alternatesAlimento, type Locale } from '../../lib/rutas';
+import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlFuentes, alternatesAlimento, type Locale } from '../../lib/rutas';
 import { catName } from '../../i18n/categorias';
 import { t } from '../../i18n/strings';
-import { resolverSustitutos } from '../../lib/datos';
+import { resolverSustitutos, citasDeNota, texto } from '../../lib/datos';
 import { fmtPorcion, rellenar } from '../../lib/formatos';
 import type { Alimento } from '../../lib/tipos';
 
@@ -53,13 +52,32 @@ const respuesta =
         : rellenar(s.faqAHigh, { name: nombre, r: fmtPorcion(food.safeServingG, locale), u: unidad });
 
 const sustitutos = resolverSustitutos(food);
+const citas = citasDeNota(food.notaCitas);
+
+// DE DÓNDE SALE CADA NÚMERO, con la regla de la ficha de la app: una línea
+// cuando la ración y la lista dicen lo mismo —1.780 de los 1.843— y dos con
+// rótulo cuando no, porque en 63 alimentos no coinciden y una sola firmaría
+// «medido» sobre una cifra que nadie midió.
+const proc = food.procedencia;
+const unaLinea =
+  proc.racion.texto === proc.lista.texto &&
+  proc.racion.fuentes.join('|') === proc.lista.fuentes.join('|');
+const lineas = unaLinea
+  ? [{ mitad: proc.lista, rotulo: null as string | null }]
+  : [
+      { mitad: proc.racion, rotulo: texto('provenanceServingLabel', locale) },
+      { mitad: proc.lista, rotulo: texto('provenanceListLabel', locale) },
+    ];
+// El pie no se pone debajo de un «nadie ha medido esto»: solo cuando algún
+// campo tiene fuente detrás.
+const conRespaldo = proc.lista.texto !== 'provenanceC' || proc.racion.texto !== 'provenanceC';
 
 const jsonld = [
   {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Fodmind', item: site.toString() },
+      { '@type': 'ListItem', position: 1, name: 'Fodmind', item: new URL(urlLanding(locale), site).toString() },
       { '@type': 'ListItem', position: 2, name: s.foodsIndexTitle, item: new URL(urlAlimentos(locale), site).toString() },
       { '@type': 'ListItem', position: 3, name: catName(food.category, locale), item: new URL(urlCategoria(locale, CAT_SLUG[food.category][locale]), site).toString() },
       { '@type': 'ListItem', position: 4, name: nombre },
@@ -88,7 +106,7 @@ const jsonld = [
   jsonld={jsonld}
 >
   <nav class="migas">
-    <a href="/">Fodmind</a> ›
+    <a href={urlLanding(locale)}>Fodmind</a> ›
     <a href={urlAlimentos(locale)}>{s.foodsIndexTitle}</a> ›
     <a href={urlCategoria(locale, CAT_SLUG[food.category][locale])}>{catName(food.category, locale)}</a> ›
     <span>{nombre}</span>
@@ -130,8 +148,33 @@ const jsonld = [
   {food.note && (
     <aside class="aviso">
       <strong>{nombre}:</strong> {food.note[locale]}
+      {citas.length > 0 && (
+        <p class="citas-nota">
+          {citas.map((c, i) => (
+            <>
+              {i > 0 && ' · '}
+              <a href={c.url} rel="noopener nofollow">{c.ref}</a>
+            </>
+          ))}
+        </p>
+      )}
     </aside>
   )}
+
+  <section class="procedencia">
+    {lineas.map(({ mitad, rotulo }) => (
+      <p class="procedencia-linea">
+        <span aria-hidden="true">{mitad.texto === 'provenanceC' ? '?' : '✓'}</span>
+        <span>
+          {rotulo ? `${rotulo}: ` : ''}
+          {texto(mitad.texto, locale)}
+          {mitad.fuentes.length > 0 ? ` · ${texto('provenanceFrom', locale)} ${mitad.fuentes.join(', ')}` : ''}
+        </span>
+      </p>
+    ))}
+    {conRespaldo && <p class="procedencia-pie">{texto('dataNote', locale)}</p>}
+    <p class="procedencia-pie"><a href={urlFuentes(locale)}>{texto('sourcesTitle', locale)}</a></p>
+  </section>
 
   {sustitutos.length > 0 && (
     <section>
@@ -150,5 +193,4 @@ const jsonld = [
 
   <div class="aviso">{s.notice}</div>
 
-  <CtaApp locale={locale} />
 </Base>

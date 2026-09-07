@@ -12,7 +12,7 @@ Gently brown peeled garlic cloves in oil, remove the solids and use the oil. The
 
 ## The green part of spring onion
 
-[Onion](/en/foods/onion/) is red, but the green leaf of spring onion is not: chop it finely as if it were fresh onion, to finish dishes or for gentle sofritos. Not the white part.
+[Onion](/foods/onion/) is red, but the green leaf of spring onion is not: chop it finely as if it were fresh onion, to finish dishes or for gentle sofritos. Not the white part.
 
 ## Other tricks that work
 
@@ -25,4 +25,4 @@ Gently brown peeled garlic cloves in oil, remove the solids and use the oil. The
 
 In restaurants and ready meals, assume the onion and garlic are inside. This is where the Fodmind label reader makes the difference: photograph the ingredient list and it tells you whether the product fits, without decoding E-numbers by hand.
 
-Elimination is not forever: during reintroduction you test how much fructan you tolerate, and many people go back to eating garlic in small servings. The [complete method](/en/guide/) is explained in the guide.
+Elimination is not forever: during reintroduction you test how much fructan you tolerate, and many people go back to eating garlic in small servings. The [complete method](/guide/) is explained in the guide.

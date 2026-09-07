@@ -8,7 +8,7 @@ Si la leche te sienta mal, el diagnóstico popular es «intolerancia a la lactos
 
 ## Por qué no todos los lácteos son iguales
 
-[La leche de vaca](/alimentos/leche-de-vaca/) lleva lactosa de sobra: es el ejemplo de libro. Pero fíjate en lo que pasa con el resto:
+[La leche de vaca](/es/alimentos/leche-de-vaca/) lleva lactosa de sobra: es el ejemplo de libro. Pero fíjate en lo que pasa con el resto:
 
 - **Quesos curados** (parmesano, manchego, cheddar): la fermentación y el curado eliminan casi toda la lactosa. Verdes.
 - **Mantequilla y nata**: grasa casi pura, lactosa residual mínima. Verdes.
@@ -20,4 +20,4 @@ Si la leche te sienta mal, el diagnóstico popular es «intolerancia a la lactos
 
 Aquí es donde la fase de **reintroducción** vale oro: se prueba la lactosa sola, con un alimento «puro», en dosis crecientes durante tres días. Si toleras la lactosa, tu problema con la leche era parte del cuadro general de FODMAPs. Si no la toleras ni en dosis bajas, hablamos de una intolerancia más específica y un dietista te dirá hasta dónde llegar con enzimas lactasa.
 
-La clave es no eliminar a ciegas para siempre. La [guía de reintroducción](/guia/) explica cómo hacer estas pruebas de forma ordenada, y en [Fodmind](/alimentos/) cada lácteo tiene su ración segura y el FODMAP concreto que contiene.
+La clave es no eliminar a ciegas para siempre. La [guía de reintroducción](/es/guia/) explica cómo hacer estas pruebas de forma ordenada, y en [Fodmind](/es/alimentos/) cada lácteo tiene su ración segura y el FODMAP concreto que contiene.

@@ -1,6 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import CtaApp from '../../components/CtaApp.astro';
 import { alternatesEstatico, urlArticulo, type Locale } from '../../lib/rutas';
 import { guia } from '../../lib/datos';
 import { t } from '../../i18n/strings';
@@ -54,5 +53,4 @@ const preguntas = guia.filter((a) => a.grupo === 'preguntas');
     </section>
   )}
 
-  <CtaApp locale={locale} />
 </Base>

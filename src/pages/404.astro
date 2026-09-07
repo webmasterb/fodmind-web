@@ -1,9 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
-import { alternatesEstatico, urlLanding, type Locale } from '../lib/rutas';
+import { alternatesEstatico, urlLanding, LOCALE_RAIZ } from '../lib/rutas';
 import { t } from '../i18n/strings';
 
-const locale = 'es' as Locale;
+const locale = LOCALE_RAIZ;
 const s = t(locale);
 const alternates = alternatesEstatico('landing');
 ---

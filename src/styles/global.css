@@ -601,3 +601,61 @@ details p {
   margin-right: 10px;
   font-weight: 600;
 }
+
+/* ---------- procedencia y fuentes ---------- */
+
+.citas-nota {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.citas-nota a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.procedencia {
+  margin: 22px 0 6px;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+
+.procedencia-linea {
+  display: flex;
+  gap: 8px;
+  margin: 0 0 4px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.procedencia-pie {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.lista-fuentes {
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+}
+
+.lista-fuentes li {
+  padding: 14px 0;
+  border-top: 1px solid var(--borde);
+}
+
+.fuente-ref {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.fuente-meta {
+  margin: 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}

@@ -15,8 +15,14 @@ const SEG_LEGAL = {
 };
 const CAT_SLUG = JSON.parse(readFileSync(join(RAIZ, 'src', 'lib', 'cat-slug.json'), 'utf8'));
 
+/** El idioma raíz se lee de rutas.ts: aquí no se repite la decisión. */
+const rutasTs = readFileSync(join(RAIZ, 'src', 'lib', 'rutas.ts'), 'utf8');
+const LOCALE_RAIZ = rutasTs.match(/LOCALE_RAIZ: Locale = '(\w+)'/)?.[1];
+const base = (lang) => (lang === LOCALE_RAIZ ? '' : `/${lang}`);
+
 const foods = JSON.parse(readFileSync(join(RAIZ, 'src', 'data', 'foods.json'), 'utf8'));
 const guia = JSON.parse(readFileSync(join(RAIZ, 'src', 'data', 'guide.json'), 'utf8'));
+const fuentes = JSON.parse(readFileSync(join(RAIZ, 'src', 'data', 'fuentes.json'), 'utf8'));
 
 test('catálogo: 1843 alimentos con nombre en los 6 idiomas', () => {
   assert.equal(foods.length, 1843);
@@ -122,22 +128,85 @@ test('índices de búsqueda: 6 idiomas, un elemento por alimento', () => {
   }
 });
 
-test('los enlaces internos del blog apuntan a slugs que existen', () => {
+test('el idioma raíz es uno de los seis y la home lo usa', () => {
+  assert.ok(LANGS.includes(LOCALE_RAIZ), `LOCALE_RAIZ ${LOCALE_RAIZ} no es un idioma del sitio`);
+  const home = readFileSync(join(RAIZ, 'src', 'pages', 'index.astro'), 'utf8');
+  const enLaHome = home.match(/<Landing locale="(\w+)"/)?.[1];
+  assert.equal(enLaHome, LOCALE_RAIZ, `la home sirve ${enLaHome} y la raíz es ${LOCALE_RAIZ}`);
+});
+
+test('los enlaces internos del blog llevan el prefijo de su idioma y existen', () => {
   const postsDir = join(RAIZ, 'src', 'content', 'blog');
-  const slugsPorLang = {};
+  const indices = (lang) =>
+    new Set([
+      SEG_ALIMENTOS[lang],
+      SEG_GUIA[lang],
+      SEG_BLOG[lang],
+      SEG_LEGAL.privacidad[lang],
+      SEG_LEGAL.terminos[lang],
+    ]);
+
   for (const lang of LANGS) {
-    slugsPorLang[lang] = new Set(foods.map((f) => f.slug[lang]));
-  }
-  for (const lang of LANGS) {
+    const slugs = new Set(foods.map((f) => f.slug[lang]));
+    const articulos = new Set(guia.map((a) => a.id));
     for (const file of readdirSync(join(postsDir, lang))) {
       const texto = readFileSync(join(postsDir, lang, file), 'utf8');
-      const enlaces = [...texto.matchAll(/\]\((\/[a-z0-9/-]*\/)\)/g)].map((m) => m[1]);
-      for (const enlace of enlaces) {
-        const trozos = enlace.replace(/^\/|\/$/g, '').split('/');
+      for (const [, enlace] of texto.matchAll(/\]\((\/[a-z0-9/-]*\/)\)/g)) {
+        const pref = base(lang);
+        assert.ok(
+          pref === '' ? !LANGS.some((l) => enlace.startsWith(`/${l}/`)) : enlace.startsWith(`${pref}/`),
+          `${lang}/${file}: ${enlace} no lleva el prefijo de su idioma (${pref || 'raíz'})`
+        );
+        const trozos = enlace.slice(pref.length).replace(/^\/|\/$/g, '').split('/').filter(Boolean);
+        if (trozos.length === 0) continue;
+        assert.ok(indices(lang).has(trozos[0]), `${lang}/${file}: ${enlace} no es una sección del sitio`);
         if (trozos.length === 2 && trozos[0] === SEG_ALIMENTOS[lang]) {
-          assert.ok(slugsPorLang[lang].has(trozos[1]), `${lang}/${file}: enlace a alimento inexistente ${enlace}`);
+          assert.ok(slugs.has(trozos[1]), `${lang}/${file}: enlace a alimento inexistente ${enlace}`);
+        }
+        if (trozos.length === 2 && trozos[0] === SEG_GUIA[lang]) {
+          assert.ok(articulos.has(trozos[1]), `${lang}/${file}: enlace a artículo inexistente ${enlace}`);
         }
       }
     }
+  }
+});
+
+test('procedencia: los 1843 dicen de dónde salen sus dos números', () => {
+  const claves = new Set(['provenanceA', 'provenanceB', 'provenanceC', 'provenanceComposition']);
+  for (const f of foods) {
+    assert.ok(f.procedencia, `${f.id}: sin procedencia`);
+    for (const mitad of ['racion', 'lista']) {
+      const m = f.procedencia[mitad];
+      assert.ok(claves.has(m.texto), `${f.id}/${mitad}: grado ${m.texto} desconocido`);
+      assert.ok(Array.isArray(m.fuentes), `${f.id}/${mitad}: fuentes no es lista`);
+      // Grado C es «nadie lo ha medido»: no puede venir con fuente detrás.
+      if (m.texto === 'provenanceC') assert.equal(m.fuentes.length, 0, `${f.id}/${mitad}: grado C con fuente`);
+    }
+  }
+});
+
+test('las citas de las notas existen y llevan enlace', () => {
+  const porId = new Map(fuentes.notaCitas.map((c) => [c.id, c]));
+  for (const f of foods) {
+    for (const id of f.notaCitas ?? []) {
+      const cita = porId.get(id);
+      assert.ok(cita, `${f.id}: cita ${id} sin resolver en fuentes.json`);
+      assert.match(cita.url, /^https?:\/\//, `cita ${id}: sin URL`);
+      assert.ok(cita.ref?.trim(), `cita ${id}: sin referencia`);
+    }
+    // Una nota con citas y sin nota sería una cita huérfana en la ficha.
+    if (f.notaCitas?.length) assert.ok(f.note, `${f.id}: cita sin nota que respaldar`);
+  }
+});
+
+test('fuentes: bibliografía, composición y textos completos en 6 idiomas', () => {
+  assert.ok(fuentes.bibliografia.length >= 20, 'bibliografía corta');
+  assert.ok(fuentes.composicion.length >= 10, 'faltan tablas de composición');
+  for (const c of fuentes.composicion) {
+    assert.ok(c.quien?.trim(), `${c.id}: sin quién lo publica`);
+    assert.ok(c.licencia?.trim(), `${c.id}: sin licencia — las CC BY obligan a nombrarla`);
+  }
+  for (const [clave, valor] of Object.entries(fuentes.textos)) {
+    for (const lang of LANGS) assert.ok(valor[lang]?.trim(), `texto ${clave}: vacío en ${lang}`);
   }
 });

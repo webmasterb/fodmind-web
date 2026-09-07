@@ -1,6 +1,8 @@
 ---
-import { LOCALES, LOCALE_TAG, urlLanding, urlAlimentos, urlGuia, urlBlog, urlLegal, type Locale } from '../lib/rutas';
+import { LOCALES, LOCALE_TAG, LOCALE_RAIZ, urlLanding, urlAlimentos, urlGuia, urlBlog, urlFuentes, urlLegal, type Locale } from '../lib/rutas';
 import { t, APP_STORE_URL, PLAY_STORE_URL } from '../i18n/strings';
+import { texto } from '../lib/datos';
+import CtaApp from '../components/CtaApp.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -19,6 +21,16 @@ const site = Astro.site ?? new URL('https://fodmind.com');
 const abs = (ruta: string) => new URL(ruta, site).toString();
 const jsonldFinal = jsonld ? (Array.isArray(jsonld) ? jsonld : [jsonld]) : [];
 
+/** Open Graph pide idioma_PAÍS, que no es el mismo formato que hreflang. */
+const OG_LOCALE: Record<Locale, string> = {
+  en: 'en_US',
+  es: 'es_ES',
+  fr: 'fr_FR',
+  de: 'de_DE',
+  it: 'it_IT',
+  pt: 'pt_PT',
+};
+
 const nav = [
   { href: urlAlimentos(locale), label: s.navAlimentos },
   { href: urlGuia(locale), label: s.navGuia },
@@ -36,13 +48,21 @@ const nav = [
     {noindex && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={abs(canonical)} />
     {LOCALES.map((l) => <link rel="alternate" hreflang={LOCALE_TAG[l]} href={abs(alternates[l])} />)}
-    <link rel="alternate" hreflang="x-default" href={abs(alternates['es'])} />
+    <link rel="alternate" hreflang="x-default" href={abs(alternates[LOCALE_RAIZ])} />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Fodmind" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={abs(canonical)} />
-    <meta property="og:image" content={abs('/icon.png')} />
+    <meta property="og:image" content={abs('/og.png')} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={OG_LOCALE[locale]} />
+    {LOCALES.filter((l) => l !== locale).map((l) => <meta property="og:locale:alternate" content={OG_LOCALE[l]} />)}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={abs('/og.png')} />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="theme-color" content="#faf7ef" />
     {jsonldFinal.map((obj) => <script type="application/ld+json" set:html={JSON.stringify(obj)} />)}
@@ -56,13 +76,20 @@ const nav = [
         <nav class="nav" aria-label="principal">
           {nav.map((item) => <a href={item.href}>{item.label}</a>)}
         </nav>
-        <a class="boton boton-primario" href={`${urlLanding(locale)}#descargar`}>{s.ctaApp}</a>
+        <a
+          class="boton boton-primario"
+          href="#descargar"
+          data-descarga
+          data-ios={APP_STORE_URL}
+          data-android={PLAY_STORE_URL}
+        >{s.ctaApp}</a>
       </div>
     </header>
 
     <main>
       <div class="contenedor">
         <slot />
+        <CtaApp locale={locale} />
       </div>
     </main>
 
@@ -80,6 +107,7 @@ const nav = [
         </div>
         <div>
           <p class="pie-titulo">Legal</p>
+          <a href={urlFuentes(locale)}>{texto('sourcesTitle', locale)}</a>
           <a href={urlLegal(locale, 'privacidad')}>{s.privacyTitle}</a>
           <a href={urlLegal(locale, 'terminos')}>{s.termsTitle}</a>
           <p class="pie-nota">© 2026 Fodmind</p>
@@ -94,5 +122,25 @@ const nav = [
         </div>
       </div>
     </footer>
+    <script is:inline>
+      // El botón de la cabecera lleva a la banda de descarga de la propia
+      // página, que ahora está en todas. Con JS y en un móvil va directo a su
+      // tienda: quien entra desde el buscador con el teléfono en la mano se
+      // ahorra el rebote por la landing. Sin JS sigue funcionando el ancla.
+      (function () {
+        var b = document.querySelector('[data-descarga]');
+        if (!b) return;
+        var ua = navigator.userAgent || '';
+        var destino = /iPad|iPhone|iPod/.test(ua)
+          ? b.getAttribute('data-ios')
+          : /Android/.test(ua)
+            ? b.getAttribute('data-android')
+            : null;
+        if (destino) {
+          b.setAttribute('href', destino);
+          b.setAttribute('rel', 'noopener');
+        }
+      })();
+    </script>
   </body>
 </html>

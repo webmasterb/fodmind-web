@@ -8,7 +8,7 @@ If milk does not agree with you, the popular diagnosis is "lactose intolerance".
 
 ## Why not all dairy is the same
 
-[Cow's milk](/en/foods/cow-s-milk/) is full of lactose: the textbook example. But look at what happens with the rest:
+[Cow's milk](/foods/cow-s-milk/) is full of lactose: the textbook example. But look at what happens with the rest:
 
 - **Aged cheeses** (parmesan, manchego, cheddar): fermentation and aging remove almost all the lactose. Green.
 - **Butter and cream**: nearly pure fat, minimal residual lactose. Green.
@@ -20,4 +20,4 @@ If milk does not agree with you, the popular diagnosis is "lactose intolerance".
 
 This is where the **reintroduction** phase earns its keep: you test lactose alone, with a "pure" food, in increasing doses over three days. If you tolerate lactose, your problem with milk was part of the general FODMAP picture. If you cannot tolerate it even in low doses, we are talking about a more specific intolerance and a dietitian will tell you how far to go with lactase enzymes.
 
-The key is not to eliminate blindly forever. The [reintroduction guide](/en/guide/) explains how to run these tests in an orderly way, and on [Fodmind](/en/foods/) every dairy item shows its safe serving and the specific FODMAP it contains.
+The key is not to eliminate blindly forever. The [reintroduction guide](/guide/) explains how to run these tests in an orderly way, and on [Fodmind](/foods/) every dairy item shows its safe serving and the specific FODMAP it contains.

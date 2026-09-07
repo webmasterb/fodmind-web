@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
-import CtaApp from '../../components/CtaApp.astro';
-import { alternatesArticulo, urlArticulo, urlGuia, type Locale } from '../../lib/rutas';
+import { alternatesArticulo, urlArticulo, urlGuia, urlLanding, type Locale } from '../../lib/rutas';
 import { guia } from '../../lib/datos';
 import { t } from '../../i18n/strings';
 import { cuerpo } from '../../lib/cuerpo';
@@ -44,7 +43,7 @@ const jsonld = [
   jsonld={jsonld}
 >
   <nav class="migas">
-    <a href="/">Fodmind</a> ›
+    <a href={urlLanding(locale)}>Fodmind</a> ›
     <a href={urlGuia(locale)}>{s.guideIndexTitle}</a> ›
     <span>{art.title[locale]}</span>
   </nav>
@@ -66,5 +65,4 @@ const jsonld = [
     </ul>
   </section>
 
-  <CtaApp locale={locale} />
 </Base>

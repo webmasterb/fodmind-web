@@ -1,9 +1,15 @@
 import type { APIRoute } from 'astro';
-import { LOCALES, LOCALE_TAG, CAT_SLUG, SEG } from '../lib/rutas';
+import { LOCALES, LOCALE_TAG, LOCALE_RAIZ, CAT_SLUG, SEG, base } from '../lib/rutas';
 import { foods, guia, CATEGORIAS } from '../lib/datos';
 import { getCollection } from 'astro:content';
 
 const SITE = 'https://fodmind.com';
+/**
+ * `lastmod` es la fecha del build. El sitio es estático y se reconstruye
+ * entero en cada despliegue, así que no hay una fecha por página más honesta
+ * que esa: fingir una por URL sería inventarla.
+ */
+const LASTMOD = new Date().toISOString().slice(0, 10);
 
 function url(loc: string, alternates: Record<string, string>): string {
   const links = Object.entries(alternates)
@@ -12,20 +18,13 @@ function url(loc: string, alternates: Record<string, string>): string {
         `<xhtml:link rel="alternate" hreflang="${LOCALE_TAG[l as keyof typeof LOCALE_TAG]}" href="${SITE}${ruta}"/>`
     )
     .join('');
-  const defecto = `<xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${alternates['es']}"/>`;
-  return `  <url><loc>${SITE}${loc}</loc>${links}${defecto}</url>`;
+  const defecto = `<xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${alternates[LOCALE_RAIZ] ?? Object.values(alternates)[0]}"/>`;
+  return `  <url><loc>${SITE}${loc}</loc><lastmod>${LASTMOD}</lastmod>${links}${defecto}</url>`;
 }
 
-function estaticas(tipo: 'landing' | 'alimentos' | 'guia' | 'blog' | 'privacidad' | 'terminos'): Record<string, string> {
+function estaticas(tipo: 'landing' | 'alimentos' | 'guia' | 'blog' | 'fuentes' | 'privacidad' | 'terminos'): Record<string, string> {
   return Object.fromEntries(
-    LOCALES.map((l) => {
-      const p = l === 'es' ? '' : `/${l}`;
-      const ruta =
-        tipo === 'landing'
-          ? '/'
-          : `${p}/${SEG[tipo === 'alimentos' ? 'alimentos' : tipo][l]}/`.replace('//', '/');
-      return [l, ruta];
-    })
+    LOCALES.map((l) => [l, tipo === 'landing' ? `${base(l)}/` : `${base(l)}/${SEG[tipo][l]}/`])
   );
 }
 
@@ -39,17 +38,14 @@ export const GET: APIRoute = async () => {
     }
   };
 
-  for (const tipo of ['landing', 'alimentos', 'guia', 'blog', 'privacidad', 'terminos'] as const) {
+  for (const tipo of ['landing', 'alimentos', 'guia', 'blog', 'fuentes', 'privacidad', 'terminos'] as const) {
     anotar(estaticas(tipo));
   }
 
   for (const cat of CATEGORIAS) {
     anotar(
       Object.fromEntries(
-        LOCALES.map((l) => {
-          const p = l === 'es' ? '' : `/${l}`;
-          return [l, `${p}/${SEG.alimentos[l]}/${CAT_SLUG[cat.id][l]}/`];
-        })
+        LOCALES.map((l) => [l, `${base(l)}/${SEG.alimentos[l]}/${CAT_SLUG[cat.id][l]}/`])
       )
     );
   }
@@ -57,10 +53,7 @@ export const GET: APIRoute = async () => {
   for (const food of foods) {
     anotar(
       Object.fromEntries(
-        LOCALES.map((l) => {
-          const p = l === 'es' ? '' : `/${l}`;
-          return [l, `${p}/${SEG.alimentos[l]}/${food.slug[l]}/`];
-        })
+        LOCALES.map((l) => [l, `${base(l)}/${SEG.alimentos[l]}/${food.slug[l]}/`])
       )
     );
   }
@@ -68,10 +61,7 @@ export const GET: APIRoute = async () => {
   for (const art of guia) {
     anotar(
       Object.fromEntries(
-        LOCALES.map((l) => {
-          const p = l === 'es' ? '' : `/${l}`;
-          return [l, `${p}/${SEG.guia[l]}/${art.id}/`];
-        })
+        LOCALES.map((l) => [l, `${base(l)}/${SEG.guia[l]}/${art.id}/`])
       )
     );
   }
@@ -82,10 +72,7 @@ export const GET: APIRoute = async () => {
     const localesCon = LOCALES.filter((l) => posts.some((e) => e.id === `${l}/${slug}`));
     anotar(
       Object.fromEntries(
-        localesCon.map((l) => {
-          const p = l === 'es' ? '' : `/${l}`;
-          return [l, `${p}/${SEG.blog[l]}/${slug}/`];
-        })
+        localesCon.map((l) => [l, `${base(l)}/${SEG.blog[l]}/${slug}/`])
       )
     );
   }

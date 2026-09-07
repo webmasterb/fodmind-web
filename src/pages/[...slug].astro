@@ -1,5 +1,5 @@
 ---
-import { LOCALES, CAT_SLUG, SEG, type Locale } from '../lib/rutas';
+import { LOCALES, LOCALE_RAIZ, CAT_SLUG, SEG, base, type Locale } from '../lib/rutas';
 import { foods, guia, CATEGORIAS } from '../lib/datos';
 import { getCollection } from 'astro:content';
 import Landing from '../components/paginas/Landing.astro';
@@ -11,15 +11,16 @@ import Articulo from '../components/paginas/Articulo.astro';
 import BlogIndex from '../components/paginas/BlogIndex.astro';
 import Post from '../components/paginas/Post.astro';
 import Legal from '../components/paginas/Legal.astro';
+import Fuentes from '../components/paginas/Fuentes.astro';
 
 export async function getStaticPaths() {
   const rutas: { params: { slug?: string }; props: Record<string, unknown> }[] = [];
-  const prefijo = (l: Locale) => (l === 'es' ? [] : [l]);
+  const prefijo = (l: Locale) => (l === LOCALE_RAIZ ? [] : [l]);
 
   for (const locale of LOCALES) {
     const pref = prefijo(locale);
 
-    if (locale !== 'es') {
+    if (locale !== LOCALE_RAIZ) {
       rutas.push({ params: { slug: locale }, props: { kind: 'landing', locale } });
     }
 
@@ -60,6 +61,11 @@ export async function getStaticPaths() {
     });
 
     rutas.push({
+      params: { slug: [...pref, SEG.fuentes[locale]].join('/') },
+      props: { kind: 'fuentes', locale },
+    });
+
+    rutas.push({
       params: { slug: [...pref, SEG.privacidad[locale]].join('/') },
       props: { kind: 'privacidad', locale },
     });
@@ -76,10 +82,7 @@ export async function getStaticPaths() {
     if (!LOCALES.includes(locale)) continue;
     const pref = prefijo(locale);
     const alternatesPost = Object.fromEntries(
-      LOCALES.map((l) => {
-        const p = l === 'es' ? '' : `/${l}`;
-        return [l, `${p}/${SEG.blog[l]}/${slug}/`];
-      })
+      LOCALES.map((l) => [l, `${base(l)}/${SEG.blog[l]}/${slug}/`])
     ) as Record<Locale, string>;
     rutas.push({
       params: { slug: [...pref, SEG.blog[locale], slug].join('/') },
@@ -112,5 +115,6 @@ const { kind, locale } = props;
 {kind === 'articulo' && <Articulo locale={locale} articuloId={props.articuloId!} />}
 {kind === 'blog' && <BlogIndex locale={locale} />}
 {kind === 'post' && <Post locale={locale} entrada={props.entrada as never} alternatesPost={props.alternatesPost!} />}
+{kind === 'fuentes' && <Fuentes locale={locale} />}
 {kind === 'privacidad' && <Legal locale={locale} cual="privacidad" />}
 {kind === 'terminos' && <Legal locale={locale} cual="terminos" />}

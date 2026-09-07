@@ -26,4 +26,4 @@ You can eat one amber food. What you cannot do is eat four ambers in the same me
 
 Without a diary, reintroduction is guesswork: symptoms take up to 72 hours and memory is unreliable. Log meals and symptoms every day; after three weeks you have a map of your gut that no test can replace.
 
-The Fodmind app carries the full phase guide, reintroduction challenges with their calendar and the symptom diary in your pocket. And if you would rather start by reading, the [guide on the web](/en/guide/) is free.
+The Fodmind app carries the full phase guide, reintroduction challenges with their calendar and the symptom diary in your pocket. And if you would rather start by reading, the [guide on the web](/guide/) is free.

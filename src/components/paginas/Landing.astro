@@ -1,10 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
-import CtaApp from '../CtaApp.astro';
-import { alternatesEstatico, CAT_SLUG, urlAlimentos, urlCategoria, type Locale } from '../../lib/rutas';
+import { alternatesEstatico, CAT_SLUG, LOCALE_TAG, urlLanding, urlAlimentos, urlCategoria, type Locale } from '../../lib/rutas';
 import { CATEGORIAS } from '../../lib/datos';
 import { catName } from '../../i18n/categorias';
-import { t } from '../../i18n/strings';
+import { t, APP_STORE_URL, PLAY_STORE_URL } from '../../i18n/strings';
 import { fmt, rellenar } from '../../lib/formatos';
 
 interface Props {
@@ -16,7 +15,17 @@ const s = t(locale);
 const alternates = alternatesEstatico('landing');
 const site = Astro.site ?? new URL('https://fodmind.com');
 
+const home = new URL(urlLanding(locale), site).toString();
+
 const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Fodmind',
+    url: home,
+    inLanguage: LOCALE_TAG[locale],
+    publisher: { '@type': 'Organization', name: 'Fodmind', url: site.toString(), logo: new URL('/icon.png', site).toString() },
+  },
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareApplication',
@@ -24,7 +33,10 @@ const jsonld = [
     applicationCategory: 'HealthApplication',
     operatingSystem: 'iOS, Android',
     description: s.metaHomeDesc,
-    url: site.toString(),
+    url: home,
+    image: new URL('/og.png', site).toString(),
+    inLanguage: LOCALE_TAG[locale],
+    installUrl: [APP_STORE_URL, PLAY_STORE_URL],
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
   },
   {
@@ -101,5 +113,4 @@ const jsonld = [
     ))}
   </section>
 
-  <CtaApp locale={locale} />
 </Base>

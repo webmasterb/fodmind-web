@@ -1,13 +1,11 @@
 ---
 import Base from '../../layouts/Base.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
-import CtaApp from '../../components/CtaApp.astro';
-import { CAT_SLUG, urlAlimentos, urlCategoria, type Locale } from '../../lib/rutas';
+import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, alternatesCategoria, type Locale } from '../../lib/rutas';
 import { categoria } from '../../lib/datos';
 import { catName, CAT_NAMES } from '../../i18n/categorias';
 import { t } from '../../i18n/strings';
 import { fmt, rellenar } from '../../lib/formatos';
-import { LOCALES } from '../../lib/rutas';
 
 interface Props {
   locale: Locale;
@@ -26,20 +24,14 @@ const porNivel = ['low', 'moderate', 'high'].map((nivel) => ({
     .sort((a, b) => a.names[locale].localeCompare(b.names[locale], locale)),
 }));
 
-const alternates = Object.fromEntries(
-  LOCALES.map((l) => {
-    const pref = l === 'es' ? '' : `/${l}`;
-    const seg = { es: 'alimentos', en: 'foods', fr: 'aliments', de: 'lebensmittel', it: 'alimenti', pt: 'alimentos' }[l];
-    return [l, `${pref}/${seg}/${CAT_SLUG[catId][l]}/`];
-  })
-) as Record<Locale, string>;
+const alternates = alternatesCategoria(catId);
 
 const site = Astro.site ?? new URL('https://fodmind.com');
 const breadcrumb = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Fodmind', item: site.toString() },
+    { '@type': 'ListItem', position: 1, name: 'Fodmind', item: new URL(urlLanding(locale), site).toString() },
     { '@type': 'ListItem', position: 2, name: s.foodsIndexTitle, item: new URL(urlAlimentos(locale), site).toString() },
     { '@type': 'ListItem', position: 3, name: nombre },
   ],
@@ -55,7 +47,7 @@ const breadcrumb = {
   jsonld={breadcrumb}
 >
   <nav class="migas">
-    <a href="/">Fodmind</a> ›
+    <a href={urlLanding(locale)}>Fodmind</a> ›
     <a href={urlAlimentos(locale)}>{s.foodsIndexTitle}</a> ›
     <span>{nombre}</span>
   </nav>
@@ -91,5 +83,4 @@ const breadcrumb = {
     </div>
   </section>
 
-  <CtaApp locale={locale} />
 </Base>

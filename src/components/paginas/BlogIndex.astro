@@ -1,6 +1,5 @@
 ---
 import Base from '../../layouts/Base.astro';
-import CtaApp from '../../components/CtaApp.astro';
 import { alternatesEstatico, urlPost, type Locale } from '../../lib/rutas';
 import { getCollection } from 'astro:content';
 import { t } from '../../i18n/strings';
@@ -46,5 +45,4 @@ const formato = new Intl.DateTimeFormat(LOCALE_TAG[locale], { dateStyle: 'long' 
     </div>
   </section>
 
-  <CtaApp locale={locale} />
 </Base>

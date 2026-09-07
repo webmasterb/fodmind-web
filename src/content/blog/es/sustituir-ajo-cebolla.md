@@ -12,7 +12,7 @@ Dora dientes de ajo pelados en aceite a fuego suave, retira el sólido y usa el 
 
 ## La parte verde de la cebolleta
 
-[La cebolla](/alimentos/cebolla/) es roja, pero la hoja verde de la cebolleta no: úsala picada fina como si fuera cebolla fresca, para terminar platos o para sofritos suaves. La parte blanca, no.
+[La cebolla](/es/alimentos/cebolla/) es roja, pero la hoja verde de la cebolleta no: úsala picada fina como si fuera cebolla fresca, para terminar platos o para sofritos suaves. La parte blanca, no.
 
 ## Otros trucos que funcionan
 
@@ -25,4 +25,4 @@ Dora dientes de ajo pelados en aceite a fuego suave, retira el sólido y usa el 
 
 En restaurantes y comida preparada, asume que la cebolla y el ajo van dentro. Aquí es donde el lector de etiquetas de Fodmind marca la diferencia: fotografías la lista de ingredientes y te dice si el producto encaja, sin descifrar nomenclatura E-475 a mano.
 
-La eliminación no es para siempre: en la fase de reintroducción se comprueba cuánto fructano toleras, y mucha gente vuelve a comer ajo en ración pequeña. El [método completo](/guia/) está explicado en la guía.
+La eliminación no es para siempre: en la fase de reintroducción se comprueba cuánto fructano toleras, y mucha gente vuelve a comer ajo en ración pequeña. El [método completo](/es/guia/) está explicado en la guía.

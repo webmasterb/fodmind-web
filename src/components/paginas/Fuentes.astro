@@ -1,0 +1,72 @@
+---
+/**
+ * De dónde salen los datos, con la misma letra que la app.
+ *
+ * No es una página de cortesía: seis de las tablas de composición son CC BY y
+ * obligan a nombrar autor, obra y licencia allí donde se publica el dato
+ * derivado, Ciqual exige la cita con su versión y la tabla japonesa su fórmula.
+ * La web publica esos números igual que la app, así que los cita igual.
+ */
+import Base from '../../layouts/Base.astro';
+import { alternatesEstatico, urlFuentes, type Locale } from '../../lib/rutas';
+import { fuentes, texto } from '../../lib/datos';
+import { t } from '../../i18n/strings';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+const alternates = alternatesEstatico('fuentes');
+const titulo = texto('sourcesTitle', locale);
+---
+
+<Base
+  locale={locale}
+  title={`${titulo} — Fodmind`}
+  description={texto('dataCreditsNote', locale)}
+  canonical={urlFuentes(locale)}
+  alternates={alternates}
+>
+  <div class="entrada">
+    <h1>{titulo}</h1>
+    <p class="texto-muted" style="max-width:700px">{texto('dataNote', locale)}</p>
+  </div>
+
+  <section>
+    <h2 class="subrayado-seccion">{texto('dataCredits', locale)}</h2>
+    <p class="texto-muted" style="max-width:700px">{texto('dataCreditsNote', locale)}</p>
+    <ul class="lista-fuentes">
+      {fuentes.composicion.map((c) => (
+        <li>
+          <p class="fuente-ref">{c.fuente}</p>
+          <p class="texto-muted fuente-meta">
+            {c.quien} · {c.licencia}
+            {c.licenciaUrl && (
+              <> · <a href={c.licenciaUrl} rel="noopener nofollow">{c.licencia}</a></>
+            )}
+            {c.consultado && <> · {c.consultado}</>}
+          </p>
+          {c.url && <p class="fuente-meta"><a href={c.url} rel="noopener nofollow">{c.url}</a></p>}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2 class="subrayado-seccion">{titulo}</h2>
+    <ul class="lista-fuentes">
+      {fuentes.bibliografia.map((c) => (
+        <li>
+          <p class="fuente-ref">{c.ref}</p>
+          <p class="fuente-meta"><a href={c.url} rel="noopener nofollow">{c.title}</a></p>
+          <p class="texto-muted fuente-meta">{c.where}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <div class="aviso">{s.notice}</div>
+
+</Base>

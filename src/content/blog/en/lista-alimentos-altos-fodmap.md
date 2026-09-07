@@ -12,13 +12,13 @@ When you start the low FODMAP diet, the first thing you look for is a list of wh
 
 **Onion and garlic.** The two most famous fructan concentrators, and they are in half of all cooking: sofritos, broths, sauces, garlic bread. They also appear as powder, which concentrates them even further. The classic swap is the green part of spring onion or garlic-infused oil.
 
-**Cabbage family and mushrooms.** [Cauliflower](/en/foods/cauliflower/) and [button mushrooms](/en/foods/button-mushroom/) are red in a normal serving due to mannitol and fructans, though small portions fit.
+**Cabbage family and mushrooms.** [Cauliflower](/foods/cauliflower/) and [button mushrooms](/foods/button-mushroom/) are red in a normal serving due to mannitol and fructans, though small portions fit.
 
-**Fruits with excess fructose or polyols.** [Apple](/en/foods/apple/), [mango](/en/foods/mango/) and [watermelon](/en/foods/watermelon/) are the three classics. Unripe banana, on the other hand, is green: ripeness changes the starch.
+**Fruits with excess fructose or polyols.** [Apple](/foods/apple/), [mango](/foods/mango/) and [watermelon](/foods/watermelon/) are the three classics. Unripe banana, on the other hand, is green: ripeness changes the starch.
 
 **Legumes.** Lentils, chickpeas and beans concentrate GOS. Long soaking and canning cut the load considerably, which is why canned lentils have a larger safe serving than home-cooked ones.
 
-**Honey and sweeteners.** [Honey](/en/foods/honey/) is pure excess fructose. The sorbitol, mannitol and xylitol in sugar-free gum are polyols and among the worst.
+**Honey and sweeteners.** [Honey](/foods/honey/) is pure excess fructose. The sorbitol, mannitol and xylitol in sugar-free gum are polyols and among the worst.
 
 ## How to use the list without obsessing
 
@@ -26,4 +26,4 @@ When you start the low FODMAP diet, the first thing you look for is a list of wh
 2. Remember that FODMAPs **stack up over the day**.
 3. During elimination, be strict; during reintroduction, test one FODMAP at a time.
 
-The [complete guide](/en/guide/) explains the phases step by step, and in the [food index](/en/foods/) you can check any food with its safe serving in grams.
+The [complete guide](/guide/) explains the phases step by step, and in the [food index](/foods/) you can check any food with its safe serving in grams.

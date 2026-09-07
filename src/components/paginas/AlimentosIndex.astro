@@ -1,7 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
-import CtaApp from '../../components/CtaApp.astro';
 import { alternatesEstatico, CAT_SLUG, base, urlCategoria, type Locale } from '../../lib/rutas';
 import { CATEGORIAS } from '../../lib/datos';
 import { catName } from '../../i18n/categorias';
@@ -49,7 +48,6 @@ const colores = JSON.stringify(LEVEL_COLOR);
     </div>
   </section>
 
-  <CtaApp locale={locale} />
 </Base>
 
 <script>
@@ -57,7 +55,7 @@ const colores = JSON.stringify(LEVEL_COLOR);
   if (caja) {
     const input = caja.querySelector<HTMLInputElement>('#buscador')!;
     const resultados = caja.querySelector<HTMLElement>('#resultados')!;
-    const idioma = caja.dataset.locale ?? 'es';
+    const idioma = caja.dataset.locale ?? 'en';
     const prefijo = caja.dataset.base ?? '';
     const cats = JSON.parse(caja.dataset.cats ?? '{}') as Record<string, string>;
     const colores = JSON.parse(caja.dataset.colores ?? '{}') as Record<string, string>;

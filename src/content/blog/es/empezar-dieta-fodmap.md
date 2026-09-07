@@ -26,4 +26,4 @@ Puedes comer un alimento ámbar. Lo que no puedes es comer cuatro ámbar en la m
 
 Sin diario, la reintroducción es adivinanza: los síntomas tardan hasta 72 horas y la memoria no es fiable. Anota comida y síntomas cada día; a las tres semanas tienes un mapa de tu intestino que ningún test sustituye.
 
-La app de Fodmind lleva la guía completa por fases, retos de reintroducción con su calendario y el diario de síntomas en el bolsillo. Y si prefieres empezar leyendo, la [guía en la web](/guia/) es gratis.
+La app de Fodmind lleva la guía completa por fases, retos de reintroducción con su calendario y el diario de síntomas en el bolsillo. Y si prefieres empezar leyendo, la [guía en la web](/es/guia/) es gratis.

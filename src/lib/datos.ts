@@ -1,10 +1,25 @@
 import foodsJson from '../data/foods.json';
 import guideJson from '../data/guide.json';
-import type { Alimento, ArticuloGuia, EntradaBusqueda } from './tipos';
+import fuentesJson from '../data/fuentes.json';
+import type { Alimento, ArticuloGuia, EntradaBusqueda, Fuentes } from './tipos';
 import { CAT_SLUG, LOCALES, type Locale } from './rutas';
 
-export const foods = foodsJson as Alimento[];
+export const foods = foodsJson as unknown as Alimento[];
 export const guia = guideJson as ArticuloGuia[];
+export const fuentes = fuentesJson as unknown as Fuentes;
+
+/** Texto de la app en el idioma pedido: la web no reescribe estos rótulos. */
+export function texto(clave: keyof Fuentes['textos'], locale: keyof Fuentes['textos']['provenanceFrom']): string {
+  return fuentes.textos[clave][locale];
+}
+
+/** Las citas que respaldan la nota de un alimento, ya resueltas. */
+export function citasDeNota(ids: string[] | undefined) {
+  if (!ids?.length) return [];
+  return ids
+    .map((id) => fuentes.notaCitas.find((f) => f.id === id))
+    .filter((f): f is Fuentes['notaCitas'][number] => Boolean(f));
+}
 
 export const foodById = new Map(foods.map((f) => [f.id, f]));
 
