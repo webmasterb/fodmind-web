@@ -64,7 +64,9 @@ const jsonld = [
     <h1>{s.heroTitle}</h1>
     <p>{s.heroText}</p>
     <div class="hero-botones">
-      <a class="boton boton-primario" href="#descargar">{s.heroCta}</a>
+      {/* data-descarga: en movil salta a la tienda en vez de desplazar
+          la pagina. Estaba solo en el boton de la cabecera. */}
+      <a class="boton boton-primario" href="#descargar" data-descarga>{s.heroCta}</a>
       <a class="boton boton-secundario" href={urlAlimentos(locale)}>{s.heroCtaSecondary}</a>
     </div>
     <div class="stats">

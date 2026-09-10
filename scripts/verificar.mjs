@@ -6,6 +6,7 @@
  */
 
 import { readFileSync, existsSync, readdirSync, statSync } from 'node:fs';
+import { createContext, runInContext } from 'node:vm';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -185,8 +186,27 @@ let restos = 0;
 let sinDescarga = 0;
 let sinMedicion = 0;
 let examinadas = 0;
+let sinBanner = 0;
+let anclaSuelta = 0;
+let conNoreferrer = 0;
 const APP_STORE = 'https://apps.apple.com/app/id6795241315';
 const PLAY = 'https://play.google.com/store/apps/details?id=com.fodmapguide.app';
+/**
+ * El id del banner sale de strings.ts, no se repite aquí: si alguien cambia la
+ * app, esto tiene que fallar en vez de seguir apuntando a la anterior.
+ */
+const APP_ID = readFileSync(join(RAIZ, 'src', 'i18n', 'strings.ts'), 'utf8')
+  .match(/APP_ID = '(\d+)'/)?.[1];
+ok(Boolean(APP_ID) && APP_STORE.endsWith(`id${APP_ID}`), `APP_ID (${APP_ID}) y APP_STORE_URL dicen lo mismo`);
+/**
+ * Un botón que dice «descargar» y solo desplaza la página.
+ *
+ * El botón de la cabecera saltaba a la tienda en móvil y el del hero no,
+ * porque le faltaba `data-descarga` y nadie lo notó: los dos se ven igual y los
+ * dos llevan al mismo ancla. Esto se niega a construir si vuelve a aparecer un
+ * `href="#descargar"` sin la marca en el mismo elemento.
+ */
+const ANCLA = /<a\b[^>]*href="#descargar"[^>]*>/g;
 const escanear = (dir) => {
   for (const entrada of readdirSync(dir)) {
     const ruta = join(dir, entrada);
@@ -199,6 +219,14 @@ const escanear = (dir) => {
       // tráfico del buscador. Sin esto, basta olvidar el CTA en una plantilla
       // nueva para tener 1.843 fichas sin salida a la tienda.
       if (!contenido.includes(APP_STORE) || !contenido.includes(PLAY)) sinDescarga++;
+      for (const a of contenido.match(ANCLA) || []) {
+        if (!a.includes('data-descarga')) anclaSuelta++;
+      }
+      if (!contenido.includes('name="apple-itunes-app"')) sinBanner++;
+      // noreferrer borraría la cabecera Referer y con ella el informe de
+      // referentes web de App Store Connect, que es la única atribución que
+      // hay sin pagar un SDK.
+      if (/<a\b[^>]*(apps\.apple\.com|play\.google\.com)[^>]*noreferrer/.test(contenido)) conNoreferrer++;
       if (!contenido.includes('cloudflareinsights.com/beacon.min.js')) sinMedicion++;
     }
   }
@@ -208,6 +236,49 @@ ok(restos === 0, `sin restos de plantilla en ${examinadas} HTML`);
 ok(sinDescarga === 0, `las ${examinadas} páginas llevan a las dos tiendas`);
 // La política de privacidad afirma que se mide; que sea verdad en todas.
 ok(sinMedicion === 0, `las ${examinadas} páginas miden visitas, como dice la política`);
+ok(sinBanner === 0, `las ${examinadas} páginas llevan la barra nativa de la App Store`);
+ok(anclaSuelta === 0, 'ningún botón de descarga se quedó sin data-descarga');
+ok(conNoreferrer === 0, 'ningún enlace a las tiendas lleva noreferrer');
+
+/**
+ * EL SALTO A LA TIENDA, ejecutando el script TAL COMO SE SIRVE.
+ *
+ * No se comprueba la intención sino el fichero desplegado: se saca el script
+ * del HTML y se corre contra un DOM de mentira con la cadena de agente de cada
+ * aparato. Existe porque este salto ya falló en silencio —el botón del hero se
+ * quedó meses sin la marca y nadie lo vio, porque un botón que solo desplaza la
+ * página se parece mucho a uno que funciona—.
+ */
+const portada = readFileSync(join(DIST, 'index.html'), 'utf8');
+const marca = portada.indexOf('var ua = navigator.userAgent');
+const guion = marca < 0 ? null
+  : portada.slice(portada.indexOf('>', portada.lastIndexOf('<script', marca)) + 1, portada.indexOf('</script>', marca));
+ok(Boolean(guion), 'el script del salto a la tienda está en la página');
+if (guion) {
+  const APARATOS = [
+    ['iPhone', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) Version/18.0 Mobile/15E148 Safari/604.1', 0, APP_STORE],
+    // iPadOS manda cadena de Macintosh desde la 13: sin maxTouchPoints se pierde.
+    ['iPad', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Version/18.0 Safari/605.1.15', 5, APP_STORE],
+    ['Mac', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Version/18.0 Safari/605.1.15', 0, '#descargar'],
+    ['Android', 'Mozilla/5.0 (Linux; Android 14; Pixel 8) Chrome/120 Mobile Safari/537.36', 5, PLAY],
+    ['TikTok/iOS', 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) BytedanceWebview/d8a21c6 musical_ly_34.5.0', 0, APP_STORE],
+    ['escritorio', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120 Safari/537.36', 0, '#descargar'],
+  ];
+  for (const [nombre, ua, toques, espera] of APARATOS) {
+    const a = {
+      href: '#descargar',
+      setAttribute(k, v) { this[k] = v; },
+      getAttribute(k) { return this[k]; },
+    };
+    const ctx = {
+      navigator: { userAgent: ua, maxTouchPoints: toques },
+      document: { readyState: 'complete', querySelectorAll: () => [a], addEventListener: () => {} },
+    };
+    createContext(ctx);
+    runInContext(guion, ctx);
+    ok(a.href === espera, `${nombre} va a ${espera === '#descargar' ? 'la banda de la página' : espera.split('/')[2]}`);
+  }
+}
 
 console.log(fallos === 0 ? '\nTODO EN VERDE' : `\n${fallos} FALLOS`);
 process.exit(fallos === 0 ? 0 : 1);

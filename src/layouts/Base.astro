@@ -1,6 +1,6 @@
 ---
 import { LOCALES, LOCALE_TAG, LOCALE_RAIZ, urlLanding, urlAlimentos, urlGuia, urlBlog, urlFuentes, urlLegal, type Locale } from '../lib/rutas';
-import { t, APP_STORE_URL, PLAY_STORE_URL } from '../i18n/strings';
+import { t, APP_ID, APP_STORE_URL, PLAY_STORE_URL } from '../i18n/strings';
 import { texto } from '../lib/datos';
 import CtaApp from '../components/CtaApp.astro';
 import '../styles/global.css';
@@ -66,6 +66,71 @@ const nav = [
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta name="theme-color" content="#faf7ef" />
     {jsonldFinal.map((obj) => <script type="application/ld+json" set:html={JSON.stringify(obj)} />)}
+    {/*
+      LA BARRA NATIVA DE LA APP STORE, y conviene saber para qué NO sirve.
+
+      Safari en iOS pinta arriba una barra con el icono de la app, su nota y un
+      botón de instalar. Es lo más parecido que existe a «abrir la ficha lista
+      para descargar», y no cuesta más que esta línea.
+
+      Lo que NO hace: no aparece en el navegador integrado de otras apps
+      —TikTok, Instagram y Facebook usan su propio WKWebView— ni en Chrome de
+      iOS. Solo Safari y Safari View Controller, según respuesta de un ingeniero
+      de Apple en sus foros. Así que esto sirve al tráfico del buscador, que
+      aterriza en las 1.843 fichas, y NO al de las redes.
+
+      Sin `app-argument`: la app no consta que lea URLs de entrada, y un
+      argumento que se ignora es código muerto.
+
+      OJO CON LOS COMENTARIOS AQUÍ. En Astro, `<!-- -->` se sirve y `{ / * * / }`
+      no. Esta explicación en HTML engordaba cada página 1.133 bytes COMPRIMIDOS
+      —un 30 % sobre 3.811— y se multiplicaba por 11.479 páginas.
+    */}
+    <meta name="apple-itunes-app" content={`app-id=${APP_ID}`} />
+    {/*
+      EL SALTO A LA TIENDA. Los botones de descarga apuntan al ancla de la banda
+      de la propia página; con JS y en un móvil van directos a su tienda, que es
+      un toque menos para quien entra con el teléfono en la mano. Sin JS sigue
+      funcionando el ancla, y por eso el href es ese y no la tienda.
+
+      TRES COSAS QUE COSTARON UNA REVISIÓN:
+
+      1. querySelectorAll, no querySelector. Con el singular solo se arreglaba
+         el PRIMER botón del DOM —el de la cabecera— y el del hero seguía
+         desplazando la página. Ojo al tocarlo: un NodeList vacío es truthy, así
+         que un `if (!lista) return` aquí no protegería de nada.
+
+      2. iPadOS manda cadena de agente de Macintosh desde la 13, así que /iPad/
+         no casa en un iPad. Se mira también maxTouchPoints; la app soporta iPad.
+
+      3. Va en el head y además escucha el clic. El botón de la cabecera está en
+         los primeros 3.500 bytes y este script estaba al final del documento:
+         entre medias hay una ventana en la que un toque se iba al ancla. El
+         oyente en fase de captura la cierra pase lo que pase.
+
+      Y no se toca `rel`: sin target="_blank", noopener no hace nada, y
+      noreferrer borraría la cabecera Referer y con ella el informe de referentes
+      web de App Store Connect, que es la única atribución gratis que hay.
+    */}
+    <script is:inline define:vars={{ IOS: APP_STORE_URL, ANDROID: PLAY_STORE_URL }}>
+      (function () {
+        var ua = navigator.userAgent || '';
+        var esIOS = /iPad|iPhone|iPod/.test(ua)
+          || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+        var destino = esIOS ? IOS : /Android/.test(ua) ? ANDROID : null;
+        if (!destino) return;
+        var pinta = function () {
+          var l = document.querySelectorAll('[data-descarga]');
+          for (var i = 0; i < l.length; i += 1) l[i].setAttribute('href', destino);
+        };
+        document.addEventListener('click', function (e) {
+          var a = e.target && e.target.closest && e.target.closest('[data-descarga]');
+          if (a) a.setAttribute('href', destino);
+        }, true);
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pinta);
+        else pinta();
+      })();
+    </script>
   </head>
   <body>
     <header class="cabecera">
@@ -76,13 +141,7 @@ const nav = [
         <nav class="nav" aria-label="principal">
           {nav.map((item) => <a href={item.href}>{item.label}</a>)}
         </nav>
-        <a
-          class="boton boton-primario"
-          href="#descargar"
-          data-descarga
-          data-ios={APP_STORE_URL}
-          data-android={PLAY_STORE_URL}
-        >{s.ctaApp}</a>
+        <a class="boton boton-primario" href="#descargar" data-descarga>{s.ctaApp}</a>
       </div>
     </header>
 
@@ -134,25 +193,5 @@ const nav = [
       src="https://static.cloudflareinsights.com/beacon.min.js"
       data-cf-beacon='{"token": "52da165e457a405bb28a45a1a23fe3cb"}'
     ></script>
-    <script is:inline>
-      // El botón de la cabecera lleva a la banda de descarga de la propia
-      // página, que ahora está en todas. Con JS y en un móvil va directo a su
-      // tienda: quien entra desde el buscador con el teléfono en la mano se
-      // ahorra el rebote por la landing. Sin JS sigue funcionando el ancla.
-      (function () {
-        var b = document.querySelector('[data-descarga]');
-        if (!b) return;
-        var ua = navigator.userAgent || '';
-        var destino = /iPad|iPhone|iPod/.test(ua)
-          ? b.getAttribute('data-ios')
-          : /Android/.test(ua)
-            ? b.getAttribute('data-android')
-            : null;
-        if (destino) {
-          b.setAttribute('href', destino);
-          b.setAttribute('rel', 'noopener');
-        }
-      })();
-    </script>
   </body>
 </html>
