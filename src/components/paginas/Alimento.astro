@@ -2,6 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import BadgeNivel from '../../components/BadgeNivel.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
+import CtaEscaner from '../../components/CtaEscaner.astro';
 import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlFuentes, urlNivelCat, urlArticulo, alternatesAlimento, type Locale } from '../../lib/rutas';
 import { catName } from '../../i18n/categorias';
 import { t } from '../../i18n/strings';
@@ -166,6 +167,11 @@ const jsonld = [
   </div>
 
   {contextoRacion && <p class="texto-muted" style="margin-top:-8px">{contextoRacion}</p>}
+
+  {/* Justo después de la respuesta, no al pie: quien llega del buscador ya
+      tiene lo que venía a buscar en la primera pantalla y se va sin ver la
+      banda del final, que queda cuatro pantallas más abajo en un móvil. */}
+  <CtaEscaner locale={locale} />
 
   {food.fodmaps.length > 0 && (
     <section>

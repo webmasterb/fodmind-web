@@ -19,11 +19,11 @@
  * para el buscador, es una puerta.
  */
 import Base from '../layouts/Base.astro';
-import { APP_ID, APP_STORE_URL, PLAY_STORE_URL } from '../i18n/strings';
+import { enlaceAppStore, enlacePlay } from '../i18n/strings';
 import { LOCALES, type Locale } from '../lib/rutas';
 
-const CAMPANA_APPLE = `https://apps.apple.com/app/apple-store/id${APP_ID}?pt=128340095&ct=tiktok&mt=8`;
-const CAMPANA_PLAY = `${PLAY_STORE_URL}&referrer=${encodeURIComponent('utm_source=tiktok&utm_medium=bio')}`;
+const CAMPANA_APPLE = enlaceAppStore('tiktok');
+const CAMPANA_PLAY = enlacePlay('tiktok', 'tiktok', 'bio');
 const alternates = Object.fromEntries(LOCALES.map((l) => [l, '/tiktok/'])) as Record<Locale, string>;
 ---
 
@@ -49,7 +49,7 @@ const alternates = Object.fromEntries(LOCALES.map((l) => [l, '/tiktok/'])) as Re
         <span><small>Get it on</small>Google Play</span>
       </a>
     </div>
-    <p class="puerta-nota">Or keep reading: <a href={APP_STORE_URL} rel="noopener">App Store</a> · <a href={PLAY_STORE_URL} rel="noopener">Google Play</a> · <a href="/">fodmind.com</a></p>
+    <p class="puerta-nota">Or keep reading: <a href={CAMPANA_APPLE} rel="noopener">App Store</a> · <a href={CAMPANA_PLAY} rel="noopener">Google Play</a> · <a href="/">fodmind.com</a></p>
   </section>
 </Base>
 

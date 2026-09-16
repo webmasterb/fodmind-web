@@ -1,0 +1,54 @@
+---
+/**
+ * LA BARRA FIJA DE ABAJO, solo en móvil y solo con JS.
+ *
+ * El botón de la cabecera es pequeño y está arriba, lejos del pulgar. Esta
+ * barra aparece cuando el visitante ya ha bajado algo —o sea, cuando ha
+ * leído la respuesta— y se esconde en cuanto la banda del final entra en
+ * pantalla, para no tener dos llamadas iguales a la vista. La X la cierra
+ * para el resto de la sesión.
+ *
+ * Nace oculta (hidden) y sin JS se queda así: en escritorio no hay nada que
+ * instalar, y el CSS la apaga de todas formas por encima de 720 px. Es una
+ * banda de tamaño «razonable» según la guía de interstitials del buscador:
+ * una fila, no una capa sobre el contenido.
+ */
+import { t } from '../i18n/strings';
+import type { Locale } from '../lib/rutas';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+---
+
+<div class="barra-app" id="barra-app" hidden>
+  <span class="barra-app-texto">🌿 {s.barraApp}</span>
+  <a class="boton boton-primario" href="#descargar" data-descarga data-ct="barra">{s.ctaApp}</a>
+  <button type="button" class="barra-app-cerrar" aria-label={s.cerrar}>×</button>
+</div>
+
+<script is:inline>
+  (function () {
+    var barra = document.getElementById('barra-app');
+    if (!barra) return;
+    var ua = navigator.userAgent || '';
+    var movil = /Android|iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+    if (!movil) return;
+    try { if (sessionStorage.getItem('barra-app') === 'no') return; } catch (e) { /* sin almacenamiento, sin memoria */ }
+    var banda = document.getElementById('descargar');
+    var pinta = function () {
+      var bajado = window.scrollY > 320;
+      var bandaALaVista = banda ? banda.getBoundingClientRect().top < window.innerHeight : false;
+      barra.hidden = !(bajado && !bandaALaVista);
+    };
+    window.addEventListener('scroll', pinta, { passive: true });
+    barra.querySelector('.barra-app-cerrar').addEventListener('click', function () {
+      barra.hidden = true;
+      window.removeEventListener('scroll', pinta);
+      try { sessionStorage.setItem('barra-app', 'no'); } catch (e) { /* idem */ }
+    });
+  })();
+</script>

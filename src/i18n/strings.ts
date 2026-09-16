@@ -5,6 +5,25 @@ import type { Locale } from '../lib/rutas';
 export const APP_ID = '6795241315';
 export const APP_STORE_URL = 'https://apps.apple.com/app/id6795241315';
 export const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.fodmapguide.app';
+
+/**
+ * LOS ENLACES A LAS TIENDAS LLEVAN CAMPAÑA, todos.
+ *
+ * Sin parámetros, App Store Connect suma cada descarga que llega de aquí en
+ * un solo «Web Referrer» —y solo si la cabecera Referer sobrevive—, y Play no
+ * la atribuye a nada. Con `pt` (el proveedor de la cuenta) y `ct` (la campaña)
+ * Apple la lista en Analytics › Campaigns por campaña; con `referrer=utm_…`
+ * Play la lista en Adquisición › UTM. Así se sabe qué botón trae descargas y
+ * cuál solo se pulsa, que es lo único que decide dónde poner el siguiente.
+ *
+ * La campaña va la ÚLTIMA en las dos URLs a propósito: el script del salto a
+ * la tienda (Base.astro) pega el nombre del botón al final.
+ */
+export const APPLE_PT = '128340095';
+export const enlaceAppStore = (campana: string) =>
+  `https://apps.apple.com/app/apple-store/id${APP_ID}?pt=${APPLE_PT}&mt=8&ct=${campana}`;
+export const enlacePlay = (campana: string, fuente = 'fodmind.com', medio = 'web') =>
+  `${PLAY_STORE_URL}&referrer=${encodeURIComponent(`utm_source=${fuente}&utm_medium=${medio}&utm_campaign=${campana}`)}`;
 export const CONTACT_EMAIL = 'soporte@fodmind.com';
 
 export interface Strings {
@@ -12,6 +31,13 @@ export interface Strings {
   navGuia: string;
   navBlog: string;
   ctaApp: string;
+  ctaEscanerTitulo: string;
+  ctaEscanerTexto: string;
+  ctaEscanerAlt: string;
+  barraApp: string;
+  cerrar: string;
+  badgeApple: string;
+  badgePlay: string;
   searchPlaceholder: string;
   readMore: string;
   seeCategory: string;
@@ -97,6 +123,14 @@ export const STR: Record<Locale, Strings> = {
     navGuia: 'Guía',
     navBlog: 'Blog',
     ctaApp: 'Descargar la app',
+    ctaEscanerTitulo: '¿En el súper? Escanea la etiqueta',
+    ctaEscanerTexto:
+      'Apunta con la cámara a la lista de ingredientes: la app marca cada palabra FODMAP y te dice por qué. Gratis en iOS y Android.',
+    ctaEscanerAlt: 'Resultado del lector de etiquetas de Fodmind: los ingredientes con FODMAP, marcados en rojo',
+    barraApp: 'El escáner FODMAP',
+    cerrar: 'Cerrar',
+    badgeApple: 'Descárgalo en el',
+    badgePlay: 'Disponible en',
     searchPlaceholder: 'Buscar un alimento…',
     readMore: 'Leer más',
     seeCategory: 'Ver la categoría',
@@ -274,6 +308,14 @@ export const STR: Record<Locale, Strings> = {
     navGuia: 'Guide',
     navBlog: 'Blog',
     ctaApp: 'Get the app',
+    ctaEscanerTitulo: 'In the supermarket? Scan the label',
+    ctaEscanerTexto:
+      'Point the camera at the ingredient list: the app marks every FODMAP word and tells you why. Free on iOS and Android.',
+    ctaEscanerAlt: 'Result from the Fodmind label reader: the FODMAP ingredients, marked in red',
+    barraApp: 'The FODMAP scanner',
+    cerrar: 'Close',
+    badgeApple: 'Download on the',
+    badgePlay: 'Get it on',
     searchPlaceholder: 'Search a food…',
     readMore: 'Read more',
     seeCategory: 'View category',
@@ -451,6 +493,14 @@ export const STR: Record<Locale, Strings> = {
     navGuia: 'Guide',
     navBlog: 'Blog',
     ctaApp: 'Télécharger l’app',
+    ctaEscanerTitulo: 'Au supermarché ? Scannez l’étiquette',
+    ctaEscanerTexto:
+      'Visez la liste des ingrédients avec l’appareil photo : l’app repère chaque mot FODMAP et vous dit pourquoi. Gratuite sur iOS et Android.',
+    ctaEscanerAlt: 'Résultat du lecteur d’étiquettes Fodmind : les ingrédients FODMAP, marqués en rouge',
+    barraApp: 'Le scanner FODMAP',
+    cerrar: 'Fermer',
+    badgeApple: 'Télécharger dans l’',
+    badgePlay: 'Disponible sur',
     searchPlaceholder: 'Rechercher un aliment…',
     readMore: 'Lire la suite',
     seeCategory: 'Voir la catégorie',
@@ -628,6 +678,14 @@ export const STR: Record<Locale, Strings> = {
     navGuia: 'Anleitung',
     navBlog: 'Blog',
     ctaApp: 'App laden',
+    ctaEscanerTitulo: 'Im Supermarkt? Scanne das Etikett',
+    ctaEscanerTexto:
+      'Halte die Kamera auf die Zutatenliste: Die App markiert jedes FODMAP-Wort und sagt dir, warum. Gratis für iOS und Android.',
+    ctaEscanerAlt: 'Ergebnis des Fodmind-Etiketten-Lesers: die FODMAP-Zutaten, rot markiert',
+    barraApp: 'Der FODMAP-Scanner',
+    cerrar: 'Schließen',
+    badgeApple: 'Laden im',
+    badgePlay: 'Jetzt bei',
     searchPlaceholder: 'Lebensmittel suchen…',
     readMore: 'Weiterlesen',
     seeCategory: 'Kategorie ansehen',
@@ -805,6 +863,14 @@ export const STR: Record<Locale, Strings> = {
     navGuia: 'Guida',
     navBlog: 'Blog',
     ctaApp: 'Scarica l’app',
+    ctaEscanerTitulo: 'Al supermercato? Scansiona l’etichetta',
+    ctaEscanerTexto:
+      'Inquadra la lista degli ingredienti: l’app segna ogni parola FODMAP e ti dice perché. Gratis su iOS e Android.',
+    ctaEscanerAlt: 'Risultato del lettore di etichette Fodmind: gli ingredienti FODMAP, segnati in rosso',
+    barraApp: 'Lo scanner FODMAP',
+    cerrar: 'Chiudi',
+    badgeApple: 'Scarica su',
+    badgePlay: 'Disponibile su',
     searchPlaceholder: 'Cerca un alimento…',
     readMore: 'Leggi di più',
     seeCategory: 'Vedi la categoria',
@@ -982,6 +1048,14 @@ export const STR: Record<Locale, Strings> = {
     navGuia: 'Guia',
     navBlog: 'Blog',
     ctaApp: 'Descarregar a app',
+    ctaEscanerTitulo: 'No supermercado? Lê o rótulo com a app',
+    ctaEscanerTexto:
+      'Aponta a câmara à lista de ingredientes: a app marca cada palavra FODMAP e diz-te porquê. Grátis em iOS e Android.',
+    ctaEscanerAlt: 'Resultado do leitor de rótulos Fodmind: os ingredientes FODMAP, marcados a vermelho',
+    barraApp: 'O scanner FODMAP',
+    cerrar: 'Fechar',
+    badgeApple: 'Descarregar na',
+    badgePlay: 'Disponível no',
     searchPlaceholder: 'Procurar um alimento…',
     readMore: 'Ler mais',
     seeCategory: 'Ver a categoria',

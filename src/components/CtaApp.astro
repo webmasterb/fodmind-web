@@ -1,5 +1,5 @@
 ---
-import { t, APP_STORE_URL, PLAY_STORE_URL } from '../i18n/strings';
+import { t, enlaceAppStore, enlacePlay } from '../i18n/strings';
 import type { Locale } from '../lib/rutas';
 
 interface Props {
@@ -14,13 +14,13 @@ const s = t(locale);
   <h2>Fodmind</h2>
   <p>{s.metaHomeDesc}</p>
   <div class="tiendas">
-    <a class="tienda-boton" href={APP_STORE_URL} rel="noopener">
+    <a class="tienda-boton" href={enlaceAppStore('web-banda')} rel="noopener">
       <span aria-hidden="true"></span>
-      <span><small>Download on the</small>App Store</span>
+      <span><small>{s.badgeApple}</small>App Store</span>
     </a>
-    <a class="tienda-boton" href={PLAY_STORE_URL} rel="noopener">
+    <a class="tienda-boton" href={enlacePlay('web-banda')} rel="noopener">
       <span aria-hidden="true">▶</span>
-      <span><small>Get it on</small>Google Play</span>
+      <span><small>{s.badgePlay}</small>Google Play</span>
     </a>
   </div>
 </section>

@@ -299,3 +299,18 @@ test('los slugs de nivel no chocan con ningún alimento ni categoría', () => {
     }
   }
 });
+
+test('strings.ts: cada clave de la interfaz está en los seis idiomas', () => {
+  // Astro no comprueba tipos al construir: una clave olvidada en un idioma
+  // sale como «undefined» en el HTML —o, en un atributo, en silencio—. Se
+  // cuentan las claves de primer nivel de la interfaz en cada bloque de idioma.
+  const src = readFileSync(join(RAIZ, 'src', 'i18n', 'strings.ts'), 'utf8');
+  const interfaz = src.slice(src.indexOf('export interface Strings {'), src.indexOf('export const STR'));
+  const claves = [...interfaz.matchAll(/^  (\w+)[?]?:/gm)].map((m) => m[1]);
+  assert.ok(claves.length > 40, `la interfaz tiene ${claves.length} claves`);
+  const cuerpo = src.slice(src.indexOf('export const STR'));
+  for (const clave of claves) {
+    const veces = (cuerpo.match(new RegExp(`^    ${clave}:`, 'gm')) || []).length;
+    assert.equal(veces, LANGS.length, `«${clave}» está en ${veces} idiomas, no en ${LANGS.length}`);
+  }
+});

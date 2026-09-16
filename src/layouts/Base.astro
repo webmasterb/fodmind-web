@@ -1,8 +1,9 @@
 ---
 import { LOCALES, LOCALE_TAG, LOCALE_RAIZ, urlLanding, urlAlimentos, urlGuia, urlBlog, urlFuentes, urlLegal, type Locale } from '../lib/rutas';
-import { t, APP_ID, APP_STORE_URL, PLAY_STORE_URL } from '../i18n/strings';
+import { t, APP_ID, APPLE_PT, enlaceAppStore, enlacePlay } from '../i18n/strings';
 import { texto } from '../lib/datos';
 import CtaApp from '../components/CtaApp.astro';
+import BarraApp from '../components/BarraApp.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -80,13 +81,15 @@ const nav = [
       aterriza en las 1.843 fichas, y NO al de las redes.
 
       Sin `app-argument`: la app no consta que lea URLs de entrada, y un
-      argumento que se ignora es código muerto.
+      argumento que se ignora es código muerto. Con `affiliate-data`: Safari
+      pega esos parámetros a la URL de la tienda, y así la barra cuenta como
+      campaña «web-banner» en vez de fundirse con el resto.
 
       OJO CON LOS COMENTARIOS AQUÍ. En Astro, `<!-- -->` se sirve y `{ / * * / }`
       no. Esta explicación en HTML engordaba cada página 1.133 bytes COMPRIMIDOS
       —un 30 % sobre 3.811— y se multiplicaba por 11.479 páginas.
     */}
-    <meta name="apple-itunes-app" content={`app-id=${APP_ID}`} />
+    <meta name="apple-itunes-app" content={`app-id=${APP_ID}, affiliate-data=pt=${APPLE_PT}&ct=web-banner&mt=8`} />
     {/*
       EL SALTO A LA TIENDA. Los botones de descarga apuntan al ancla de la banda
       de la propia página; con JS y en un móvil van directos a su tienda, que es
@@ -111,21 +114,26 @@ const nav = [
       Y no se toca `rel`: sin target="_blank", noopener no hace nada, y
       noreferrer borraría la cabecera Referer y con ella el informe de referentes
       web de App Store Connect, que es la única atribución gratis que hay.
+
+      Cada botón lleva `data-ct` con su nombre (cabecera, hero, contextual,
+      barra) y el script lo pega al final del enlace de campaña: así la tienda
+      dice qué botón trajo cada descarga, no solo que vino de la web.
     */}
-    <script is:inline define:vars={{ IOS: APP_STORE_URL, ANDROID: PLAY_STORE_URL }}>
+    <script is:inline define:vars={{ IOS: enlaceAppStore('web-'), ANDROID: enlacePlay('web-') }}>
       (function () {
         var ua = navigator.userAgent || '';
         var esIOS = /iPad|iPhone|iPod/.test(ua)
           || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
         var destino = esIOS ? IOS : /Android/.test(ua) ? ANDROID : null;
         if (!destino) return;
+        var enlace = function (a) { return destino + (a.getAttribute('data-ct') || 'boton'); };
         var pinta = function () {
           var l = document.querySelectorAll('[data-descarga]');
-          for (var i = 0; i < l.length; i += 1) l[i].setAttribute('href', destino);
+          for (var i = 0; i < l.length; i += 1) l[i].setAttribute('href', enlace(l[i]));
         };
         document.addEventListener('click', function (e) {
           var a = e.target && e.target.closest && e.target.closest('[data-descarga]');
-          if (a) a.setAttribute('href', destino);
+          if (a) a.setAttribute('href', enlace(a));
         }, true);
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', pinta);
         else pinta();
@@ -141,7 +149,7 @@ const nav = [
         <nav class="nav" aria-label="principal">
           {nav.map((item) => <a href={item.href}>{item.label}</a>)}
         </nav>
-        <a class="boton boton-primario" href="#descargar" data-descarga>{s.ctaApp}</a>
+        <a class="boton boton-primario" href="#descargar" data-descarga data-ct="cabecera">{s.ctaApp}</a>
       </div>
     </header>
 
@@ -161,8 +169,8 @@ const nav = [
         </div>
         <div>
           <p class="pie-titulo">{s.ctaApp}</p>
-          <a href={APP_STORE_URL} rel="noopener">App Store</a>
-          <a href={PLAY_STORE_URL} rel="noopener">Google Play</a>
+          <a href={enlaceAppStore('web-pie')} rel="noopener">App Store</a>
+          <a href={enlacePlay('web-pie')} rel="noopener">Google Play</a>
         </div>
         <div>
           <p class="pie-titulo">Legal</p>
@@ -181,6 +189,7 @@ const nav = [
         </div>
       </div>
     </footer>
+    <BarraApp locale={locale} />
     <!--
       Medición de visitas. La política de privacidad ya decía «las visitas se
       miden de forma anónima y agregada con Cloudflare Web Analytics» y el

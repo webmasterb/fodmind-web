@@ -1,0 +1,33 @@
+---
+/**
+ * LA LLAMADA A LA APP DENTRO DE LA FICHA, donde está el lector.
+ *
+ * Las 1.843 fichas son la puerta por la que entra casi todo el tráfico del
+ * buscador, y hasta ahora su única salida a la tienda era la banda del final:
+ * en un móvil, cuatro pantallas por debajo de la respuesta. Esto va justo
+ * detrás de la ración, con la pantalla real del lector de etiquetas —el
+ * recorte de la captura de la tienda, no un dibujo— para que «escáner»
+ * signifique algo antes de pedir la descarga.
+ *
+ * Un solo botón, con data-descarga: en móvil salta a la tienda del aparato
+ * con la campaña «web-contextual»; en escritorio baja a la banda.
+ */
+import { t } from '../i18n/strings';
+import type { Locale } from '../lib/rutas';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+---
+
+<aside class="cta-escaner">
+  <img src={`/app/lector-${locale}.webp`} width="640" height="387" alt={s.ctaEscanerAlt} decoding="async" />
+  <div>
+    <p class="cta-escaner-titulo">{s.ctaEscanerTitulo}</p>
+    <p>{s.ctaEscanerTexto}</p>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-ct="contextual">{s.ctaApp}</a>
+  </div>
+</aside>

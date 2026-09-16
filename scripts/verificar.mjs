@@ -189,15 +189,34 @@ let examinadas = 0;
 let sinBanner = 0;
 let anclaSuelta = 0;
 let conNoreferrer = 0;
+let sinCampana = 0;
+let sinBarra = 0;
+let bannerSinCampana = 0;
 const APP_STORE = 'https://apps.apple.com/app/id6795241315';
 const PLAY = 'https://play.google.com/store/apps/details?id=com.fodmapguide.app';
 /**
- * El id del banner sale de strings.ts, no se repite aquí: si alguien cambia la
- * app, esto tiene que fallar en vez de seguir apuntando a la anterior.
+ * El id del banner y el proveedor de campañas salen de strings.ts, no se
+ * repiten aquí: si alguien cambia la app, esto tiene que fallar en vez de
+ * seguir apuntando a la anterior.
  */
-const APP_ID = readFileSync(join(RAIZ, 'src', 'i18n', 'strings.ts'), 'utf8')
-  .match(/APP_ID = '(\d+)'/)?.[1];
+const strings = readFileSync(join(RAIZ, 'src', 'i18n', 'strings.ts'), 'utf8');
+const APP_ID = strings.match(/APP_ID = '(\d+)'/)?.[1];
+const APPLE_PT = strings.match(/APPLE_PT = '(\d+)'/)?.[1];
 ok(Boolean(APP_ID) && APP_STORE.endsWith(`id${APP_ID}`), `APP_ID (${APP_ID}) y APP_STORE_URL dicen lo mismo`);
+ok(Boolean(APPLE_PT), `APPLE_PT (${APPLE_PT}) está en strings.ts`);
+/**
+ * LOS ENLACES A LAS TIENDAS LLEVAN CAMPAÑA. Un enlace pelado a la tienda es
+ * una descarga que App Store Connect suma a «Web Referrer» y Play a nada: se
+ * pulsa y no se sabe desde dónde. Esto se niega a construir si vuelve a
+ * aparecer uno sin `pt`/`ct` o sin `referrer=utm_…`, y exige que cada página
+ * tenga al menos uno de cada tienda con campaña, que es la única forma de
+ * saber qué botón trae descargas.
+ */
+const APPLE_CAMPANA = (ct) => `https://apps.apple.com/app/apple-store/id${APP_ID}?pt=${APPLE_PT}&mt=8&ct=${ct}`;
+const PLAY_CAMPANA = (ct, fuente = 'fodmind.com', medio = 'web') =>
+  `${PLAY}&referrer=${encodeURIComponent(`utm_source=${fuente}&utm_medium=${medio}&utm_campaign=${ct}`)}`;
+const APPLE_PELADO = /<a\b[^>]*href="https:\/\/apps\.apple\.com\/app\/id\d+"/;
+const PLAY_PELADO = /<a\b[^>]*href="https:\/\/play\.google\.com\/store\/apps\/details\?id=com\.fodmapguide\.app"/;
 /**
  * Un botón que dice «descargar» y solo desplaza la página.
  *
@@ -218,11 +237,17 @@ const escanear = (dir) => {
       // La app se descarga desde CUALQUIER página: es a lo que viene el
       // tráfico del buscador. Sin esto, basta olvidar el CTA en una plantilla
       // nueva para tener 1.843 fichas sin salida a la tienda.
-      if (!contenido.includes(APP_STORE) || !contenido.includes(PLAY)) sinDescarga++;
+      if (!contenido.includes(APPLE_CAMPANA('')) || !contenido.includes(`${PLAY}&referrer=utm_source%3D`)) sinDescarga++;
+      if (APPLE_PELADO.test(contenido) || PLAY_PELADO.test(contenido)) sinCampana++;
+      // La barra fija de abajo y el botón de la cabecera: los dos con su
+      // nombre de campaña, que es lo que el script pega al enlace.
+      if (!contenido.includes('id="barra-app"') || !contenido.includes('data-ct="barra"') || !contenido.includes('data-ct="cabecera"')) sinBarra++;
       for (const a of contenido.match(ANCLA) || []) {
         if (!a.includes('data-descarga')) anclaSuelta++;
       }
       if (!contenido.includes('name="apple-itunes-app"')) sinBanner++;
+      // Astro escribe el & del atributo como &#38;; el navegador lo lee como &.
+      else if (!contenido.replace(/&#38;/g, '&').includes(`affiliate-data=pt=${APPLE_PT}&ct=web-banner`)) bannerSinCampana++;
       // noreferrer borraría la cabecera Referer y con ella el informe de
       // referentes web de App Store Connect, que es la única atribución que
       // hay sin pagar un SDK.
@@ -239,6 +264,13 @@ ok(sinMedicion === 0, `las ${examinadas} páginas miden visitas, como dice la po
 ok(sinBanner === 0, `las ${examinadas} páginas llevan la barra nativa de la App Store`);
 ok(anclaSuelta === 0, 'ningún botón de descarga se quedó sin data-descarga');
 ok(conNoreferrer === 0, 'ningún enlace a las tiendas lleva noreferrer');
+ok(sinCampana === 0, 'ningún enlace a las tiendas va sin campaña');
+ok(sinBarra === 0, `las ${examinadas} páginas llevan la barra fija y el botón de cabecera con su campaña`);
+ok(bannerSinCampana === 0, 'la barra nativa de la App Store lleva la campaña web-banner');
+// La ficha lleva la llamada contextual con la pantalla del lector en su idioma.
+ok(manzanaEn.includes('data-ct="contextual"') && manzanaEn.includes('/app/lector-en.webp'), 'la ficha en inglés lleva la llamada al lector, con su captura');
+ok(leer(sandiaEs).includes('/app/lector-es.webp') && leer(sandiaEs).includes('Escanea la etiqueta'), 'la ficha en español lleva la llamada al lector, en español');
+for (const l of LANGS) ok(existsSync(join(RAIZ, 'public', 'app', `lector-${l}.webp`)), `la captura del lector existe en ${l}`);
 
 /**
  * EL SALTO A LA TIENDA, ejecutando el script TAL COMO SE SIRVE.
@@ -256,17 +288,19 @@ const guion = marca < 0 ? null
 ok(Boolean(guion), 'el script del salto a la tienda está en la página');
 if (guion) {
   const APARATOS = [
-    ['iPhone', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) Version/18.0 Mobile/15E148 Safari/604.1', 0, APP_STORE],
+    ['iPhone', 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) Version/18.0 Mobile/15E148 Safari/604.1', 0, APPLE_CAMPANA('web-cabecera')],
     // iPadOS manda cadena de Macintosh desde la 13: sin maxTouchPoints se pierde.
-    ['iPad', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Version/18.0 Safari/605.1.15', 5, APP_STORE],
+    ['iPad', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Version/18.0 Safari/605.1.15', 5, APPLE_CAMPANA('web-cabecera')],
     ['Mac', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) Version/18.0 Safari/605.1.15', 0, '#descargar'],
-    ['Android', 'Mozilla/5.0 (Linux; Android 14; Pixel 8) Chrome/120 Mobile Safari/537.36', 5, PLAY],
-    ['TikTok/iOS', 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) BytedanceWebview/d8a21c6 musical_ly_34.5.0', 0, APP_STORE],
+    ['Android', 'Mozilla/5.0 (Linux; Android 14; Pixel 8) Chrome/120 Mobile Safari/537.36', 5, PLAY_CAMPANA('web-cabecera')],
+    ['TikTok/iOS', 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) BytedanceWebview/d8a21c6 musical_ly_34.5.0', 0, APPLE_CAMPANA('web-cabecera')],
     ['escritorio', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120 Safari/537.36', 0, '#descargar'],
   ];
   for (const [nombre, ua, toques, espera] of APARATOS) {
+    // El botón de mentira es el de la cabecera: el script pega su data-ct.
     const a = {
       href: '#descargar',
+      'data-ct': 'cabecera',
       setAttribute(k, v) { this[k] = v; },
       getAttribute(k) { return this[k]; },
     };
@@ -276,7 +310,7 @@ if (guion) {
     };
     createContext(ctx);
     runInContext(guion, ctx);
-    ok(a.href === espera, `${nombre} va a ${espera === '#descargar' ? 'la banda de la página' : espera.split('/')[2]}`);
+    ok(a.href === espera, `${nombre} va a ${espera === '#descargar' ? 'la banda de la página' : `${espera.split('/')[2]} con la campaña web-cabecera`}`);
   }
 }
 
