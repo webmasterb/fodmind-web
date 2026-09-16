@@ -16,6 +16,12 @@
   box-sizing: border-box;
 }
 
+/* `hidden` manda sobre cualquier display de clase: la insignia de la otra
+   tienda, la barra de abajo. Sin esto, un display:inline-flex lo anula. */
+[hidden] {
+  display: none !important;
+}
+
 html {
   scroll-behavior: smooth;
 }

@@ -14,11 +14,11 @@ const s = t(locale);
   <h2>Fodmind</h2>
   <p>{s.metaHomeDesc}</p>
   <div class="tiendas">
-    <a class="tienda-boton" href={enlaceAppStore('web-banda')} rel="noopener">
+    <a class="tienda-boton" href={enlaceAppStore('web-banda')} rel="noopener" data-tienda="apple">
       <span aria-hidden="true"></span>
       <span><small>{s.badgeApple}</small>App Store</span>
     </a>
-    <a class="tienda-boton" href={enlacePlay('web-banda')} rel="noopener">
+    <a class="tienda-boton" href={enlacePlay('web-banda')} rel="noopener" data-tienda="play">
       <span aria-hidden="true">▶</span>
       <span><small>{s.badgePlay}</small>Google Play</span>
     </a>

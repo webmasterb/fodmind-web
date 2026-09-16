@@ -118,6 +118,11 @@ const nav = [
       Cada botón lleva `data-ct` con su nombre (cabecera, hero, contextual,
       barra) y el script lo pega al final del enlace de campaña: así la tienda
       dice qué botón trajo cada descarga, no solo que vino de la web.
+
+      Y EN EL MÓVIL NO SE ELIGE TIENDA. Las insignias de la banda y los enlaces
+      del pie llevan `data-tienda="apple|play"`; en un iPhone se esconde la de
+      Play y en un Android la de Apple. Solo en escritorio quedan las dos, que
+      es el único sitio donde no se sabe qué teléfono lleva quien mira.
     */}
     <script is:inline define:vars={{ IOS: enlaceAppStore('web-'), ANDROID: enlacePlay('web-') }}>
       (function () {
@@ -127,9 +132,12 @@ const nav = [
         var destino = esIOS ? IOS : /Android/.test(ua) ? ANDROID : null;
         if (!destino) return;
         var enlace = function (a) { return destino + (a.getAttribute('data-ct') || 'boton'); };
+        var mia = esIOS ? 'apple' : 'play';
         var pinta = function () {
           var l = document.querySelectorAll('[data-descarga]');
           for (var i = 0; i < l.length; i += 1) l[i].setAttribute('href', enlace(l[i]));
+          var t = document.querySelectorAll('[data-tienda]');
+          for (var j = 0; j < t.length; j += 1) t[j].hidden = t[j].getAttribute('data-tienda') !== mia;
         };
         document.addEventListener('click', function (e) {
           var a = e.target && e.target.closest && e.target.closest('[data-descarga]');
@@ -169,8 +177,8 @@ const nav = [
         </div>
         <div>
           <p class="pie-titulo">{s.ctaApp}</p>
-          <a href={enlaceAppStore('web-pie')} rel="noopener">App Store</a>
-          <a href={enlacePlay('web-pie')} rel="noopener">Google Play</a>
+          <a href={enlaceAppStore('web-pie')} rel="noopener" data-tienda="apple">App Store</a>
+          <a href={enlacePlay('web-pie')} rel="noopener" data-tienda="play">Google Play</a>
         </div>
         <div>
           <p class="pie-titulo">Legal</p>

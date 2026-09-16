@@ -304,13 +304,24 @@ if (guion) {
       setAttribute(k, v) { this[k] = v; },
       getAttribute(k) { return this[k]; },
     };
+    // Y las dos insignias de la banda: en un móvil solo queda la de su tienda.
+    const insignia = (tienda) => ({ hidden: false, 'data-tienda': tienda, getAttribute(k) { return this[k]; } });
+    const apple = insignia('apple');
+    const play = insignia('play');
     const ctx = {
       navigator: { userAgent: ua, maxTouchPoints: toques },
-      document: { readyState: 'complete', querySelectorAll: () => [a], addEventListener: () => {} },
+      document: {
+        readyState: 'complete',
+        querySelectorAll: (sel) => (sel === '[data-tienda]' ? [apple, play] : [a]),
+        addEventListener: () => {},
+      },
     };
     createContext(ctx);
     runInContext(guion, ctx);
     ok(a.href === espera, `${nombre} va a ${espera === '#descargar' ? 'la banda de la página' : `${espera.split('/')[2]} con la campaña web-cabecera`}`);
+    const visibles = [apple, play].filter((i) => !i.hidden).map((i) => i['data-tienda']).join('+') || 'ninguna';
+    const esperaVisibles = espera === '#descargar' ? 'apple+play' : espera.includes('apple.com') ? 'apple' : 'play';
+    ok(visibles === esperaVisibles, `${nombre} ve la insignia de ${esperaVisibles}`);
   }
 }
 
