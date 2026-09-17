@@ -599,6 +599,92 @@ details p {
   }
 }
 
+/* ---------- el lector en la web ---------- */
+
+.lector-web {
+  margin: 34px 0;
+}
+
+.lector-texto {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  padding: 12px 14px;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  resize: vertical;
+  margin: 6px 0 12px;
+}
+
+.lector-resultado {
+  margin-top: 18px;
+  background: var(--card);
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  padding: 16px 18px;
+}
+
+.lector-cuenta {
+  font-weight: 800;
+  font-size: 19px;
+  margin: 0 0 10px;
+  color: var(--verde);
+}
+
+.lector-cuenta-roja {
+  color: var(--rojo);
+}
+
+.lector-marcado {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0 0 12px;
+}
+
+.lector-palabra {
+  background: #fde8e8;
+  color: var(--rojo);
+  font-weight: 700;
+  border: 1.5px solid var(--rojo);
+  border-radius: 6px;
+  padding: 0 5px;
+}
+
+.lector-pildoras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.lector-pildora {
+  background: #fde8e8;
+  color: var(--rojo);
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.lector-pildora small {
+  font-weight: 400;
+  opacity: 0.8;
+}
+
+.lector-nota {
+  margin: 0 0 12px;
+  font-size: 15px;
+}
+
+.lector-aviso {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
 /* ---------- barra fija de descarga, solo móvil ---------- */
 
 .barra-app {

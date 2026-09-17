@@ -271,6 +271,16 @@ ok(bannerSinCampana === 0, 'la barra nativa de la App Store lleva la campaña we
 ok(manzanaEn.includes('data-ct="contextual"') && manzanaEn.includes('/app/lector-en.webp'), 'la ficha en inglés lleva la llamada al lector, con su captura');
 ok(leer(sandiaEs).includes('/app/lector-es.webp') && leer(sandiaEs).includes('Escanea la etiqueta'), 'la ficha en español lleva la llamada al lector, en español');
 for (const l of LANGS) ok(existsSync(join(RAIZ, 'public', 'app', `lector-${l}.webp`)), `la captura del lector existe en ${l}`);
+// El lector de la web y el botón que abre la app, en cada ficha.
+ok(manzanaEn.includes('id="lector"') && manzanaEn.includes('data-abrir'), 'la ficha lleva el lector de la web y el botón que abre la app');
+// Los enlaces universales: el fichero de Apple con el equipo y la app, sin extensión.
+const aasa = join(DIST, '.well-known', 'apple-app-site-association');
+ok(existsSync(aasa), 'apple-app-site-association está en el dist');
+if (existsSync(aasa)) {
+  const j = JSON.parse(readFileSync(aasa, 'utf8'));
+  const app = j.applinks?.details?.[0]?.appIDs?.[0] || '';
+  ok(/^[A-Z0-9]{10}\.com\.fodmapguide\.app$/.test(app), `el AASA nombra la app con su equipo (${app})`);
+}
 
 /**
  * EL SALTO A LA TIENDA, ejecutando el script TAL COMO SE SIRVE.
@@ -303,6 +313,7 @@ if (guion) {
       'data-ct': 'cabecera',
       setAttribute(k, v) { this[k] = v; },
       getAttribute(k) { return this[k]; },
+      hasAttribute(k) { return k in this; },
     };
     // Y las dos insignias de la banda: en un móvil solo queda la de su tienda.
     const insignia = (tienda) => ({ hidden: false, 'data-tienda': tienda, getAttribute(k) { return this[k]; } });
@@ -319,6 +330,24 @@ if (guion) {
     createContext(ctx);
     runInContext(guion, ctx);
     ok(a.href === espera, `${nombre} va a ${espera === '#descargar' ? 'la banda de la página' : `${espera.split('/')[2]} con la campaña web-cabecera`}`);
+    // El botón que abre la app: intent en Android con Play de reserva; en
+    // iOS y escritorio, lo mismo que el resto.
+    const abre = {
+      href: '#descargar', 'data-ct': 'contextual', 'data-abrir': '',
+      setAttribute(k, v) { this[k] = v; },
+      getAttribute(k) { return this[k]; },
+      hasAttribute(k) { return k in this; },
+    };
+    const ctx2 = {
+      navigator: { userAgent: ua, maxTouchPoints: toques },
+      document: { readyState: 'complete', querySelectorAll: (sel) => (sel === '[data-tienda]' ? [] : [abre]), addEventListener: () => {} },
+    };
+    createContext(ctx2);
+    runInContext(guion, ctx2);
+    const esperaAbre = espera === '#descargar' ? '#descargar'
+      : espera.includes('apple.com') ? APPLE_CAMPANA('web-contextual')
+        : `intent://escanear#Intent;scheme=fodmind;package=com.fodmapguide.app;S.browser_fallback_url=${encodeURIComponent(PLAY_CAMPANA('web-contextual'))};end`;
+    ok(abre.href === esperaAbre, `${nombre}: el botón de abrir la app ${esperaAbre.startsWith('intent') ? 'usa el intent con Play de reserva' : esperaAbre === '#descargar' ? 'baja a la banda' : 'va a la App Store'}`);
     const visibles = [apple, play].filter((i) => !i.hidden).map((i) => i['data-tienda']).join('+') || 'ninguna';
     const esperaVisibles = espera === '#descargar' ? 'apple+play' : espera.includes('apple.com') ? 'apple' : 'play';
     ok(visibles === esperaVisibles, `${nombre} ve la insignia de ${esperaVisibles}`);

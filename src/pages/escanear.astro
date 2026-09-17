@@ -1,0 +1,65 @@
+---
+/**
+ * EL ENLACE QUE ABRE EL ESCÁNER: fodmind.com/escanear.
+ *
+ * Es el destino de los enlaces universales del fichero
+ * .well-known/apple-app-site-association: cuando la app lea enlaces (2.4),
+ * un iPhone con la app instalada abre el escáner directamente al tocar este
+ * enlace desde fuera de Safari (un mensaje, un correo, otra app). Sin la app,
+ * el iPhone abre esta página, que mide la visita y salta a la tienda con la
+ * campaña «web-escanear». Android llega aquí solo si el intent del botón
+ * falló; también salta.
+ *
+ * noindex: es una puerta, no una página.
+ */
+import Base from '../layouts/Base.astro';
+import { enlaceAppStore, enlacePlay } from '../i18n/strings';
+import { LOCALES, type Locale } from '../lib/rutas';
+
+const CAMPANA_APPLE = enlaceAppStore('web-escanear');
+const CAMPANA_PLAY = enlacePlay('web-escanear');
+const alternates = Object.fromEntries(LOCALES.map((l) => [l, '/escanear/'])) as Record<Locale, string>;
+---
+
+<Base
+  locale="en"
+  title="Fodmind — scan the pack"
+  description="Point the camera at the back of any pack and see which FODMAP words are on it."
+  canonical="/escanear/"
+  alternates={alternates}
+  noindex
+>
+  <section class="puerta">
+    <p class="puerta-hola">Got the pack in your hand?</p>
+    <h1>Scan it with Fodmind</h1>
+    <p>Point the camera at the ingredient list and the app marks every FODMAP word. Taking you to the store…</p>
+    <div class="tiendas">
+      <a class="tienda-boton" href={CAMPANA_APPLE} rel="noopener" data-tienda="apple">
+        <span aria-hidden="true"></span>
+        <span><small>Download on the</small>App Store</span>
+      </a>
+      <a class="tienda-boton" href={CAMPANA_PLAY} rel="noopener" data-tienda="play">
+        <span aria-hidden="true">▶</span>
+        <span><small>Get it on</small>Google Play</span>
+      </a>
+    </div>
+    <p class="puerta-nota">Or keep reading: <a href="/">fodmind.com</a></p>
+  </section>
+</Base>
+
+<script is:inline define:vars={{ apple: CAMPANA_APPLE, play: CAMPANA_PLAY }}>
+  // Medio segundo para que el beacon cuente la visita; luego a la tienda.
+  const ua = navigator.userAgent || '';
+  const esApple = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const esAndroid = /Android/.test(ua);
+  const destino = esApple ? apple : esAndroid ? play : null;
+  if (destino) setTimeout(() => window.location.replace(destino), 500);
+</script>
+
+<style>
+  .puerta { text-align: center; padding: 3rem 0 2rem; }
+  .puerta-hola { font-size: 1.1rem; opacity: 0.8; margin: 0 0 0.5rem; }
+  .puerta h1 { margin: 0 0 0.75rem; }
+  .puerta .tiendas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin: 1.5rem 0; }
+  .puerta-nota { font-size: 0.9rem; opacity: 0.7; }
+</style>

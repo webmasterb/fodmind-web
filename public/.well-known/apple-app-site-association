@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["9JU4USYBKL.com.fodmapguide.app"],
+        "components": [
+          { "/": "/escanear", "comment": "el escaner, desde el boton de la web" },
+          { "/": "/escanear/" },
+          { "/": "/foods/*", "comment": "las fichas en ingles" },
+          { "/": "/es/alimentos/*" },
+          { "/": "/fr/aliments/*" },
+          { "/": "/de/lebensmittel/*" },
+          { "/": "/it/alimenti/*" },
+          { "/": "/pt/alimentos/*" }
+        ]
+      }
+    ]
+  }
+}

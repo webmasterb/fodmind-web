@@ -4,7 +4,8 @@ import type { Locale } from '../lib/rutas';
 // La guardia de verificar.mjs comprueba que los dos digan lo mismo.
 export const APP_ID = '6795241315';
 export const APP_STORE_URL = 'https://apps.apple.com/app/id6795241315';
-export const PLAY_STORE_URL = 'https://play.google.com/store/apps/details?id=com.fodmapguide.app';
+export const PAQUETE_ANDROID = 'com.fodmapguide.app';
+export const PLAY_STORE_URL = `https://play.google.com/store/apps/details?id=${PAQUETE_ANDROID}`;
 
 /**
  * LOS ENLACES A LAS TIENDAS LLEVAN CAMPAÑA, todos.
@@ -38,6 +39,16 @@ export interface Strings {
   cerrar: string;
   badgeApple: string;
   badgePlay: string;
+  ctaEscanear: string;
+  lectorTitulo: string;
+  lectorPlaceholder: string;
+  lectorBoton: string;
+  lectorNinguna: string;
+  lectorUna: string;
+  lectorVarias: string;
+  lectorNota: string;
+  lectorAviso: string;
+  familias: { fructans: string; gos: string; lactose: string; fructose: string; polyols: string };
   searchPlaceholder: string;
   readMore: string;
   seeCategory: string;
@@ -131,6 +142,16 @@ export const STR: Record<Locale, Strings> = {
     cerrar: 'Cerrar',
     badgeApple: 'Descárgalo en el',
     badgePlay: 'Disponible en',
+    ctaEscanear: 'Escanear el paquete',
+    lectorTitulo: 'Prueba el lector: pega una lista de ingredientes',
+    lectorPlaceholder: 'Harina de trigo, azúcar, aceite de palma, cebolla en polvo…',
+    lectorBoton: 'Ver las palabras FODMAP',
+    lectorNinguna: 'Ninguna palabra FODMAP clara en esta lista',
+    lectorUna: '1 palabra FODMAP en esta lista',
+    lectorVarias: '{n} palabras FODMAP en esta lista',
+    lectorNota: 'En la tienda no hace falta pegar nada: apunta con la cámara y la app lee el paquete.',
+    lectorAviso: 'Solo palabras: la app además pesa la ración y lo que tú toleras.',
+    familias: { fructans: 'fructanos', gos: 'GOS', lactose: 'lactosa', fructose: 'fructosa', polyols: 'polioles' },
     searchPlaceholder: 'Buscar un alimento…',
     readMore: 'Leer más',
     seeCategory: 'Ver la categoría',
@@ -316,6 +337,16 @@ export const STR: Record<Locale, Strings> = {
     cerrar: 'Close',
     badgeApple: 'Download on the',
     badgePlay: 'Get it on',
+    ctaEscanear: 'Scan the pack',
+    lectorTitulo: 'Try the reader: paste an ingredient list',
+    lectorPlaceholder: 'Wheat flour, sugar, palm oil, onion powder…',
+    lectorBoton: 'Show the FODMAP words',
+    lectorNinguna: 'No clear FODMAP word in this list',
+    lectorUna: '1 FODMAP word in this list',
+    lectorVarias: '{n} FODMAP words in this list',
+    lectorNota: 'In the shop there is nothing to paste: point the camera and the app reads the pack.',
+    lectorAviso: 'Words only: the app also weighs the portion and what you tolerate.',
+    familias: { fructans: 'fructans', gos: 'GOS', lactose: 'lactose', fructose: 'excess fructose', polyols: 'polyols' },
     searchPlaceholder: 'Search a food…',
     readMore: 'Read more',
     seeCategory: 'View category',
@@ -501,6 +532,16 @@ export const STR: Record<Locale, Strings> = {
     cerrar: 'Fermer',
     badgeApple: 'Télécharger dans l’',
     badgePlay: 'Disponible sur',
+    ctaEscanear: 'Scanner le paquet',
+    lectorTitulo: 'Essayez le lecteur : collez une liste d’ingrédients',
+    lectorPlaceholder: 'Farine de blé, sucre, huile de palme, oignon en poudre…',
+    lectorBoton: 'Voir les mots FODMAP',
+    lectorNinguna: 'Aucun mot FODMAP clair dans cette liste',
+    lectorUna: '1 mot FODMAP dans cette liste',
+    lectorVarias: '{n} mots FODMAP dans cette liste',
+    lectorNota: 'En magasin, rien à coller : visez avec l’appareil photo et l’app lit le paquet.',
+    lectorAviso: 'Des mots seulement : l’app pèse aussi la portion et ce que vous tolérez.',
+    familias: { fructans: 'fructanes', gos: 'GOS', lactose: 'lactose', fructose: 'fructose', polyols: 'polyols' },
     searchPlaceholder: 'Rechercher un aliment…',
     readMore: 'Lire la suite',
     seeCategory: 'Voir la catégorie',
@@ -686,6 +727,16 @@ export const STR: Record<Locale, Strings> = {
     cerrar: 'Schließen',
     badgeApple: 'Laden im',
     badgePlay: 'Jetzt bei',
+    ctaEscanear: 'Packung scannen',
+    lectorTitulo: 'Probier den Leser: Zutatenliste einfügen',
+    lectorPlaceholder: 'Weizenmehl, Zucker, Palmöl, Zwiebelpulver…',
+    lectorBoton: 'FODMAP-Wörter zeigen',
+    lectorNinguna: 'Kein eindeutiges FODMAP-Wort in dieser Liste',
+    lectorUna: '1 FODMAP-Wort in dieser Liste',
+    lectorVarias: '{n} FODMAP-Wörter in dieser Liste',
+    lectorNota: 'Im Laden musst du nichts einfügen: Kamera drauf, die App liest die Packung.',
+    lectorAviso: 'Nur Wörter: Die App wiegt außerdem die Portion und was du verträgst.',
+    familias: { fructans: 'Fruktane', gos: 'GOS', lactose: 'Laktose', fructose: 'Fruktose', polyols: 'Polyole' },
     searchPlaceholder: 'Lebensmittel suchen…',
     readMore: 'Weiterlesen',
     seeCategory: 'Kategorie ansehen',
@@ -871,6 +922,16 @@ export const STR: Record<Locale, Strings> = {
     cerrar: 'Chiudi',
     badgeApple: 'Scarica su',
     badgePlay: 'Disponibile su',
+    ctaEscanear: 'Scansiona la confezione',
+    lectorTitulo: 'Prova il lettore: incolla una lista di ingredienti',
+    lectorPlaceholder: 'Farina di frumento, zucchero, olio di palma, cipolla in polvere…',
+    lectorBoton: 'Mostra le parole FODMAP',
+    lectorNinguna: 'Nessuna parola FODMAP chiara in questa lista',
+    lectorUna: '1 parola FODMAP in questa lista',
+    lectorVarias: '{n} parole FODMAP in questa lista',
+    lectorNota: 'In negozio non serve incollare nulla: inquadra con la fotocamera e l’app legge la confezione.',
+    lectorAviso: 'Solo parole: l’app pesa anche la porzione e quello che tolleri.',
+    familias: { fructans: 'fruttani', gos: 'GOS', lactose: 'lattosio', fructose: 'fruttosio', polyols: 'polioli' },
     searchPlaceholder: 'Cerca un alimento…',
     readMore: 'Leggi di più',
     seeCategory: 'Vedi la categoria',
@@ -1056,6 +1117,16 @@ export const STR: Record<Locale, Strings> = {
     cerrar: 'Fechar',
     badgeApple: 'Descarregar na',
     badgePlay: 'Disponível no',
+    ctaEscanear: 'Ler a embalagem',
+    lectorTitulo: 'Experimenta o leitor: cola uma lista de ingredientes',
+    lectorPlaceholder: 'Farinha de trigo, açúcar, óleo de palma, cebola em pó…',
+    lectorBoton: 'Ver as palavras FODMAP',
+    lectorNinguna: 'Nenhuma palavra FODMAP clara nesta lista',
+    lectorUna: '1 palavra FODMAP nesta lista',
+    lectorVarias: '{n} palavras FODMAP nesta lista',
+    lectorNota: 'Na loja não é preciso colar nada: aponta a câmara e a app lê a embalagem.',
+    lectorAviso: 'Só palavras: a app pesa também a porção e o que toleras.',
+    familias: { fructans: 'frutanos', gos: 'GOS', lactose: 'lactose', fructose: 'frutose', polyols: 'polióis' },
     searchPlaceholder: 'Procurar um alimento…',
     readMore: 'Ler mais',
     seeCategory: 'Ver a categoria',

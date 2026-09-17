@@ -1,6 +1,6 @@
 ---
 import { LOCALES, LOCALE_TAG, LOCALE_RAIZ, urlLanding, urlAlimentos, urlGuia, urlBlog, urlFuentes, urlLegal, type Locale } from '../lib/rutas';
-import { t, APP_ID, APPLE_PT, enlaceAppStore, enlacePlay } from '../i18n/strings';
+import { t, APP_ID, APPLE_PT, PAQUETE_ANDROID, enlaceAppStore, enlacePlay } from '../i18n/strings';
 import { texto } from '../lib/datos';
 import CtaApp from '../components/CtaApp.astro';
 import BarraApp from '../components/BarraApp.astro';
@@ -123,15 +123,31 @@ const nav = [
       del pie llevan `data-tienda="apple|play"`; en un iPhone se esconde la de
       Play y en un Android la de Apple. Solo en escritorio quedan las dos, que
       es el único sitio donde no se sabe qué teléfono lleva quien mira.
+
+      `data-abrir` ES «ABRE LA APP SI LA TIENES». En Android es un intent con
+      el esquema de la app (fodmind://escanear) y la tienda de reserva: Chrome
+      abre la app si está instalada y si no va a Play, sin diálogos. En iOS no
+      hay forma limpia sin dominios asociados (el esquema suelto enseña un
+      «no se puede abrir la página» cuando no está), así que el botón va a la
+      tienda y la barra nativa de Safari, que sí sabe si la app está, es la
+      que dice «Abrir». Cuando la app lea enlaces (2.4), el mismo botón abre
+      el escáner con un enlace universal.
     */}
-    <script is:inline define:vars={{ IOS: enlaceAppStore('web-'), ANDROID: enlacePlay('web-') }}>
+    <script is:inline define:vars={{ IOS: enlaceAppStore('web-'), ANDROID: enlacePlay('web-'), PAQUETE: PAQUETE_ANDROID }}>
       (function () {
         var ua = navigator.userAgent || '';
         var esIOS = /iPad|iPhone|iPod/.test(ua)
           || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
         var destino = esIOS ? IOS : /Android/.test(ua) ? ANDROID : null;
         if (!destino) return;
-        var enlace = function (a) { return destino + (a.getAttribute('data-ct') || 'boton'); };
+        var enlace = function (a) {
+          var tienda = destino + (a.getAttribute('data-ct') || 'boton');
+          if (!esIOS && a.hasAttribute('data-abrir')) {
+            return 'intent://escanear#Intent;scheme=fodmind;package=' + PAQUETE
+              + ';S.browser_fallback_url=' + encodeURIComponent(tienda) + ';end';
+          }
+          return tienda;
+        };
         var mia = esIOS ? 'apple' : 'play';
         var pinta = function () {
           var l = document.querySelectorAll('[data-descarga]');

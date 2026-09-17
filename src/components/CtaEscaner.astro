@@ -9,8 +9,10 @@
  * recorte de la captura de la tienda, no un dibujo— para que «escáner»
  * signifique algo antes de pedir la descarga.
  *
- * Un solo botón, con data-descarga: en móvil salta a la tienda del aparato
- * con la campaña «web-contextual»; en escritorio baja a la banda.
+ * Un solo botón, con data-descarga y data-abrir: dice «Escanear el paquete»
+ * y no «Descargar la app», porque lo primero ofrece algo y lo segundo pide
+ * un favor. En Android abre la app si está y si no va a Play; en iOS va a la
+ * App Store con la campaña «web-contextual»; en escritorio baja a la banda.
  */
 import { t } from '../i18n/strings';
 import type { Locale } from '../lib/rutas';
@@ -28,6 +30,6 @@ const s = t(locale);
   <div>
     <p class="cta-escaner-titulo">{s.ctaEscanerTitulo}</p>
     <p>{s.ctaEscanerTexto}</p>
-    <a class="boton boton-primario" href="#descargar" data-descarga data-ct="contextual">{s.ctaApp}</a>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="contextual">{s.ctaEscanear}</a>
   </div>
 </aside>

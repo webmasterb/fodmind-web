@@ -1,0 +1,104 @@
+---
+/**
+ * EL LECTOR EN LA WEB: probar la app antes de instalarla.
+ *
+ * Quien llega a una ficha desde el buscador viene con una pregunta y se va
+ * contestado; el que se convierte es el que ve la app funcionar. Aquí pega
+ * una lista de ingredientes y ve rodeadas las palabras FODMAP, como en la
+ * app, y debajo lo que la web no puede hacer y la app sí: leerla con la
+ * cámara en la tienda, pesar la ración, lo que uno tolera. Todo en el
+ * navegador, sin servidor: las palabras están en lib/lector-palabras.mjs.
+ *
+ * No afirma que una lista esté limpia. Sin hallazgos dice «ninguna palabra
+ * FODMAP clara», que es verdad, y no «apto», que no lo sabe.
+ */
+import { t } from '../i18n/strings';
+import { PATRONES } from '../lib/lector-palabras.mjs';
+import type { Locale } from '../lib/rutas';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+---
+
+<section class="lector-web" id="lector">
+  <h2 class="subrayado-seccion">{s.lectorTitulo}</h2>
+  <textarea class="lector-texto" rows="4" placeholder={s.lectorPlaceholder} aria-label={s.lectorTitulo}></textarea>
+  <button type="button" class="boton boton-primario lector-boton">{s.lectorBoton}</button>
+  <div class="lector-resultado" hidden>
+    <p class="lector-cuenta"></p>
+    <p class="lector-marcado"></p>
+    <div class="lector-pildoras"></div>
+    <p class="lector-nota">{s.lectorNota}</p>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="lector">{s.ctaEscanear}</a>
+    <p class="lector-aviso">{s.lectorAviso}</p>
+  </div>
+</section>
+
+<script is:inline define:vars={{ PATRONES, FAMILIAS: s.familias, UNA: s.lectorUna, VARIAS: s.lectorVarias, NINGUNA: s.lectorNinguna }}>
+  (function () {
+    var raiz = document.getElementById('lector');
+    if (!raiz) return;
+    var texto = raiz.querySelector('.lector-texto');
+    var boton = raiz.querySelector('.lector-boton');
+    var resultado = raiz.querySelector('.lector-resultado');
+    var cuenta = raiz.querySelector('.lector-cuenta');
+    var marcado = raiz.querySelector('.lector-marcado');
+    var pildoras = raiz.querySelector('.lector-pildoras');
+    // Cada patrón, envuelto en lookarounds de letra Unicode: \b es ASCII y
+    // partiría «cebolla» de «cebollas» pero no «ail» de «détail».
+    var reglas = PATRONES.map(function (p) {
+      return { familia: p.familia, re: new RegExp('(?<![\\p{L}])(?:' + p.re + ')(?![\\p{L}])', 'giu') };
+    });
+    var esc = function (t) {
+      return t.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+    };
+    var lee = function () {
+      var t = (texto.value || '').replace(/\s+/g, ' ').trim();
+      if (!t) return;
+      // Los tramos encontrados, sin solapar: el más largo manda («harina de
+      // trigo» antes que «trigo»).
+      var tramos = [];
+      reglas.forEach(function (r) {
+        r.re.lastIndex = 0;
+        var m;
+        while ((m = r.re.exec(t))) {
+          tramos.push({ a: m.index, b: m.index + m[0].length, familia: r.familia, palabra: m[0] });
+          if (!m[0].length) r.re.lastIndex += 1;
+        }
+      });
+      tramos.sort(function (x, y) { return x.a - y.a || (y.b - y.a) - (x.b - x.a); });
+      var limpios = [];
+      tramos.forEach(function (tr) {
+        var ultimo = limpios[limpios.length - 1];
+        if (!ultimo || tr.a >= ultimo.b) limpios.push(tr);
+      });
+      var html = '';
+      var pos = 0;
+      limpios.forEach(function (tr) {
+        html += esc(t.slice(pos, tr.a)) + '<mark class="lector-palabra">' + esc(t.slice(tr.a, tr.b)) + '</mark>';
+        pos = tr.b;
+      });
+      html += esc(t.slice(pos));
+      marcado.innerHTML = html;
+      var vistas = {};
+      pildoras.innerHTML = limpios.filter(function (tr) {
+        var k = tr.palabra.toLowerCase();
+        if (vistas[k]) return false;
+        vistas[k] = true;
+        return true;
+      }).map(function (tr) {
+        return '<span class="lector-pildora">' + esc(tr.palabra.toLowerCase()) + ' <small>' + esc(FAMILIAS[tr.familia] || tr.familia) + '</small></span>';
+      }).join('');
+      var n = Object.keys(vistas).length;
+      cuenta.textContent = n === 0 ? NINGUNA : n === 1 ? UNA : VARIAS.replace('{n}', String(n));
+      cuenta.classList.toggle('lector-cuenta-roja', n > 0);
+      resultado.hidden = false;
+    };
+    boton.addEventListener('click', lee);
+    texto.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) lee(); });
+  })();
+</script>
