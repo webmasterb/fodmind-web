@@ -16,7 +16,7 @@ export const LOCALE_TAG: Record<Locale, string> = {
 };
 
 /** Segmentos de ruta por idioma. El exportador de la app repite alimentos. */
-export const SEG: Record<'alimentos' | 'guia' | 'blog' | 'fuentes' | 'privacidad' | 'terminos', Record<Locale, string>> = {
+export const SEG: Record<'alimentos' | 'guia' | 'blog' | 'fuentes' | 'privacidad' | 'terminos' | 'escaner', Record<Locale, string>> = {
   alimentos: {
     es: 'alimentos',
     en: 'foods',
@@ -64,6 +64,15 @@ export const SEG: Record<'alimentos' | 'guia' | 'blog' | 'fuentes' | 'privacidad
     de: 'nutzungsbedingungen',
     it: 'termini',
     pt: 'termos',
+  },
+  // El escáner: la página de la herramienta, con el motor de la app.
+  escaner: {
+    es: 'escaner',
+    en: 'scanner',
+    fr: 'scanner',
+    de: 'scanner',
+    it: 'scanner',
+    pt: 'scanner',
   },
 };
 
@@ -131,6 +140,10 @@ export function alternatesNivelCat(nivel: FodmapLevel, catId: string): Record<Lo
   return alternatesDeEntidad((l) => urlNivelCat(l, nivel, catId));
 }
 
+export function urlEscaner(locale: Locale): string {
+  return `${base(locale)}/${SEG.escaner[locale]}/`;
+}
+
 export function urlFuentes(locale: Locale): string {
   return `${base(locale)}/${SEG.fuentes[locale]}/`;
 }
@@ -143,7 +156,7 @@ export function urlLegal(locale: Locale, cual: 'privacidad' | 'terminos'): strin
  * Alternates de las páginas estáticas (landing, índices y legal), que son las
  * mismas rutas en los 6 idiomas. Alimenta hreflang, sitemap y selector.
  */
-export function alternatesEstatico(tipo: 'landing' | 'alimentos' | 'guia' | 'blog' | 'fuentes' | 'privacidad' | 'terminos'): Record<Locale, string> {
+export function alternatesEstatico(tipo: 'landing' | 'alimentos' | 'guia' | 'blog' | 'fuentes' | 'privacidad' | 'terminos' | 'escaner'): Record<Locale, string> {
   return Object.fromEntries(
     LOCALES.map((l) => {
       const pref = base(l);
@@ -162,6 +175,8 @@ export function alternatesEstatico(tipo: 'landing' | 'alimentos' | 'guia' | 'blo
           return [l, `${pref}/${SEG.privacidad[l]}/`];
         case 'terminos':
           return [l, `${pref}/${SEG.terminos[l]}/`];
+        case 'escaner':
+          return [l, `${pref}/${SEG.escaner[l]}/`];
       }
     })
   ) as Record<Locale, string>;

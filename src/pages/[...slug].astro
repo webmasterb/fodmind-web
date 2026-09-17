@@ -15,6 +15,7 @@ import Post from '../components/paginas/Post.astro';
 import Legal from '../components/paginas/Legal.astro';
 import Fuentes from '../components/paginas/Fuentes.astro';
 import Nivel from '../components/paginas/Nivel.astro';
+import Escaner from '../components/paginas/Escaner.astro';
 
 export async function getStaticPaths() {
   const rutas: { params: { slug?: string }; props: Record<string, unknown> }[] = [];
@@ -94,6 +95,10 @@ export async function getStaticPaths() {
       params: { slug: [...pref, SEG.terminos[locale]].join('/') },
       props: { kind: 'terminos', locale },
     });
+    rutas.push({
+      params: { slug: [...pref, SEG.escaner[locale]].join('/') },
+      props: { kind: 'escaner', locale },
+    });
   }
 
   const posts = await getCollection('blog');
@@ -152,3 +157,4 @@ const { kind, locale } = props;
 {kind === 'fuentes' && <Fuentes locale={locale} />}
 {kind === 'privacidad' && <Legal locale={locale} cual="privacidad" />}
 {kind === 'terminos' && <Legal locale={locale} cual="terminos" />}
+{kind === 'escaner' && <Escaner locale={locale} />}

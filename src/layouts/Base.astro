@@ -1,5 +1,5 @@
 ---
-import { LOCALES, LOCALE_TAG, LOCALE_RAIZ, urlLanding, urlAlimentos, urlGuia, urlBlog, urlFuentes, urlLegal, type Locale } from '../lib/rutas';
+import { LOCALES, LOCALE_TAG, LOCALE_RAIZ, urlLanding, urlAlimentos, urlGuia, urlBlog, urlFuentes, urlLegal, urlEscaner, type Locale } from '../lib/rutas';
 import { t, APP_ID, APPLE_PT, PAQUETE_ANDROID, enlaceAppStore, enlacePlay } from '../i18n/strings';
 import { texto } from '../lib/datos';
 import CtaApp from '../components/CtaApp.astro';
@@ -33,6 +33,7 @@ const OG_LOCALE: Record<Locale, string> = {
 };
 
 const nav = [
+  { href: urlEscaner(locale), label: s.navEscaner },
   { href: urlAlimentos(locale), label: s.navAlimentos },
   { href: urlGuia(locale), label: s.navGuia },
   { href: urlBlog(locale), label: s.navBlog },

@@ -599,10 +599,30 @@ details p {
   }
 }
 
-/* ---------- el lector en la web ---------- */
+/* ---------- el lector de la app, en la web ---------- */
 
-.lector-web {
+/* Los colores de nivel son los de la app (constants/fodmap-theme.ts):
+   LevelColors y LevelSurfaces, tal cual. */
+:root {
+  --nivel-alto: #AF3129;
+  --nivel-medio: #845C07;
+  --nivel-bajo: #217242;
+  --fondo-alto: #F9E4E1;
+  --fondo-medio: #F7EDD6;
+  --fondo-bajo: #E4F3E9;
+}
+
+.lector {
   margin: 34px 0;
+}
+
+.lector-intro {
+  margin-top: -6px;
+}
+
+.lector-enlace-escaner {
+  margin: 0 0 12px;
+  font-size: 15px;
 }
 
 .lector-texto {
@@ -618,60 +638,215 @@ details p {
   margin: 6px 0 12px;
 }
 
-.lector-resultado {
-  margin-top: 18px;
+.lector-codigo {
+  margin: 0 0 16px;
+}
+
+.lector-pista {
+  font-size: 15px;
+  margin: 10px 0;
+}
+
+.lector-visor {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 3 / 4;
+  max-height: 70vh;
+}
+
+.lector-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.lector-marco {
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 38%;
+  height: 24%;
+  border: 3px solid rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 0 0 999px rgba(0, 0, 0, 0.35);
+}
+
+.lector-cerrar-camara {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.lector-estado {
+  margin: 12px 0;
+  font-size: 15px;
+}
+
+.lector-pared {
   background: var(--card);
   border: 1px solid var(--borde);
   border-radius: 16px;
   padding: 16px 18px;
+  margin: 12px 0;
 }
 
-.lector-cuenta {
-  font-weight: 800;
-  font-size: 19px;
-  margin: 0 0 10px;
-  color: var(--verde);
-}
-
-.lector-cuenta-roja {
-  color: var(--rojo);
-}
-
-.lector-marcado {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--muted);
+.lector-pared p {
   margin: 0 0 12px;
-}
-
-.lector-palabra {
-  background: #fde8e8;
-  color: var(--rojo);
   font-weight: 700;
-  border: 1.5px solid var(--rojo);
-  border-radius: 6px;
-  padding: 0 5px;
 }
 
-.lector-pildoras {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+.lector-producto {
+  margin: 0 0 10px;
+}
+
+.lector-producto-nombre {
+  font-weight: 800;
+  font-size: 18px;
+  margin: 0;
+}
+
+.lector-producto-fuente {
+  font-size: 14px;
+  margin: 2px 0 0;
+}
+
+.lector-resultado {
+  margin-top: 18px;
+  background: var(--card);
+  border: 1px solid var(--borde);
+  border-radius: 18px;
+  padding: 18px;
+}
+
+/* Las tres losas, lo alto primero y levantado cuando no es cero, como en la
+   vista rápida de pasillo de la app. */
+.lector-losas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
   margin: 0 0 14px;
 }
 
-.lector-pildora {
-  background: #fde8e8;
-  color: var(--rojo);
-  border-radius: 999px;
-  padding: 5px 12px;
-  font-size: 14px;
-  font-weight: 700;
+.lector-losa {
+  border-radius: 16px;
+  padding: 16px 8px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-.lector-pildora small {
-  font-weight: 400;
-  opacity: 0.8;
+.lector-losa strong {
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.lector-losa span {
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.lector-losa-alta { background: var(--fondo-alto); color: var(--nivel-alto); }
+.lector-losa-media { background: var(--fondo-medio); color: var(--nivel-medio); }
+.lector-losa-baja { background: var(--fondo-bajo); color: var(--nivel-bajo); }
+
+.lector-losa-destacada {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(175, 49, 41, 0.18);
+}
+
+.lector-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.lector-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.lector-chip i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.lector-chip-alta { background: var(--fondo-alto); }
+.lector-chip-alta i { background: var(--nivel-alto); }
+.lector-chip-media { background: var(--fondo-medio); }
+.lector-chip-media i { background: var(--nivel-medio); }
+
+.lector-desconocidos {
+  font-weight: 600;
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.lector-rota {
+  color: var(--nivel-medio);
+  font-weight: 600;
+  font-size: 15px;
+  margin: 0 0 10px;
+}
+
+.lector-veredicto {
+  font-size: 14px;
+  margin: 0 0 14px;
+}
+
+.lector-detalle {
+  margin: 16px 0 0;
+  border-top: 1px solid var(--borde);
+  padding-top: 8px;
+}
+
+.lector-detalle h3 {
+  font-size: 15px;
+  margin: 14px 0 6px;
+}
+
+.lector-detalle ul {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 15px;
+}
+
+.lector-detalle small {
+  color: var(--muted);
+}
+
+.lector-grupo-alta { color: var(--nivel-alto); }
+.lector-grupo-media { color: var(--nivel-medio); }
+.lector-grupo-baja { color: var(--nivel-bajo); }
+.lector-grupo-gris { color: var(--muted); }
+
+.lector-app {
+  margin-top: 18px;
+  border-top: 1px solid var(--borde);
+  padding-top: 14px;
 }
 
 .lector-nota {

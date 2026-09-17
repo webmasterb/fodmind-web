@@ -13,6 +13,7 @@ const SEG_LEGAL = {
   privacidad: { es: 'privacidad', en: 'privacy', fr: 'confidentialite', de: 'datenschutz', it: 'privacy', pt: 'privacidade' },
   terminos: { es: 'terminos', en: 'terms', fr: 'conditions', de: 'nutzungsbedingungen', it: 'termini', pt: 'termos' },
 };
+const SEG_ESCANER = { es: 'escaner', en: 'scanner', fr: 'scanner', de: 'scanner', it: 'scanner', pt: 'scanner' };
 const CAT_SLUG = JSON.parse(readFileSync(join(RAIZ, 'src', 'lib', 'cat-slug.json'), 'utf8'));
 
 /** El idioma raíz se lee de rutas.ts: aquí no se repite la decisión. */
@@ -82,6 +83,7 @@ test('rutas únicas por idioma: alimentos, categorías, guía, blog y legal no c
     for (const post of postsPorLang[lang]) anotar(`${SEG_BLOG[lang]}/${post}`, `post ${post}`);
     anotar(SEG_LEGAL.privacidad[lang], 'privacidad');
     anotar(SEG_LEGAL.terminos[lang], 'términos');
+    anotar(SEG_ESCANER[lang], 'escáner');
   }
 });
 

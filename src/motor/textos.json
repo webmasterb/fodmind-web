@@ -1,0 +1,202 @@
+{
+  "labelTitle": {
+    "es": "Lector de etiquetas",
+    "en": "Label reader",
+    "fr": "Lecteur d’étiquettes",
+    "de": "Etiketten-Leser",
+    "it": "Lettore di etichette",
+    "pt": "Leitor de rótulos"
+  },
+  "labelIntro": {
+    "es": "La lista del envase, ingrediente por ingrediente y con su fuente.",
+    "en": "The list on the package, ingredient by ingredient and with its source.",
+    "fr": "La liste de l’emballage, ingrédient par ingrédient et avec sa source.",
+    "de": "Die Liste der Verpackung, Zutat für Zutat und mit Quelle.",
+    "it": "La lista della confezione, ingrediente per ingrediente e con la fonte.",
+    "pt": "A lista da embalagem, ingrediente a ingrediente e com a sua fonte."
+  },
+  "labelPlaceholder": {
+    "es": "Tomate, cebolla, aceite de girasol, sal, ajo en polvo…",
+    "en": "Tomato, onion, sunflower oil, salt, garlic powder…",
+    "fr": "Tomate, oignon, huile de tournesol, sel, ail en poudre…",
+    "de": "Tomate, Zwiebel, Sonnenblumenöl, Salz, Knoblauchpulver…",
+    "it": "Pomodoro, cipolla, olio di girasole, sale, aglio in polvere…",
+    "pt": "Tomate, cebola, óleo de girassol, sal, alho em pó…"
+  },
+  "labelAnalyze": {
+    "es": "Analizar",
+    "en": "Analyse",
+    "fr": "Analyser",
+    "de": "Analysieren",
+    "it": "Analizza",
+    "pt": "Analisar"
+  },
+  "labelHighs": {
+    "es": "Altos en FODMAP",
+    "en": "High in FODMAPs",
+    "fr": "Élevés en FODMAP",
+    "de": "Hoch an FODMAP",
+    "it": "Alti in FODMAP",
+    "pt": "Altos em FODMAP"
+  },
+  "labelWatch": {
+    "es": "A vigilar",
+    "en": "Worth watching",
+    "fr": "À surveiller",
+    "de": "Im Auge behalten",
+    "it": "Da tenere d’occhio",
+    "pt": "A vigiar"
+  },
+  "labelFine": {
+    "es": "Sin problema conocido",
+    "en": "No known problem",
+    "fr": "Sans problème connu",
+    "de": "Kein bekanntes Problem",
+    "it": "Nessun problema noto",
+    "pt": "Sem problema conhecido"
+  },
+  "labelUnknown": {
+    "es": "No reconocidos",
+    "en": "Not recognised",
+    "fr": "Non reconnus",
+    "de": "Nicht erkannt",
+    "it": "Non riconosciuti",
+    "pt": "Não reconhecidos"
+  },
+  "labelUnknownWarn": {
+    "es": "No reconocido no significa seguro: puede ser algo que la app aún no conoce.",
+    "en": "Not recognised does not mean safe: it may be something the app does not know yet.",
+    "fr": "Non reconnu ne veut pas dire sûr : ce peut être quelque chose que l’app ne connaît pas encore.",
+    "de": "Nicht erkannt heißt nicht sicher: Es kann etwas sein, das die App noch nicht kennt.",
+    "it": "Non riconosciuto non significa sicuro: può essere qualcosa che l’app ancora non conosce.",
+    "pt": "Não reconhecido não significa seguro: pode ser algo que a app ainda não conhece."
+  },
+  "labelQuickUnknown": {
+    "es": "Hay cosas que no reconozco. No reconocido no significa seguro.",
+    "en": "There are things I do not recognise. Not recognised does not mean safe.",
+    "fr": "Il y a des choses que je ne reconnais pas. Non reconnu ne veut pas dire sûr.",
+    "de": "Manches erkenne ich nicht. Nicht erkannt heißt nicht sicher.",
+    "it": "Ci sono cose che non riconosco. Non riconosciuto non significa sicuro.",
+    "pt": "Há coisas que não reconheço. Não reconhecido não significa seguro."
+  },
+  "labelQuickToggle": {
+    "es": "Vista rápida de pasillo",
+    "en": "Quick aisle view",
+    "fr": "Vue rapide de rayon",
+    "de": "Schnellansicht für den Gang",
+    "it": "Vista rapida da corsia",
+    "pt": "Vista rápida de corredor"
+  },
+  "labelSeeDetail": {
+    "es": "Ver el detalle",
+    "en": "See the details",
+    "fr": "Voir le détail",
+    "de": "Details ansehen",
+    "it": "Vedi il dettaglio",
+    "pt": "Ver o detalhe"
+  },
+  "labelNoVerdict": {
+    "es": "No dice si es apto: dice qué lleva y por qué. La decisión es tuya.",
+    "en": "It does not say whether it is suitable: it says what it contains and why. The decision is yours.",
+    "fr": "Ça ne dit pas s’il convient : ça dit ce qu’il contient et pourquoi. La décision est la tienne.",
+    "de": "Es sagt nicht, ob es passt: Es sagt, was drin ist und warum. Die Entscheidung ist deine.",
+    "it": "Non dice se è adatto: dice cosa contiene e perché. La decisione è tua.",
+    "pt": "Não diz se é adequado: diz o que leva e porquê. A decisão é tua."
+  },
+  "labelPortionTag": {
+    "es": "ración",
+    "en": "portion",
+    "fr": "portion",
+    "de": "Portion",
+    "it": "porzione",
+    "pt": "porção"
+  },
+  "labelFromCatalog": {
+    "es": "Está en la tabla de la app. Toca para ver su ración y sus fuentes.",
+    "en": "It is in the app table. Tap to see its serving and its sources.",
+    "fr": "Il est dans la table de l’app. Touche pour voir sa portion et ses sources.",
+    "de": "Steht in der Tabelle der App. Tippe für Portion und Quellen.",
+    "it": "È nella tabella dell’app. Tocca per vedere porzione e fonti.",
+    "pt": "Está na tabela da app. Toca para ver a dose e as fontes."
+  },
+  "labelBarcodeHint": {
+    "es": "Apunta al código de barras. Déjale un poco de blanco a los lados o no se lee.",
+    "en": "Point at the barcode. Leave some white space at the sides or it will not read.",
+    "fr": "Visez le code-barres. Laissez un peu de blanc sur les côtés, sinon il ne se lit pas.",
+    "de": "Ziel auf den Barcode. Lass etwas Weiß an den Seiten, sonst wird er nicht gelesen.",
+    "it": "Inquadra il codice a barre. Lascia un po’ di bianco ai lati o non si legge.",
+    "pt": "Aponta ao código de barras. Deixa algum branco nos lados ou não se lê."
+  },
+  "labelBarcodeSearching": {
+    "es": "Buscando el producto…",
+    "en": "Looking up the product…",
+    "fr": "Recherche du produit…",
+    "de": "Produkt wird gesucht…",
+    "it": "Cerco il prodotto…",
+    "pt": "A procurar o produto…"
+  },
+  "labelBarcodeFound": {
+    "es": "Código leído",
+    "en": "Barcode read",
+    "fr": "Code lu",
+    "de": "Code gelesen",
+    "it": "Codice letto",
+    "pt": "Código lido"
+  },
+  "labelBarcodeOtherLang": {
+    "es": "La lista está en otro idioma. El análisis vale igual; repásala.",
+    "en": "The list is in another language. The analysis still holds; check it.",
+    "fr": "La liste est dans une autre langue. L’analyse vaut quand même ; vérifie-la.",
+    "de": "Die Liste ist in einer anderen Sprache. Die Auswertung gilt trotzdem; prüf sie.",
+    "it": "La lista è in un’altra lingua. L’analisi vale lo stesso; ricontrollala.",
+    "pt": "A lista está noutra língua. A análise vale na mesma; revê-a."
+  },
+  "labelBarcodeSource": {
+    "es": "Ingredientes de Open Food Facts (licencia ODbL), escritos por gente como tú: la etiqueta del envase manda.",
+    "en": "Ingredients from Open Food Facts (ODbL licence), written by people like you: the package label rules.",
+    "fr": "Ingrédients d’Open Food Facts (licence ODbL), écrits par des gens comme toi : l’étiquette de l’emballage prime.",
+    "de": "Zutaten von Open Food Facts (ODbL-Lizenz), geschrieben von Leuten wie dir: Das Etikett der Packung gilt.",
+    "it": "Ingredienti da Open Food Facts (licenza ODbL), scritti da persone come te: comanda l’etichetta della confezione.",
+    "pt": "Ingredientes do Open Food Facts (licença ODbL), escritos por pessoas como tu: manda o rótulo da embalagem."
+  },
+  "labelBarcodeNotFoundNoReader": {
+    "es": "Ese producto no está en la base de datos, que es lo más habitual con la marca del súper. Busca sus ingredientes principales en la lista de alimentos.",
+    "en": "That product is not in the database, which is common with supermarket own brands. Look its main ingredients up in the food list.",
+    "fr": "Ce produit n’est pas dans la base, ce qui est courant avec les marques de distributeur. Cherchez ses ingrédients principaux dans la liste des aliments.",
+    "de": "Dieses Produkt steht nicht in der Datenbank, was bei Eigenmarken normal ist. Such seine Hauptzutaten in der Lebensmittelliste.",
+    "it": "Quel prodotto non è nella base dati, cosa comune con le marche del supermercato. Cerca i suoi ingredienti principali nella lista degli alimenti.",
+    "pt": "Esse produto não está na base de dados, o que é comum com as marcas do supermercado. Procura os seus ingredientes principais na lista de alimentos."
+  },
+  "labelBarcodeNoIngredientsNoReader": {
+    "es": "El producto está en la base, pero nadie ha escrito sus ingredientes todavía. Busca sus ingredientes principales en la lista de alimentos.",
+    "en": "The product is in the database, but nobody has typed its ingredients yet. Look its main ingredients up in the food list.",
+    "fr": "Le produit est dans la base, mais personne n’a encore saisi ses ingrédients. Cherchez ses ingrédients principaux dans la liste des aliments.",
+    "de": "Das Produkt steht in der Datenbank, aber die Zutaten hat noch niemand eingetippt. Such seine Hauptzutaten in der Lebensmittelliste.",
+    "it": "Il prodotto è nella base dati, ma nessuno ha ancora scritto i suoi ingredienti. Cerca i suoi ingredienti principali nella lista degli alimenti.",
+    "pt": "O produto está na base, mas ainda ninguém escreveu os seus ingredientes. Procura os seus ingredientes principais na lista de alimentos."
+  },
+  "labelBarcodeNoNetNoReader": {
+    "es": "No he podido conectar para consultar el producto. Vuelve a apuntar al código cuando haya cobertura; tus productos guardados funcionan sin conexión.",
+    "en": "I could not connect to look the product up. Point at the code again when you have coverage; your saved products work offline.",
+    "fr": "Je n’ai pas pu me connecter pour chercher le produit. Revisez le code quand vous aurez du réseau ; vos produits enregistrés fonctionnent hors ligne.",
+    "de": "Ich konnte mich nicht verbinden, um das Produkt zu suchen. Ziel wieder auf den Code, wenn du Empfang hast; deine gespeicherten Produkte gehen offline.",
+    "it": "Non sono riuscito a collegarmi per cercare il prodotto. Inquadra di nuovo il codice quando c’è copertura; i tuoi prodotti salvati funzionano offline.",
+    "pt": "Não consegui ligar-me para procurar o produto. Volta a apontar ao código quando tiveres rede; os teus produtos guardados funcionam sem ligação."
+  },
+  "labelBarcodeServerDownNoReader": {
+    "es": "La base de productos no contesta ahora mismo. No es tu conexión. Busca sus ingredientes principales en la lista de alimentos.",
+    "en": "The product database is not responding right now. It is not your connection. Look its main ingredients up in the food list.",
+    "fr": "La base de produits ne répond pas en ce moment. Ce n’est pas votre connexion. Cherchez ses ingrédients principaux dans la liste des aliments.",
+    "de": "Die Produktdatenbank antwortet gerade nicht. Es liegt nicht an deiner Verbindung. Such seine Hauptzutaten in der Lebensmittelliste.",
+    "it": "La base dati dei prodotti non risponde in questo momento. Non è la tua connessione. Cerca i suoi ingredienti principali nella lista degli alimenti.",
+    "pt": "A base de produtos não responde neste momento. Não é a tua ligação. Procura os ingredientes principais na lista de alimentos."
+  },
+  "labelCameraHintBarcode": {
+    "es": "Apunta al código de barras del envase.",
+    "en": "Point at the barcode on the package.",
+    "fr": "Visez le code-barres de l’emballage.",
+    "de": "Ziel auf den Barcode der Packung.",
+    "it": "Inquadra il codice a barre della confezione.",
+    "pt": "Aponta ao código de barras da embalagem."
+  }
+}

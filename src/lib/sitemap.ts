@@ -17,7 +17,7 @@ export async function gruposDeUrls(): Promise<Record<string, string>[]> {
     Object.fromEntries(LOCALES.map((l) => [l, ruta(l)]));
 
   grupos.push(porIdioma((l) => `${base(l)}/`));
-  for (const tipo of ['alimentos', 'guia', 'blog', 'fuentes', 'privacidad', 'terminos'] as const) {
+  for (const tipo of ['alimentos', 'guia', 'blog', 'fuentes', 'privacidad', 'terminos', 'escaner'] as const) {
     grupos.push(porIdioma((l) => `${base(l)}/${SEG[tipo][l]}/`));
   }
 

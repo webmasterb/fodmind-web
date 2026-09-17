@@ -3,7 +3,7 @@ import Base from '../../layouts/Base.astro';
 import BadgeNivel from '../../components/BadgeNivel.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
 import CtaEscaner from '../../components/CtaEscaner.astro';
-import LectorWeb from '../../components/LectorWeb.astro';
+import Lector from '../../components/Lector.astro';
 import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlFuentes, urlNivelCat, urlArticulo, alternatesAlimento, type Locale } from '../../lib/rutas';
 import { catName } from '../../i18n/categorias';
 import { t } from '../../i18n/strings';
@@ -206,7 +206,7 @@ const jsonld = [
 
   {/* Probar el lector antes de instalar nada: la palanca de conversión de la
       ficha. Va después de la respuesta y antes de las fuentes. */}
-  <LectorWeb locale={locale} />
+  <Lector locale={locale} />
 
   <section class="procedencia">
     {lineas.map(({ mitad, rotulo }) => (

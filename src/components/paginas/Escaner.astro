@@ -1,0 +1,39 @@
+---
+/**
+ * LA PÁGINA DEL ESCÁNER: fodmind.com/scanner (y su ruta en cada idioma).
+ *
+ * Es la página para quien busca la herramienta y no un alimento: «fodmap
+ * scanner», «is this product low fodmap». Lleva el lector de la app entero
+ * —código de barras con la cámara y lista pegada— con el mismo motor y las
+ * mismas palabras, y el tope de tres códigos al día que empuja a la app.
+ */
+import Base from '../../layouts/Base.astro';
+import Lector from '../../components/Lector.astro';
+import { t } from '../../i18n/strings';
+import { alternatesEstatico, type Locale } from '../../lib/rutas';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+const alternates = alternatesEstatico('escaner');
+---
+
+<Base
+  locale={locale}
+  title={s.metaEscanerTitle}
+  description={s.metaEscanerDesc}
+  canonical={alternates[locale]}
+  alternates={alternates}
+>
+  <div class="entrada" style="padding-top:10px">
+    <h1>{s.escanerH1}</h1>
+    <p class="texto-muted" style="max-width:640px">{s.escanerIntro}</p>
+  </div>
+
+  <Lector locale={locale} camara />
+
+  <div class="aviso">{s.notice}</div>
+</Base>

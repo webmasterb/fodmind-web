@@ -40,15 +40,16 @@ export interface Strings {
   badgeApple: string;
   badgePlay: string;
   ctaEscanear: string;
-  lectorTitulo: string;
-  lectorPlaceholder: string;
-  lectorBoton: string;
-  lectorNinguna: string;
-  lectorUna: string;
-  lectorVarias: string;
+  navEscaner: string;
+  escanerH1: string;
+  escanerIntro: string;
+  escanerBotonCodigo: string;
+  escanerTope: string;
+  escanerCamaraNo: string;
+  metaEscanerTitle: string;
+  metaEscanerDesc: string;
   lectorNota: string;
   lectorAviso: string;
-  familias: { fructans: string; gos: string; lactose: string; fructose: string; polyols: string };
   searchPlaceholder: string;
   readMore: string;
   seeCategory: string;
@@ -143,15 +144,17 @@ export const STR: Record<Locale, Strings> = {
     badgeApple: 'Descárgalo en el',
     badgePlay: 'Disponible en',
     ctaEscanear: 'Escanear el paquete',
-    lectorTitulo: 'Prueba el lector: pega una lista de ingredientes',
-    lectorPlaceholder: 'Harina de trigo, azúcar, aceite de palma, cebolla en polvo…',
-    lectorBoton: 'Ver las palabras FODMAP',
-    lectorNinguna: 'Ninguna palabra FODMAP clara en esta lista',
-    lectorUna: '1 palabra FODMAP en esta lista',
-    lectorVarias: '{n} palabras FODMAP en esta lista',
+    navEscaner: 'Escáner',
+    escanerH1: 'Escáner FODMAP',
+    escanerIntro: 'El mismo lector que la app: apunta al código de barras o pega la lista y ve qué palabras son un FODMAP y por qué.',
+    escanerBotonCodigo: 'Escanear un código de barras',
+    escanerTope: 'Tres códigos al día en la web. En la app, sin límite y sin conexión.',
+    escanerCamaraNo: 'No he podido abrir la cámara. Permite el acceso o pega la lista de ingredientes.',
+    metaEscanerTitle: 'Escáner FODMAP online: lee la etiqueta de cualquier producto',
+    metaEscanerDesc:
+      'Escanea el código de barras o pega la lista de ingredientes y ve qué palabras son un FODMAP, con el mismo lector que la app Fodmind. Gratis, en el navegador.',
     lectorNota: 'En la tienda no hace falta pegar nada: apunta con la cámara y la app lee el paquete.',
     lectorAviso: 'Solo palabras: la app además pesa la ración y lo que tú toleras.',
-    familias: { fructans: 'fructanos', gos: 'GOS', lactose: 'lactosa', fructose: 'fructosa', polyols: 'polioles' },
     searchPlaceholder: 'Buscar un alimento…',
     readMore: 'Leer más',
     seeCategory: 'Ver la categoría',
@@ -338,15 +341,17 @@ export const STR: Record<Locale, Strings> = {
     badgeApple: 'Download on the',
     badgePlay: 'Get it on',
     ctaEscanear: 'Scan the pack',
-    lectorTitulo: 'Try the reader: paste an ingredient list',
-    lectorPlaceholder: 'Wheat flour, sugar, palm oil, onion powder…',
-    lectorBoton: 'Show the FODMAP words',
-    lectorNinguna: 'No clear FODMAP word in this list',
-    lectorUna: '1 FODMAP word in this list',
-    lectorVarias: '{n} FODMAP words in this list',
+    navEscaner: 'Scanner',
+    escanerH1: 'FODMAP scanner',
+    escanerIntro: 'The same reader as the app: point at the barcode or paste the list and see which words are a FODMAP and why.',
+    escanerBotonCodigo: 'Scan a barcode',
+    escanerTope: 'Three barcodes a day on the web. In the app, unlimited and offline.',
+    escanerCamaraNo: 'I could not open the camera. Allow access or paste the ingredient list.',
+    metaEscanerTitle: 'FODMAP scanner online: read the label of any product',
+    metaEscanerDesc:
+      'Scan the barcode or paste the ingredient list and see which words are a FODMAP, with the same reader as the Fodmind app. Free, in the browser.',
     lectorNota: 'In the shop there is nothing to paste: point the camera and the app reads the pack.',
     lectorAviso: 'Words only: the app also weighs the portion and what you tolerate.',
-    familias: { fructans: 'fructans', gos: 'GOS', lactose: 'lactose', fructose: 'excess fructose', polyols: 'polyols' },
     searchPlaceholder: 'Search a food…',
     readMore: 'Read more',
     seeCategory: 'View category',
@@ -533,15 +538,17 @@ export const STR: Record<Locale, Strings> = {
     badgeApple: 'Télécharger dans l’',
     badgePlay: 'Disponible sur',
     ctaEscanear: 'Scanner le paquet',
-    lectorTitulo: 'Essayez le lecteur : collez une liste d’ingrédients',
-    lectorPlaceholder: 'Farine de blé, sucre, huile de palme, oignon en poudre…',
-    lectorBoton: 'Voir les mots FODMAP',
-    lectorNinguna: 'Aucun mot FODMAP clair dans cette liste',
-    lectorUna: '1 mot FODMAP dans cette liste',
-    lectorVarias: '{n} mots FODMAP dans cette liste',
+    navEscaner: 'Scanner',
+    escanerH1: 'Scanner FODMAP',
+    escanerIntro: 'Le même lecteur que l’app : visez le code-barres ou collez la liste et voyez quels mots sont des FODMAP et pourquoi.',
+    escanerBotonCodigo: 'Scanner un code-barres',
+    escanerTope: 'Trois codes-barres par jour sur le web. Dans l’app, sans limite et hors ligne.',
+    escanerCamaraNo: 'Impossible d’ouvrir l’appareil photo. Autorisez l’accès ou collez la liste d’ingrédients.',
+    metaEscanerTitle: 'Scanner FODMAP en ligne : lisez l’étiquette de n’importe quel produit',
+    metaEscanerDesc:
+      'Scannez le code-barres ou collez la liste d’ingrédients et voyez quels mots sont des FODMAP, avec le même lecteur que l’app Fodmind. Gratuit, dans le navigateur.',
     lectorNota: 'En magasin, rien à coller : visez avec l’appareil photo et l’app lit le paquet.',
     lectorAviso: 'Des mots seulement : l’app pèse aussi la portion et ce que vous tolérez.',
-    familias: { fructans: 'fructanes', gos: 'GOS', lactose: 'lactose', fructose: 'fructose', polyols: 'polyols' },
     searchPlaceholder: 'Rechercher un aliment…',
     readMore: 'Lire la suite',
     seeCategory: 'Voir la catégorie',
@@ -728,15 +735,17 @@ export const STR: Record<Locale, Strings> = {
     badgeApple: 'Laden im',
     badgePlay: 'Jetzt bei',
     ctaEscanear: 'Packung scannen',
-    lectorTitulo: 'Probier den Leser: Zutatenliste einfügen',
-    lectorPlaceholder: 'Weizenmehl, Zucker, Palmöl, Zwiebelpulver…',
-    lectorBoton: 'FODMAP-Wörter zeigen',
-    lectorNinguna: 'Kein eindeutiges FODMAP-Wort in dieser Liste',
-    lectorUna: '1 FODMAP-Wort in dieser Liste',
-    lectorVarias: '{n} FODMAP-Wörter in dieser Liste',
+    navEscaner: 'Scanner',
+    escanerH1: 'FODMAP-Scanner',
+    escanerIntro: 'Derselbe Leser wie in der App: auf den Barcode zielen oder die Liste einfügen und sehen, welche Wörter ein FODMAP sind und warum.',
+    escanerBotonCodigo: 'Barcode scannen',
+    escanerTope: 'Drei Barcodes am Tag im Web. In der App ohne Limit und offline.',
+    escanerCamaraNo: 'Ich konnte die Kamera nicht öffnen. Erlaube den Zugriff oder füge die Zutatenliste ein.',
+    metaEscanerTitle: 'FODMAP-Scanner online: das Etikett jedes Produkts lesen',
+    metaEscanerDesc:
+      'Scanne den Barcode oder füge die Zutatenliste ein und sieh, welche Wörter ein FODMAP sind, mit demselben Leser wie die Fodmind-App. Gratis, im Browser.',
     lectorNota: 'Im Laden musst du nichts einfügen: Kamera drauf, die App liest die Packung.',
     lectorAviso: 'Nur Wörter: Die App wiegt außerdem die Portion und was du verträgst.',
-    familias: { fructans: 'Fruktane', gos: 'GOS', lactose: 'Laktose', fructose: 'Fruktose', polyols: 'Polyole' },
     searchPlaceholder: 'Lebensmittel suchen…',
     readMore: 'Weiterlesen',
     seeCategory: 'Kategorie ansehen',
@@ -923,15 +932,17 @@ export const STR: Record<Locale, Strings> = {
     badgeApple: 'Scarica su',
     badgePlay: 'Disponibile su',
     ctaEscanear: 'Scansiona la confezione',
-    lectorTitulo: 'Prova il lettore: incolla una lista di ingredienti',
-    lectorPlaceholder: 'Farina di frumento, zucchero, olio di palma, cipolla in polvere…',
-    lectorBoton: 'Mostra le parole FODMAP',
-    lectorNinguna: 'Nessuna parola FODMAP chiara in questa lista',
-    lectorUna: '1 parola FODMAP in questa lista',
-    lectorVarias: '{n} parole FODMAP in questa lista',
+    navEscaner: 'Scanner',
+    escanerH1: 'Scanner FODMAP',
+    escanerIntro: 'Lo stesso lettore dell’app: inquadra il codice a barre o incolla la lista e scopri quali parole sono un FODMAP e perché.',
+    escanerBotonCodigo: 'Scansiona un codice a barre',
+    escanerTope: 'Tre codici al giorno sul web. Nell’app, senza limiti e offline.',
+    escanerCamaraNo: 'Non sono riuscito ad aprire la fotocamera. Consenti l’accesso o incolla la lista di ingredienti.',
+    metaEscanerTitle: 'Scanner FODMAP online: leggi l’etichetta di qualsiasi prodotto',
+    metaEscanerDesc:
+      'Scansiona il codice a barre o incolla la lista di ingredienti e scopri quali parole sono un FODMAP, con lo stesso lettore dell’app Fodmind. Gratis, nel browser.',
     lectorNota: 'In negozio non serve incollare nulla: inquadra con la fotocamera e l’app legge la confezione.',
     lectorAviso: 'Solo parole: l’app pesa anche la porzione e quello che tolleri.',
-    familias: { fructans: 'fruttani', gos: 'GOS', lactose: 'lattosio', fructose: 'fruttosio', polyols: 'polioli' },
     searchPlaceholder: 'Cerca un alimento…',
     readMore: 'Leggi di più',
     seeCategory: 'Vedi la categoria',
@@ -1118,15 +1129,17 @@ export const STR: Record<Locale, Strings> = {
     badgeApple: 'Descarregar na',
     badgePlay: 'Disponível no',
     ctaEscanear: 'Ler a embalagem',
-    lectorTitulo: 'Experimenta o leitor: cola uma lista de ingredientes',
-    lectorPlaceholder: 'Farinha de trigo, açúcar, óleo de palma, cebola em pó…',
-    lectorBoton: 'Ver as palavras FODMAP',
-    lectorNinguna: 'Nenhuma palavra FODMAP clara nesta lista',
-    lectorUna: '1 palavra FODMAP nesta lista',
-    lectorVarias: '{n} palavras FODMAP nesta lista',
+    navEscaner: 'Scanner',
+    escanerH1: 'Scanner FODMAP',
+    escanerIntro: 'O mesmo leitor da app: aponta ao código de barras ou cola a lista e vê que palavras são um FODMAP e porquê.',
+    escanerBotonCodigo: 'Ler um código de barras',
+    escanerTope: 'Três códigos por dia na web. Na app, sem limite e sem ligação.',
+    escanerCamaraNo: 'Não consegui abrir a câmara. Permite o acesso ou cola a lista de ingredientes.',
+    metaEscanerTitle: 'Scanner FODMAP online: lê o rótulo de qualquer produto',
+    metaEscanerDesc:
+      'Lê o código de barras ou cola a lista de ingredientes e vê que palavras são um FODMAP, com o mesmo leitor da app Fodmind. Grátis, no navegador.',
     lectorNota: 'Na loja não é preciso colar nada: aponta a câmara e a app lê a embalagem.',
     lectorAviso: 'Só palavras: a app pesa também a porção e o que toleras.',
-    familias: { fructans: 'frutanos', gos: 'GOS', lactose: 'lactose', fructose: 'frutose', polyols: 'polióis' },
     searchPlaceholder: 'Procurar um alimento…',
     readMore: 'Ler mais',
     seeCategory: 'Ver a categoria',

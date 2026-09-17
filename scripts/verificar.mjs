@@ -272,7 +272,16 @@ ok(manzanaEn.includes('data-ct="contextual"') && manzanaEn.includes('/app/lector
 ok(leer(sandiaEs).includes('/app/lector-es.webp') && leer(sandiaEs).includes('Escanea la etiqueta'), 'la ficha en español lleva la llamada al lector, en español');
 for (const l of LANGS) ok(existsSync(join(RAIZ, 'public', 'app', `lector-${l}.webp`)), `la captura del lector existe en ${l}`);
 // El lector de la web y el botón que abre la app, en cada ficha.
-ok(manzanaEn.includes('id="lector"') && manzanaEn.includes('data-abrir'), 'la ficha lleva el lector de la web y el botón que abre la app');
+ok(manzanaEn.includes('id="lector"') && manzanaEn.includes('data-abrir'), 'la ficha lleva el lector de la app y el botón que abre la app');
+// El lector de la ficha y el de la página del escáner hablan con las palabras
+// de la app: las tres cifras, en el idioma de la página.
+ok(manzanaEn.includes('High in FODMAPs') && leer(sandiaEs).includes('Altos en FODMAP'), 'el lector usa los textos de la app en su idioma');
+for (const l of LANGS) {
+  const seg = { es: 'escaner', en: 'scanner', fr: 'scanner', de: 'scanner', it: 'scanner', pt: 'scanner' }[l];
+  const p = join(DIST, ...dir(l), seg, 'index.html');
+  ok(existsSync(p) && readFileSync(p, 'utf8').includes('lector-abrir-camara'), `la página del escáner existe en ${l}, con la cámara`);
+}
+ok(existsSync(join(RAIZ, 'src', 'motor', 'manifiesto.json')), 'el motor de la app está sincronizado (src/motor/manifiesto.json)');
 // Los enlaces universales: el fichero de Apple con el equipo y la app, sin extensión.
 const aasa = join(DIST, '.well-known', 'apple-app-site-association');
 ok(existsSync(aasa), 'apple-app-site-association está en el dist');

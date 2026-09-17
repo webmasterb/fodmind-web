@@ -1,0 +1,299 @@
+---
+/**
+ * EL LECTOR DE ETIQUETAS DE LA APP, EN LA WEB. Un clon, no una versión.
+ *
+ * Julen lo quiso así: quien se suscriba a la app tiene que encontrar lo mismo
+ * que vio aquí. Por eso el análisis lo hace el MISMO código que la app
+ * (src/motor/, copiado por scripts/sincronizar-motor.mjs) y las palabras de
+ * la pantalla son las del i18n de la app (src/motor/textos.json): las tres
+ * cifras —altos, a vigilar, sin problema conocido—, los nombres en su color,
+ * «no dice si es apto: dice qué lleva y por qué» y el detalle.
+ *
+ * Dos entradas, como en la app en el navegador: el código de barras con la
+ * cámara (solo con `camara`, en la página del escáner) y la lista pegada.
+ * La foto de la etiqueta no está: la app la lee en el propio teléfono con el
+ * reconocimiento de texto del sistema, y eso el navegador no lo tiene; la app
+ * en web tampoco lo ofrece (ocr.web.ts).
+ *
+ * El motor se carga con import() la primera vez que hace falta: 135 KB
+ * comprimidos que la mayoría de las visitas a una ficha no usan. El tope de
+ * tres códigos al día por navegador es de la web, no de la app: es lo que
+ * separa «probar» de «usar», y la pared lleva a la app.
+ */
+import { t } from '../i18n/strings';
+import textos from '../motor/textos.json';
+import { urlEscaner, base, type Locale } from '../lib/rutas';
+
+interface Props {
+  locale: Locale;
+  camara?: boolean;
+}
+
+const { locale, camara = false } = Astro.props;
+const s = t(locale);
+const a = (clave: keyof typeof textos) => (textos[clave] as Record<string, string>)[locale];
+const TOPE = 3;
+---
+
+<section
+  class="lector"
+  id="lector"
+  data-lang={locale}
+  data-base={base(locale)}
+  data-tope={TOPE}
+  data-web={JSON.stringify({ tope: s.escanerTope, permiso: s.escanerCamaraNo, cerrar: s.cerrar, codigo: s.escanerBotonCodigo })}
+>
+  <h2 class="subrayado-seccion">{a('labelTitle')}</h2>
+  <p class="texto-muted lector-intro">{a('labelIntro')}</p>
+
+  {camara && (
+    <div class="lector-codigo">
+      <button type="button" class="boton boton-primario lector-abrir-camara">📷 {s.escanerBotonCodigo}</button>
+      <p class="lector-pista" hidden>{a('labelCameraHintBarcode')}</p>
+      <div class="lector-visor" hidden>
+        <video class="lector-video" playsinline muted autoplay></video>
+        <div class="lector-marco" aria-hidden="true"></div>
+        <button type="button" class="lector-cerrar-camara" aria-label={s.cerrar}>×</button>
+      </div>
+      <p class="lector-estado" role="status" hidden></p>
+      <div class="lector-pared" hidden>
+        <p>{s.escanerTope}</p>
+        <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="escaner-tope">{s.ctaEscanear}</a>
+      </div>
+    </div>
+  )}
+
+  {!camara && (
+    <p class="lector-enlace-escaner"><a href={urlEscaner(locale)}>📷 {s.escanerBotonCodigo} ›</a></p>
+  )}
+
+  <div class="lector-producto" hidden>
+    <p class="lector-producto-nombre"></p>
+    <p class="lector-producto-fuente texto-muted"></p>
+  </div>
+
+  <textarea class="lector-texto" rows="4" placeholder={a('labelPlaceholder')} aria-label={a('labelTitle')}></textarea>
+  <button type="button" class="boton boton-primario lector-analizar">{a('labelAnalyze')}</button>
+
+  <div class="lector-resultado" hidden>
+    <div class="lector-losas">
+      <div class="lector-losa lector-losa-alta"><strong class="lector-n"></strong><span>{a('labelHighs')}</span></div>
+      <div class="lector-losa lector-losa-media"><strong class="lector-n"></strong><span>{a('labelWatch')}</span></div>
+      <div class="lector-losa lector-losa-baja"><strong class="lector-n"></strong><span>{a('labelFine')}</span></div>
+    </div>
+    <div class="lector-chips"></div>
+    <p class="lector-desconocidos" hidden>{a('labelQuickUnknown')}</p>
+    <p class="lector-rota" hidden>{a('labelUnknownWarn')}</p>
+    <p class="lector-veredicto texto-muted">{a('labelNoVerdict')}</p>
+    <button type="button" class="boton boton-secundario lector-ver-detalle">{a('labelSeeDetail')}</button>
+    <div class="lector-detalle" hidden></div>
+    <div class="lector-app">
+      <p class="lector-nota">{s.lectorNota}</p>
+      <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="lector">{s.ctaEscanear}</a>
+      <p class="lector-aviso">{s.lectorAviso}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Los textos de la app van en el script compartido, no en cada página: son
+  // los mismos para las 11.479 fichas y así se bajan una vez.
+  import textos from '../motor/textos.json';
+
+  type Motor = typeof import('../lib/motor-web');
+  type Lang = 'es' | 'en' | 'fr' | 'de' | 'it' | 'pt';
+
+  const raiz = document.getElementById('lector');
+  if (raiz) {
+    const lang = (raiz.dataset.lang || 'en') as Lang;
+    const T: Record<string, string> = Object.fromEntries(Object.entries(textos).map(([k, v]) => [k, (v as Record<string, string>)[lang]]));
+    const W: Record<string, string> = JSON.parse(raiz.dataset.web || '{}');
+    const TOPE = Number(raiz.dataset.tope || 3);
+    const q = <E extends HTMLElement>(sel: string) => raiz.querySelector<E>(sel);
+    const texto = q<HTMLTextAreaElement>('.lector-texto')!;
+    const analizar = q<HTMLButtonElement>('.lector-analizar')!;
+    const resultado = q<HTMLElement>('.lector-resultado')!;
+    const losas = raiz.querySelectorAll<HTMLElement>('.lector-losa');
+    const chips = q<HTMLElement>('.lector-chips')!;
+    const desconocidos = q<HTMLElement>('.lector-desconocidos')!;
+    const rota = q<HTMLElement>('.lector-rota')!;
+    const verDetalle = q<HTMLButtonElement>('.lector-ver-detalle')!;
+    const detalle = q<HTMLElement>('.lector-detalle')!;
+    const producto = q<HTMLElement>('.lector-producto')!;
+    const esc = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] as string);
+
+    let motor: Promise<Motor> | null = null;
+    const cargaMotor = () => (motor = motor || import('../lib/motor-web'));
+
+    // «Está en la tabla de la app. Toca para ver su ración»: en la web, tocar
+    // es abrir la ficha. El índice de búsqueda del idioma trae nombre y ruta
+    // de cada alimento; se baja una vez, y solo cuando hay algo del catálogo.
+    let indice: Promise<Map<string, string>> | null = null;
+    const rutaDe = async (nombre: string) => {
+      indice = indice || fetch(`/search/${lang}.json`).then((r) => r.json())
+        .then((l: { n: string; p: string }[]) => new Map(l.map((x) => [x.n.toLowerCase(), x.p])))
+        .catch(() => new Map());
+      const p = (await indice).get(nombre.toLowerCase());
+      return p ? `${raiz.dataset.base || ''}/${p}` : null;
+    };
+
+    // ---- LA PANTALLA DEL RESULTADO, como la rama compacta de label.tsx:
+    // las tres cifras, lo alto y lo vigilado con nombre, cuánto no se sabe,
+    // «no dice si es apto» y el detalle debajo.
+    const pinta = async (lista: string, fuente: { nombre?: string | null; marca?: string | null; idioma?: string | null; codigo?: boolean } | null) => {
+      const m = await cargaMotor();
+      const an = m.analiza(lista, lang);
+      const n = [an.marcador.altos, an.marcador.vigilar, an.marcador.sinProblema];
+      losas.forEach((l, i) => {
+        l.querySelector('.lector-n')!.textContent = String(n[i]);
+        l.classList.toggle('lector-losa-destacada', i === 0 && n[0] > 0);
+      });
+      const conNombre = [
+        ...an.altos.map((f) => ({ f, tono: 'alta' })),
+        ...an.grupos.vigilar.map((f) => ({ f, tono: 'media' })),
+      ];
+      chips.innerHTML = conNombre
+        .map(({ f, tono }) => `<span class="lector-chip lector-chip-${tono}"><i></i>${esc(m.nombreDe(f, lang))}</span>`)
+        .join('');
+      desconocidos.hidden = an.resultado.noReconocidos.length === 0;
+      rota.hidden = !an.rota;
+      // El detalle: los mismos grupos con nombre, la etiqueta de «depende de la
+      // cantidad» en lo vigilado, y lo no reconocido con su aviso.
+      const fila = async (f: (typeof an.altos)[number]) => {
+        const nombre = m.nombreDe(f, lang);
+        const ruta = f.origen === 'catalogo' ? await rutaDe(nombre) : null;
+        return `<li>${ruta ? `<a href="${esc(ruta)}">${esc(nombre)}</a>` : esc(nombre)}`
+          + `${f.severidad === 'watch' ? ` <small>· ${esc(T.labelPortionTag)}</small>` : ''}`
+          + `${ruta ? ` <small>· ${esc(T.labelFromCatalog)}</small>` : ''}</li>`;
+      };
+      const grupo = async (titulo: string, clase: string, lista: typeof an.altos) => (lista.length
+        ? `<h3 class="lector-grupo-${clase}">${esc(titulo)} · ${lista.length}</h3><ul>${(await Promise.all(lista.map(fila))).join('')}</ul>`
+        : '');
+      detalle.innerHTML = await grupo(T.labelHighs, 'alta', an.altos)
+        + await grupo(T.labelWatch, 'media', an.grupos.vigilar)
+        + await grupo(T.labelFine, 'baja', an.grupos.sinProblema)
+        + (an.resultado.noReconocidos.length
+          ? `<h3 class="lector-grupo-gris">${esc(T.labelUnknown)} · ${an.resultado.noReconocidos.length}</h3><ul>${an.resultado.noReconocidos.map((x) => `<li>${esc(x)}</li>`).join('')}</ul><p class="lector-aviso">${esc(T.labelUnknownWarn)}</p>`
+          : '')
+        + (fuente?.codigo ? `<p class="lector-aviso">${esc(T.labelBarcodeSource)}</p>` : '');
+      detalle.hidden = true;
+      verDetalle.hidden = false;
+      if (fuente && (fuente.nombre || fuente.marca)) {
+        producto.querySelector('.lector-producto-nombre')!.textContent = [fuente.marca, fuente.nombre].filter(Boolean).join(' · ');
+        producto.querySelector('.lector-producto-fuente')!.textContent = fuente.idioma && fuente.idioma !== lang ? T.labelBarcodeOtherLang : T.labelBarcodeFound;
+        producto.hidden = false;
+      } else {
+        producto.hidden = true;
+      }
+      resultado.hidden = false;
+      resultado.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+    verDetalle.addEventListener('click', () => { detalle.hidden = !detalle.hidden; });
+    analizar.addEventListener('click', () => {
+      const t = (texto.value || '').replace(/\s+/g, ' ').trim();
+      if (t) void pinta(t, null);
+    });
+    texto.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) analizar.click(); });
+
+    // ---- EL CÓDIGO DE BARRAS, solo en la página del escáner.
+    const abrir = q<HTMLButtonElement>('.lector-abrir-camara');
+    if (abrir) {
+      const visor = q<HTMLElement>('.lector-visor')!;
+      const video = q<HTMLVideoElement>('.lector-video')!;
+      const pista = q<HTMLElement>('.lector-pista')!;
+      const estado = q<HTMLElement>('.lector-estado')!;
+      const pared = q<HTMLElement>('.lector-pared')!;
+      const cerrar = q<HTMLButtonElement>('.lector-cerrar-camara')!;
+      let flujo: MediaStream | null = null;
+      let parar: (() => void) | null = null;
+
+      // Tres al día por navegador: es de la web, no de la app. El día en la
+      // clave, para que el contador se olvide solo.
+      const CLAVE = `fodmind.escaneos.${new Date().toISOString().slice(0, 10)}`;
+      const hechos = () => Number(localStorage.getItem(CLAVE) || 0);
+      const cuenta = () => localStorage.setItem(CLAVE, String(hechos() + 1));
+      const enPared = () => {
+        if (hechos() < TOPE) return false;
+        pared.hidden = false;
+        abrir.hidden = true;
+        return true;
+      };
+
+      const apaga = () => {
+        if (parar) parar();
+        parar = null;
+        if (flujo) flujo.getTracks().forEach((tr) => tr.stop());
+        flujo = null;
+        visor.hidden = true;
+        pista.hidden = true;
+        abrir.hidden = enPared();
+      };
+      cerrar.addEventListener('click', apaga);
+
+      const di = (msg: string) => { estado.textContent = msg; estado.hidden = !msg; };
+
+      // El detector nativo donde lo hay (Chrome en Android); si no, la
+      // librería, cargada solo entonces: en un iPhone son 400 KB que no se
+      // bajan hasta que alguien pulsa.
+      const detectar = async (alLeer: (codigo: string) => void) => {
+        const Nativo = (window as unknown as { BarcodeDetector?: new (o: { formats: string[] }) => { detect(v: HTMLVideoElement): Promise<{ rawValue: string }[]> } }).BarcodeDetector;
+        if (Nativo) {
+          const d = new Nativo({ formats: ['ean_13', 'ean_8', 'upc_a', 'upc_e'] });
+          let vivo = true;
+          parar = () => { vivo = false; };
+          const bucle = async () => {
+            while (vivo) {
+              try {
+                const r = await d.detect(video);
+                if (r.length && r[0].rawValue) { vivo = false; alLeer(r[0].rawValue); return; }
+              } catch { /* un fotograma sin leer no es un error */ }
+              await new Promise((res) => setTimeout(res, 150));
+            }
+          };
+          void bucle();
+          return;
+        }
+        const { BrowserMultiFormatReader } = await import('@zxing/browser');
+        const lector = new BrowserMultiFormatReader();
+        const control = await lector.decodeFromVideoElement(video, (res) => {
+          if (res) { control.stop(); alLeer(res.getText()); }
+        });
+        parar = () => control.stop();
+      };
+
+      const leido = async (codigo: string) => {
+        apaga();
+        di(T.labelBarcodeSearching);
+        cuenta();
+        const m = await cargaMotor();
+        const r = await m.buscarProducto(codigo, lang);
+        if (r.estado === 'ok') {
+          di('');
+          texto.value = r.producto.ingredientes;
+          await pinta(r.producto.ingredientes, { nombre: r.producto.nombre, marca: r.producto.marca, idioma: r.producto.idioma, codigo: true });
+        } else if (r.estado === 'no-esta') di(T.labelBarcodeNotFoundNoReader);
+        else if (r.estado === 'sin-ingredientes') di(T.labelBarcodeNoIngredientsNoReader);
+        else di(r.motivo === 'servidor' ? T.labelBarcodeServerDownNoReader : T.labelBarcodeNoNetNoReader);
+        enPared();
+      };
+
+      abrir.addEventListener('click', async () => {
+        if (enPared()) return;
+        di('');
+        try {
+          flujo = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: 'environment' } }, audio: false });
+        } catch {
+          di(W.permiso);
+          return;
+        }
+        video.srcObject = flujo;
+        await video.play();
+        visor.hidden = false;
+        pista.hidden = false;
+        abrir.hidden = true;
+        await detectar((codigo) => { void leido(codigo); });
+      });
+      enPared();
+    }
+  }
+</script>

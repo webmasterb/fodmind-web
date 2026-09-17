@@ -1,0 +1,22 @@
+{
+  "app": "bc5d2b71",
+  "fecha": "2026-09-17",
+  "hashes": {
+    "lib/label-scan.ts": "cffd01b44353d4e8",
+    "lib/label-crop.ts": "695254aa5abe2989",
+    "lib/level-model.ts": "9d30a003cc31b3c4",
+    "lib/food-search.ts": "469110605abff59e",
+    "lib/indice-busqueda.ts": "b2d51c23ac7aa061",
+    "lib/label-personal.ts": "d85deba5b42ce49b",
+    "lib/tolerance-model.ts": "db63a14772930a95",
+    "lib/barcode.ts": "a15195404a9fe8be",
+    "data/types.ts": "c49eb67fba23af92",
+    "data/ingredients.ts": "9b544cdac63c1f93",
+    "data/common-ingredients.ts": "8f71a8706ab5a584",
+    "data/platos-fuera-del-indice.ts": "f4e1b2673bbd4405",
+    "data/aliases.ts": "2655c86217283c7a",
+    "data/challenges.ts": "98c9666650c77ae1",
+    "data/foods": "503bcc8be3b480c2",
+    "i18n": "4e0a2258513149eb"
+  }
+}
