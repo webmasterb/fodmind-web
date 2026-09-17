@@ -11,9 +11,13 @@
  *
  * No afirma que una lista esté limpia. Sin hallazgos dice «ninguna palabra
  * FODMAP clara», que es verdad, y no «apto», que no lo sabe.
+ *
+ * EL SCRIPT NO VA EN LÍNEA. Astro lo empaqueta en un fichero con hash que se
+ * baja una vez y vale para las 11.479 páginas; en línea, el diccionario
+ * pesaba 4 KB comprimidos en CADA ficha, el doble de lo que pesaba la ficha
+ * entera. Los textos del idioma van en atributos data- del propio bloque.
  */
 import { t } from '../i18n/strings';
-import { PATRONES } from '../lib/lector-palabras.mjs';
 import type { Locale } from '../lib/rutas';
 
 interface Props {
@@ -24,12 +28,19 @@ const { locale } = Astro.props;
 const s = t(locale);
 ---
 
-<section class="lector-web" id="lector">
+<section
+  class="lector-web"
+  id="lector"
+  data-una={s.lectorUna}
+  data-varias={s.lectorVarias}
+  data-ninguna={s.lectorNinguna}
+  data-familias={JSON.stringify(s.familias)}
+>
   <h2 class="subrayado-seccion">{s.lectorTitulo}</h2>
   <textarea class="lector-texto" rows="4" placeholder={s.lectorPlaceholder} aria-label={s.lectorTitulo}></textarea>
   <button type="button" class="boton boton-primario lector-boton">{s.lectorBoton}</button>
   <div class="lector-resultado" hidden>
-    <p class="lector-cuenta"></p>
+    <p class="lector-cuenta" role="status"></p>
     <p class="lector-marcado"></p>
     <div class="lector-pildoras"></div>
     <p class="lector-nota">{s.lectorNota}</p>
@@ -38,67 +49,57 @@ const s = t(locale);
   </div>
 </section>
 
-<script is:inline define:vars={{ PATRONES, FAMILIAS: s.familias, UNA: s.lectorUna, VARIAS: s.lectorVarias, NINGUNA: s.lectorNinguna }}>
-  (function () {
-    var raiz = document.getElementById('lector');
-    if (!raiz) return;
-    var texto = raiz.querySelector('.lector-texto');
-    var boton = raiz.querySelector('.lector-boton');
-    var resultado = raiz.querySelector('.lector-resultado');
-    var cuenta = raiz.querySelector('.lector-cuenta');
-    var marcado = raiz.querySelector('.lector-marcado');
-    var pildoras = raiz.querySelector('.lector-pildoras');
-    // Cada patrón, envuelto en lookarounds de letra Unicode: \b es ASCII y
-    // partiría «cebolla» de «cebollas» pero no «ail» de «détail».
-    var reglas = PATRONES.map(function (p) {
-      return { familia: p.familia, re: new RegExp('(?<![\\p{L}])(?:' + p.re + ')(?![\\p{L}])', 'giu') };
-    });
-    var esc = function (t) {
-      return t.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
-    };
-    var lee = function () {
-      var t = (texto.value || '').replace(/\s+/g, ' ').trim();
+<script>
+  import { lee, compila } from '../lib/lector-palabras.mjs';
+
+  const raiz = document.getElementById('lector');
+  // Los patrones usan lookbehind, que Safari no tuvo hasta la 16.4 (2023): en
+  // un navegador que no lo entienda, el lector se esconde en vez de quedarse
+  // con un boton que no hace nada.
+  let soporta = true;
+  try { new RegExp('(?<!a)b', 'u'); } catch { soporta = false; }
+  if (raiz && !soporta) raiz.hidden = true;
+  if (raiz && soporta) {
+    const texto = raiz.querySelector<HTMLTextAreaElement>('.lector-texto')!;
+    const boton = raiz.querySelector<HTMLButtonElement>('.lector-boton')!;
+    const resultado = raiz.querySelector<HTMLElement>('.lector-resultado')!;
+    const cuenta = raiz.querySelector<HTMLElement>('.lector-cuenta')!;
+    const marcado = raiz.querySelector<HTMLElement>('.lector-marcado')!;
+    const pildoras = raiz.querySelector<HTMLElement>('.lector-pildoras')!;
+    const familias: Record<string, string> = JSON.parse(raiz.dataset.familias || '{}');
+    let reglas: ReturnType<typeof compila> | null = null;
+    const esc = (t: string) => t.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c] as string);
+
+    const leer = () => {
+      const t = (texto.value || '').replace(/\s+/g, ' ').trim();
       if (!t) return;
-      // Los tramos encontrados, sin solapar: el más largo manda («harina de
-      // trigo» antes que «trigo»).
-      var tramos = [];
-      reglas.forEach(function (r) {
-        r.re.lastIndex = 0;
-        var m;
-        while ((m = r.re.exec(t))) {
-          tramos.push({ a: m.index, b: m.index + m[0].length, familia: r.familia, palabra: m[0] });
-          if (!m[0].length) r.re.lastIndex += 1;
-        }
-      });
-      tramos.sort(function (x, y) { return x.a - y.a || (y.b - y.a) - (x.b - x.a); });
-      var limpios = [];
-      tramos.forEach(function (tr) {
-        var ultimo = limpios[limpios.length - 1];
-        if (!ultimo || tr.a >= ultimo.b) limpios.push(tr);
-      });
-      var html = '';
-      var pos = 0;
-      limpios.forEach(function (tr) {
-        html += esc(t.slice(pos, tr.a)) + '<mark class="lector-palabra">' + esc(t.slice(tr.a, tr.b)) + '</mark>';
+      // Las expresiones se compilan la primera vez que hacen falta, no al cargar
+      // la ficha: la mayoría de las visitas no usan el lector.
+      reglas = reglas || compila();
+      const tramos = lee(t, reglas);
+      let html = '';
+      let pos = 0;
+      for (const tr of tramos) {
+        html += `${esc(t.slice(pos, tr.a))}<mark class="lector-palabra">${esc(t.slice(tr.a, tr.b))}</mark>`;
         pos = tr.b;
-      });
-      html += esc(t.slice(pos));
-      marcado.innerHTML = html;
-      var vistas = {};
-      pildoras.innerHTML = limpios.filter(function (tr) {
-        var k = tr.palabra.toLowerCase();
-        if (vistas[k]) return false;
-        vistas[k] = true;
-        return true;
-      }).map(function (tr) {
-        return '<span class="lector-pildora">' + esc(tr.palabra.toLowerCase()) + ' <small>' + esc(FAMILIAS[tr.familia] || tr.familia) + '</small></span>';
-      }).join('');
-      var n = Object.keys(vistas).length;
-      cuenta.textContent = n === 0 ? NINGUNA : n === 1 ? UNA : VARIAS.replace('{n}', String(n));
+      }
+      marcado.innerHTML = html + esc(t.slice(pos));
+      const vistas = new Set<string>();
+      pildoras.innerHTML = tramos
+        .filter((tr) => {
+          const k = tr.palabra.toLowerCase();
+          if (vistas.has(k)) return false;
+          vistas.add(k);
+          return true;
+        })
+        .map((tr) => `<span class="lector-pildora">${esc(tr.palabra.toLowerCase())} <small>${esc(familias[tr.familia] || tr.familia)}</small></span>`)
+        .join('');
+      const n = vistas.size;
+      cuenta.textContent = n === 0 ? raiz.dataset.ninguna! : n === 1 ? raiz.dataset.una! : raiz.dataset.varias!.replace('{n}', String(n));
       cuenta.classList.toggle('lector-cuenta-roja', n > 0);
       resultado.hidden = false;
     };
-    boton.addEventListener('click', lee);
-    texto.addEventListener('keydown', function (e) { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) lee(); });
-  })();
+    boton.addEventListener('click', leer);
+    texto.addEventListener('keydown', (e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) leer(); });
+  }
 </script>
