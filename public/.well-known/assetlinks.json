@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.fodmapguide.app",
+      "sha256_cert_fingerprints": [
+        "B2:40:98:46:C3:A3:BA:45:CB:13:60:FF:28:F0:CA:25:00:22:75:9E:1A:E5:08:65:54:9F:F1:88:B6:32:B0:A1",
+        "2E:A3:AA:CC:9C:E3:B5:24:CB:54:DC:39:34:16:E4:1B:DB:F4:43:55:21:8B:EE:AB:97:4F:61:4F:70:37:CB:FE"
+      ]
+    }
+  }
+]

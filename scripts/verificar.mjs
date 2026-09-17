@@ -290,6 +290,20 @@ if (existsSync(aasa)) {
   const app = j.applinks?.details?.[0]?.appIDs?.[0] || '';
   ok(/^[A-Z0-9]{10}\.com\.fodmapguide\.app$/.test(app), `el AASA nombra la app con su equipo (${app})`);
 }
+// Y el de Android, que ademas necesita la huella del certificado con el que
+// PLAY firma la app (App Signing), no la de la clave de subida: se copia de
+// Play Console → Configuracion → Integridad de la app. Hasta que este pegada,
+// Android no verifica los enlaces https y el boton de la ficha sigue abriendo
+// la app por el intent://, que no depende de esto.
+const assetlinks = join(DIST, '.well-known', 'assetlinks.json');
+ok(existsSync(assetlinks), 'assetlinks.json está en el dist');
+if (existsSync(assetlinks)) {
+  const j = JSON.parse(readFileSync(assetlinks, 'utf8'));
+  const destino = j[0]?.target ?? {};
+  ok(destino.package_name === 'com.fodmapguide.app' && j[0]?.relation?.includes('delegate_permission/common.handle_all_urls'), 'assetlinks.json nombra el paquete de la app y delega todas las URL');
+  const huellas = destino.sha256_cert_fingerprints ?? [];
+  ok(huellas.length > 0 && huellas.every((h) => /^([0-9A-F]{2}:){31}[0-9A-F]{2}$/.test(h)), `assetlinks.json lleva la huella SHA-256 de App Signing (${huellas[0]?.startsWith('PEGAR') ? 'todavía el marcador' : huellas.length + ' huella(s)'})`);
+}
 
 /**
  * EL SALTO A LA TIENDA, ejecutando el script TAL COMO SE SIRVE.
