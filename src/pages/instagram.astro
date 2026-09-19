@@ -1,42 +1,34 @@
 ---
 /**
- * EL ENLACE DE LA BIO DE TIKTOK: fodmind.com/tiktok.
+ * EL ENLACE DE LA BIO DE INSTAGRAM (@getfodmind, 19-sep-2026): fodmind.com/instagram.
  *
- * La bio no puede llevar dos enlaces ni parametros raros, y el trafico que llega
- * por ella era indistinguible del de Google en el informe de App Store Connect:
- * las dos entran como «Web Referrer» desde fodmind.com. Esta pagina resuelve
- * eso sin SDK: mide la visita (Cloudflare, como todas), y salta a la tienda que
- * toca con el parametro de campana de cada una.
- *
- *   iPhone/iPad -> App Store con pt/ct: App Store Connect lo separa en
- *                  Analytics > Campaigns bajo «tiktok» (desde 5 instalaciones)
- *   Android     -> Google Play con referrer utm_source=tiktok: Play Console lo
- *                  separa en «adquisicion por UTM»
- *   escritorio  -> se queda aqui, con los dos botones
- *
- * El enlace de campana lo genero App Store Connect el 16-sep-2026 (pt es el
- * id de proveedor de la cuenta; ct la campana). noindex: no es una pagina
- * para el buscador, es una puerta.
+ * La misma puerta que /tiktok con su propia campana, para que App Store
+ * Connect y Play separen lo que trae cada red: «instagram» frente a «tiktok»
+ * frente a la web. En Instagram el enlace de la bio es clicable desde el
+ * primer seguidor y las historias llevan pegatina de enlace, asi que aqui
+ * el `?p=<post>` se usa de verdad: la bio lleva el del ultimo post
+ * (fodmind.com/instagram?p=quiz) y cada historia el suyo, y la tienda recibe
+ * `instagram-quiz`. noindex: es una puerta, no una pagina.
  */
 import Base from '../layouts/Base.astro';
 import { enlaceAppStore, enlacePlay } from '../i18n/strings';
 import { LOCALES, type Locale } from '../lib/rutas';
 
-const CAMPANA_APPLE = enlaceAppStore('tiktok');
-const CAMPANA_PLAY = enlacePlay('tiktok', 'tiktok', 'bio');
-const alternates = Object.fromEntries(LOCALES.map((l) => [l, '/tiktok/'])) as Record<Locale, string>;
+const CAMPANA_APPLE = enlaceAppStore('instagram');
+const CAMPANA_PLAY = enlacePlay('instagram', 'instagram', 'bio');
+const alternates = Object.fromEntries(LOCALES.map((l) => [l, '/instagram/'])) as Record<Locale, string>;
 ---
 
 <Base
   locale="en"
   title="Fodmind — get the app"
   description="Scan any pack and see which FODMAP words are on the back, and how much of it fits your portion."
-  canonical="/tiktok/"
+  canonical="/instagram/"
   alternates={alternates}
   noindex
 >
   <section class="puerta">
-    <p class="puerta-hola">Seen a pack in one of our videos?</p>
+    <p class="puerta-hola">Seen a pack in one of our posts?</p>
     <h1>Scan it with Fodmind</h1>
     <p>Which FODMAP words are on the back, and how much of it fits your portion. Taking you to the store…</p>
     <div class="tiendas">
@@ -55,7 +47,7 @@ const alternates = Object.fromEntries(LOCALES.map((l) => [l, '/tiktok/'])) as Re
 
 <script is:inline define:vars={{ apple: CAMPANA_APPLE, play: CAMPANA_PLAY }}>
   // `?p=<post>` es el post que trajo a esta persona: se pega al final de la
-  // campana (`ct=tiktok-quiz`, `utm_campaign=tiktok-quiz`), que va la ultima
+  // campana (`ct=instagram-quiz`, `utm_campaign=instagram-quiz`), que va la ultima
   // en las dos URLs a proposito. Asi la tienda dice que post trajo cada
   // descarga, no solo que red. Solo letras, cifras y guiones: lo demas se
   // ignora, que el parametro lo escribe cualquiera.
