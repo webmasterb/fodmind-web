@@ -1,0 +1,84 @@
+---
+/**
+ * LA PUERTA DE UNA RED: la pagina detras del enlace de la bio. Cuenta la
+ * visita (Cloudflare, como todas), mira el telefono y salta a la tienda que
+ * toca con la campana de la red; en escritorio se queda con los dos botones.
+ * Cada red tiene su pagina (`/tiktok`, `/app` para Instagram) y su campana,
+ * para que App Store Connect y Play las separen en filas distintas.
+ *
+ * `?p=<post>` se pega al final de la campana (instagram-quiz): la bio lleva
+ * el del ultimo post y cada historia el suyo, y la tienda dice que post trajo
+ * cada descarga. noindex: es una puerta, no una pagina.
+ */
+import Base from '../layouts/Base.astro';
+import { enlaceAppStore, enlacePlay } from '../i18n/strings';
+import { LOCALES, type Locale } from '../lib/rutas';
+
+interface Props {
+  /** La ruta de la pagina, con barras: '/app/'. */
+  ruta: string;
+  /** El nombre de la campana en las dos tiendas: 'instagram'. */
+  campana: string;
+  /** La primera linea, la que dice de donde viene quien mira. */
+  hola: string;
+}
+const { ruta, campana, hola } = Astro.props;
+const CAMPANA_APPLE = enlaceAppStore(campana);
+const CAMPANA_PLAY = enlacePlay(campana, campana, 'bio');
+const alternates = Object.fromEntries(LOCALES.map((l) => [l, ruta])) as Record<Locale, string>;
+---
+
+<Base
+  locale="en"
+  title="Fodmind — get the app"
+  description="Scan any pack and see which FODMAP words are on the back, and how much of it fits your portion."
+  canonical={ruta}
+  alternates={alternates}
+  noindex
+>
+  <section class="puerta">
+    <p class="puerta-hola">{hola}</p>
+    <h1>Scan it with Fodmind</h1>
+    <p>Which FODMAP words are on the back, and how much of it fits your portion. Taking you to the store…</p>
+    <div class="tiendas">
+      <a class="tienda-boton" href={CAMPANA_APPLE} rel="noopener" data-tienda="apple">
+        <span aria-hidden="true"></span>
+        <span><small>Download on the</small>App Store</span>
+      </a>
+      <a class="tienda-boton" href={CAMPANA_PLAY} rel="noopener" data-tienda="play">
+        <span aria-hidden="true">▶</span>
+        <span><small>Get it on</small>Google Play</span>
+      </a>
+    </div>
+    <p class="puerta-nota">Or keep reading: <a href={CAMPANA_APPLE} rel="noopener">App Store</a> · <a href={CAMPANA_PLAY} rel="noopener">Google Play</a> · <a href="/">fodmind.com</a></p>
+  </section>
+</Base>
+
+<script is:inline define:vars={{ apple: CAMPANA_APPLE, play: CAMPANA_PLAY }}>
+  // `?p=<post>` es el post que trajo a esta persona: se pega al final de la
+  // campana (`ct=<red>-quiz`, `utm_campaign=<red>-quiz`), que va la ultima
+  // en las dos URLs a proposito. Asi la tienda dice que post trajo cada
+  // descarga, no solo que red. Solo letras, cifras y guiones: lo demas se
+  // ignora, que el parametro lo escribe cualquiera.
+  const p = (new URLSearchParams(window.location.search).get('p') || '').toLowerCase();
+  const cola = /^[a-z0-9-]{1,24}$/.test(p) ? `-${p}` : '';
+  const conPost = (u) => u + cola;
+  document.querySelectorAll('a[data-tienda], .puerta-nota a[href^="https://"]').forEach((a) => {
+    a.setAttribute('href', conPost(a.getAttribute('href')));
+  });
+  // El salto va despues de que el beacon de Cloudflare haya podido contar la
+  // visita: medio segundo, que en el movil ni se nota.
+  const ua = navigator.userAgent || '';
+  const esApple = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const esAndroid = /Android/.test(ua);
+  const destino = esApple ? conPost(apple) : esAndroid ? conPost(play) : null;
+  if (destino) setTimeout(() => window.location.replace(destino), 500);
+</script>
+
+<style>
+  .puerta { text-align: center; padding: 3rem 0 2rem; }
+  .puerta-hola { font-size: 1.1rem; opacity: 0.8; margin: 0 0 0.5rem; }
+  .puerta h1 { margin: 0 0 0.75rem; }
+  .puerta .tiendas { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin: 1.5rem 0; }
+  .puerta-nota { font-size: 0.9rem; opacity: 0.7; }
+</style>
