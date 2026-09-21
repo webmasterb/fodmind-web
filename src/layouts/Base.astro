@@ -239,15 +239,21 @@ const nav = [
       tiendas ya separan las descargas por campaña; esto mide el tramo anterior,
       que era ciego: con 300 visitas al mes desde Google y «Web Referrer: —» en
       App Store Connect no se sabía si nadie llegaba al botón o nadie lo pulsaba.
-      Un `sendBeacon` de texto es una petición simple —sin preflight— y sale
-      aunque la página ya se esté yendo a la tienda. Sin sendBeacon o con un
-      navegador automatizado no se cuenta nada.
+      Va por `fetch` con `keepalive` —sale aunque la página ya se esté yendo a
+      la tienda— y en modo no-cors, que con un cuerpo de texto es una petición
+      simple sin preflight. No por `sendBeacon`: medido el 21-sep en Chrome,
+      `sendBeacon` devolvía true y la función no recibía nada; el mismo cuerpo
+      por fetch llegaba. Con un navegador automatizado no se cuenta nada.
     */}
     <script is:inline define:vars={{ EV: EVENTOS_URL, L: locale, PG: pagina }}>
       (function () {
-        if (!navigator.sendBeacon || navigator.webdriver) return;
+        if (navigator.webdriver || !(window.fetch || navigator.sendBeacon)) return;
         var manda = function (t, ct) {
-          try { navigator.sendBeacon(EV, 'v=1&l=' + L + '&pg=' + PG + '&t=' + t + '&ct=' + (ct || '-')); } catch (e) {}
+          var cuerpo = 'v=1&l=' + L + '&pg=' + PG + '&t=' + t + '&ct=' + (ct || '-');
+          try {
+            if (window.fetch) fetch(EV, { method: 'POST', mode: 'no-cors', keepalive: true, body: cuerpo }).catch(function () {});
+            else navigator.sendBeacon(EV, cuerpo);
+          } catch (e) {}
         };
         var nombre = function (a) { return 'web-' + (a.getAttribute('data-ct') || 'boton'); };
         manda('vista');
