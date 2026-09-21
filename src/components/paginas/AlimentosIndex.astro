@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
+import CtaTi from '../../components/CtaTi.astro';
 import { alternatesEstatico, CAT_SLUG, base, urlCategoria, urlNivel, type Locale } from '../../lib/rutas';
 import { CATEGORIAS, foods } from '../../lib/datos';
 import { catName } from '../../i18n/categorias';
@@ -29,6 +30,7 @@ const colores = JSON.stringify(LEVEL_COLOR);
   description={s.foodsIndexText}
   canonical={alternates[locale]}
   alternates={alternates}
+  pagina="indice"
 >
   <div class="entrada">
     <h1>{s.foodsIndexTitle}</h1>
@@ -39,6 +41,8 @@ const colores = JSON.stringify(LEVEL_COLOR);
     <input id="buscador" type="search" placeholder={s.searchPlaceholder} autocomplete="off" aria-label={s.searchPlaceholder} />
     <div id="resultados" class="resultados" role="listbox"></div>
   </div>
+
+  {s.ctaListaTitulo && <CtaTi locale={locale} ct="lista" />}
 
   <section>
     <div class="rejilla-3">

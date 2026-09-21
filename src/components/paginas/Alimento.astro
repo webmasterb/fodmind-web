@@ -3,6 +3,7 @@ import Base from '../../layouts/Base.astro';
 import BadgeNivel from '../../components/BadgeNivel.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
 import CtaEscaner from '../../components/CtaEscaner.astro';
+import CtaTi from '../../components/CtaTi.astro';
 import Lector from '../../components/Lector.astro';
 import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlFuentes, urlNivelCat, urlArticulo, alternatesAlimento, type Locale } from '../../lib/rutas';
 import { catName } from '../../i18n/categorias';
@@ -84,6 +85,12 @@ const contextoRacion =
       })
     : null;
 const citas = citasDeNota(food.notaCitas);
+// La prueba de la landing (docs/superpowers/specs/2026-09-21-landing-instalaciones.md)
+// vive en las cadenas: el idioma que las tiene está en prueba. Fresco = sin
+// etiqueta que escanear; la frontera es gruesa a propósito (la proteína lleva
+// embutidos, los cereales llevan arroz) y se afina con los contadores, no antes.
+const enPrueba = Boolean(s.ctaTiTitulo);
+const fresco = ['fruits', 'vegetables', 'legumes', 'nuts_seeds', 'protein'].includes(food.category);
 
 // DE DÓNDE SALE CADA NÚMERO, con la regla de la ficha de la app: una línea
 // cuando la ración y la lista dicen lo mismo —1.780 de los 1.843— y dos con
@@ -102,6 +109,7 @@ const lineas = unaLinea
 // El pie no se pone debajo de un «nadie ha medido esto»: solo cuando algún
 // campo tiene fuente detrás.
 const conRespaldo = proc.lista.texto !== 'provenanceC' || proc.racion.texto !== 'provenanceC';
+const algunaC = proc.lista.texto === 'provenanceC' || proc.racion.texto === 'provenanceC';
 
 const jsonld = [
   {
@@ -135,6 +143,7 @@ const jsonld = [
   canonical={alternates[locale]}
   alternates={alternates}
   jsonld={jsonld}
+  pagina="ficha"
 >
   <nav class="migas">
     <a href={urlLanding(locale)}>Fodmind</a> ›
@@ -171,8 +180,19 @@ const jsonld = [
 
   {/* Justo después de la respuesta, no al pie: quien llega del buscador ya
       tiene lo que venía a buscar en la primera pantalla y se va sin ver la
-      banda del final, que queda cuatro pantallas más abajo en un móvil. */}
-  <CtaEscaner locale={locale} />
+      banda del final, que queda cuatro pantallas más abajo en un móvil.
+
+      EL ARGUMENTO DEPENDE DEL ALIMENTO (21-sep-2026). Un mes con el escáner
+      como único argumento en las 11.486 fichas dio cero descargas medibles, y
+      seis de las nueve consultas que más traen son frescos: a quien pregunta
+      por la acelga, «escanea la etiqueta» no le dice nada. Los frescos llevan
+      el «¿y para ti?» (CtaTi) y los envasados el escáner. Solo en el idioma
+      que se prueba; los demás siguen igual y son el control. */}
+  {enPrueba && fresco ? (
+    <CtaTi locale={locale} food={food} ct="ti" />
+  ) : (
+    <CtaEscaner locale={locale} ct={enPrueba ? 'escaner' : 'contextual'} />
+  )}
 
   {food.fodmaps.length > 0 && (
     <section>
@@ -214,12 +234,13 @@ const jsonld = [
         <span aria-hidden="true">{mitad.texto === 'provenanceC' ? '?' : '✓'}</span>
         <span>
           {rotulo ? `${rotulo}: ` : ''}
-          {texto(mitad.texto, locale)}
+          {mitad.texto === 'provenanceC' && s.provenanciaCWeb ? s.provenanciaCWeb : texto(mitad.texto, locale)}
           {mitad.fuentes.length > 0 ? ` · ${texto('provenanceFrom', locale)} ${mitad.fuentes.join(', ')}` : ''}
         </span>
       </p>
     ))}
     {conRespaldo && <p class="procedencia-pie">{texto('dataNote', locale)}</p>}
+    {algunaC && s.provenanciaCApp && <p class="procedencia-pie">{s.provenanciaCApp}</p>}
     <p class="procedencia-pie"><a href={urlFuentes(locale)}>{texto('sourcesTitle', locale)}</a></p>
   </section>
 
@@ -252,6 +273,12 @@ const jsonld = [
   <section class="articulo">
     <h2 class="subrayado-seccion">{pregunta}</h2>
     <p>{respuesta}</p>
+    {enPrueba && s.faqPuente && (
+      <p class="faq-puente">
+        {rellenar(s.faqPuente, { name: nombre })}
+        <a class="boton boton-secundario" href="#descargar" data-descarga data-ct="faq">{s.faqPuenteBoton}</a>
+      </p>
+    )}
   </section>
 
   <div class="aviso">{s.notice}</div>

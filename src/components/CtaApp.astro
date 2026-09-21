@@ -8,19 +8,36 @@ interface Props {
 
 const { locale } = Astro.props;
 const s = t(locale);
+// EL QR SOLO EN ESCRITORIO Y, DE MOMENTO, SOLO EN ESPAÑOL. Uno de cada cinco
+// clics desde Google llega en un ordenador, donde la tienda está en otro
+// aparato y el botón solo podía bajar hasta aquí. El QR lleva a /qr/, que
+// salta a la tienda del teléfono con la campaña «web-qr». Español primero
+// porque es el idioma con más clics y el resto queda de control: si mueve
+// algo, se abre a los demás. La prueba de al lado (`ctaPrueba`) sigue la
+// misma regla.
+const conQr = locale === 'es' && s.qrTexto;
 ---
 
 <section class="cta-banda" id="descargar">
   <h2>Fodmind</h2>
   <p>{s.metaHomeDesc}</p>
   <div class="tiendas">
-    <a class="tienda-boton" href={enlaceAppStore('web-banda')} rel="noopener" data-tienda="apple">
+    <a class="tienda-boton" href={enlaceAppStore('web-banda')} rel="noopener" data-tienda="apple" data-ct="banda">
       <span aria-hidden="true"></span>
       <span><small>{s.badgeApple}</small>App Store</span>
     </a>
-    <a class="tienda-boton" href={enlacePlay('web-banda')} rel="noopener" data-tienda="play">
+    <a class="tienda-boton" href={enlacePlay('web-banda')} rel="noopener" data-tienda="play" data-ct="banda">
       <span aria-hidden="true">▶</span>
       <span><small>{s.badgePlay}</small>Google Play</span>
     </a>
   </div>
+  {s.ctaPrueba && <p class="cta-prueba">{s.ctaPrueba}</p>}
+  {conQr && (
+    <div class="cta-qr">
+      <a href="/qr/" data-ct="qr" aria-label={s.qrTexto}>
+        <img src="/app/qr-web.svg" width="120" height="120" alt="" decoding="async" loading="lazy" />
+      </a>
+      <p>{s.qrTexto}</p>
+    </div>
+  )}
 </section>

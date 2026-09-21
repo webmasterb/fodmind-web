@@ -269,7 +269,16 @@ ok(sinBarra === 0, `las ${examinadas} páginas llevan la barra fija y el botón 
 ok(bannerSinCampana === 0, 'la barra nativa de la App Store lleva la campaña web-banner');
 // La ficha lleva la llamada contextual con la pantalla del lector en su idioma.
 ok(manzanaEn.includes('data-ct="contextual"') && manzanaEn.includes('/app/lector-en.webp'), 'la ficha en inglés lleva la llamada al lector, con su captura');
-ok(leer(sandiaEs).includes('/app/lector-es.webp') && leer(sandiaEs).includes('Escanea la etiqueta'), 'la ficha en español lleva la llamada al lector, en español');
+// En español (la prueba del 21-sep-2026) el argumento depende del alimento: la
+// sandía es fresca y lleva el «¿y para ti?» con su nombre en la tarjeta; un
+// envasado sigue llevando el lector, con su captura y su botón renombrado.
+ok(leer(sandiaEs).includes('data-ct="ti"') && leer(sandiaEs).includes('class="tarjeta-app-nombre"') && !leer(sandiaEs).includes('data-ct="contextual"'), 'la ficha española de un fresco lleva el «¿y para ti?» y no el lector');
+const lecitinaEs = leer([...dir('es'), SEG.alimentos.es, 'lecitina-de-soja', 'index.html'].join('/'));
+ok(lecitinaEs.includes('/app/lector-es.webp') && lecitinaEs.includes('Escanea la etiqueta') && lecitinaEs.includes('data-ct="escaner"'), 'la ficha española de un envasado lleva la llamada al lector, en español');
+ok(!leer(sandiaEs).includes('data-ct="contextual"') && manzanaEn.includes('data-ct="contextual"') && !manzanaEn.includes('cta-prueba'), 'los demás idiomas siguen como estaban: son el control de la prueba');
+// Los contadores: cada página dice qué es y manda los eventos a la función.
+ok(leer(sandiaEs).includes('cloudfunctions.net/webEvento') && leer(sandiaEs).includes('const PG = "ficha"'), 'la ficha manda sus eventos con el tipo de página');
+ok(existsSync(join(DIST, 'qr', 'index.html')) && leer('qr/index.html').includes('ct=web-qr'), 'la puerta del QR existe y lleva la campaña web-qr');
 for (const l of LANGS) ok(existsSync(join(RAIZ, 'public', 'app', `lector-${l}.webp`)), `la captura del lector existe en ${l}`);
 // El lector de la web y el botón que abre la app, en cada ficha.
 ok(manzanaEn.includes('id="lector"') && manzanaEn.includes('data-abrir'), 'la ficha lleva el lector de la app y el botón que abre la app');

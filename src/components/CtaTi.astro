@@ -1,0 +1,62 @@
+---
+/**
+ * LA LLAMADA «¿Y PARA TI?», la que vende lo único que la web no puede dar.
+ *
+ * Quien llega del buscador con «acelgas fodmap» ya tiene la respuesta en la
+ * primera pantalla, y esa respuesta es para la mayoría. La única pregunta que
+ * solo la app contesta es la suya: si ESTE alimento le sienta bien a ELLA,
+ * que es lo que el diario de la app cruza —días con él frente a días sin—.
+ * Para un alimento fresco el escáner no dice nada (la acelga no tiene
+ * etiqueta); esto sí.
+ *
+ * La tarjeta de al lado es la fila de «Sospechosos» de Mi plan con el
+ * alimento de la ficha, en HTML, no una captura: pesa menos que una imagen y
+ * enseña el nombre de verdad. Las cifras van marcadas como ejemplo.
+ *
+ * Sin `food` es la versión para las listas de categoría y nivel, que eran las
+ * páginas con más impresiones y no tenían ninguna salida propia a la app.
+ * Solo existe en el idioma donde se prueba: el resto no tiene las cadenas y
+ * la ficha sigue enseñando el escáner (ver Alimento.astro).
+ */
+import { t } from '../i18n/strings';
+import { rellenar } from '../lib/formatos';
+import type { Locale } from '../lib/rutas';
+import type { Alimento } from '../lib/tipos';
+
+interface Props {
+  locale: Locale;
+  food?: Alimento;
+  /** El nombre del botón en las tiendas y en los contadores: `web-<ct>`. */
+  ct: string;
+}
+
+const { locale, food, ct } = Astro.props;
+const s = t(locale);
+const nombre = food ? food.names[locale] : '';
+const titulo = food ? s.ctaTiTitulo : s.ctaListaTitulo;
+const texto = food ? rellenar(s.ctaTiTexto ?? '', { name: nombre }) : s.ctaListaTexto;
+const boton = food ? s.ctaTiBoton : s.ctaListaBoton;
+---
+
+<aside class="cta-escaner cta-ti">
+  {food ? (
+    <figure class="tarjeta-app" aria-hidden="true">
+      <p class="tarjeta-app-rotulo">{s.ctaTiSospechosos}</p>
+      <div class="tarjeta-app-fila">
+        <span class="tarjeta-app-emoji">{food.emoji}</span>
+        <span class="tarjeta-app-nombre">
+          {nombre}
+          <small>{s.ctaTiSinEl}</small>
+        </span>
+        <span class="tarjeta-app-dias">〜 {s.ctaTiDias}</span>
+      </div>
+      <figcaption>{s.ctaTiEjemplo}</figcaption>
+    </figure>
+  ) : null}
+  <div>
+    <p class="cta-escaner-titulo">{titulo}</p>
+    <p>{texto}</p>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-ct={ct}>{boton}</a>
+    {s.ctaPrueba && <p class="cta-prueba">{s.ctaPrueba}</p>}
+  </div>
+</aside>

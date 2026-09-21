@@ -9,6 +9,7 @@
  */
 import Base from '../../layouts/Base.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
+import CtaTi from '../../components/CtaTi.astro';
 import {
   CAT_SLUG,
   urlLanding,
@@ -97,6 +98,7 @@ const jsonld = [
   canonical={alternates[locale]}
   alternates={alternates}
   jsonld={jsonld}
+  pagina="lista"
 >
   <nav class="migas">
     <a href={urlLanding(locale)}>Fodmind</a> ›
@@ -121,6 +123,8 @@ const jsonld = [
       <a href={urlGuia(locale)}>{s.navGuia}</a>
     </p>
   </div>
+
+  {s.ctaListaTitulo && <CtaTi locale={locale} ct="lista" />}
 
   {catId ? (
     <section>

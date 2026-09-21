@@ -14,9 +14,15 @@ interface Props {
   alternates: Record<Locale, string>;
   jsonld?: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
+  /** Qué tipo de página es, para los contadores: los eventos se agrupan por esto. */
+  pagina?: 'ficha' | 'lista' | 'indice' | 'landing' | 'escaner' | 'guia' | 'blog' | 'otra';
 }
 
-const { locale, title, description, canonical, alternates, jsonld, noindex } = Astro.props;
+const { locale, title, description, canonical, alternates, jsonld, noindex, pagina = 'otra' } = Astro.props;
+// Los contadores de la web viven en una Cloud Function del proyecto de la app
+// (backend/functions/web-eventos.js): vista, «llegó al botón» y clic, por
+// idioma, tipo de página y botón. Sin identificadores ni cookies.
+const EVENTOS_URL = 'https://europe-west1-fodmap-guide-app.cloudfunctions.net/webEvento';
 const s = t(locale);
 const site = Astro.site ?? new URL('https://fodmind.com');
 const abs = (ruta: string) => new URL(ruta, site).toString();
@@ -194,8 +200,8 @@ const nav = [
         </div>
         <div>
           <p class="pie-titulo">{s.ctaApp}</p>
-          <a href={enlaceAppStore('web-pie')} rel="noopener" data-tienda="apple">App Store</a>
-          <a href={enlacePlay('web-pie')} rel="noopener" data-tienda="play">Google Play</a>
+          <a href={enlaceAppStore('web-pie')} rel="noopener" data-tienda="apple" data-ct="pie">App Store</a>
+          <a href={enlacePlay('web-pie')} rel="noopener" data-tienda="play" data-ct="pie">Google Play</a>
         </div>
         <div>
           <p class="pie-titulo">Legal</p>
@@ -227,5 +233,47 @@ const nav = [
       src="https://static.cloudflareinsights.com/beacon.min.js"
       data-cf-beacon='{"token": "52da165e457a405bb28a45a1a23fe3cb"}'
     ></script>
+    {/*
+      LOS TRES CONTADORES DE CADA BOTÓN: cuántos ven la página, cuántos llegan
+      hasta cada botón (la mitad visible una vez) y cuántos lo pulsan. Las
+      tiendas ya separan las descargas por campaña; esto mide el tramo anterior,
+      que era ciego: con 300 visitas al mes desde Google y «Web Referrer: —» en
+      App Store Connect no se sabía si nadie llegaba al botón o nadie lo pulsaba.
+      Un `sendBeacon` de texto es una petición simple —sin preflight— y sale
+      aunque la página ya se esté yendo a la tienda. Sin sendBeacon o con un
+      navegador automatizado no se cuenta nada.
+    */}
+    <script is:inline define:vars={{ EV: EVENTOS_URL, L: locale, PG: pagina }}>
+      (function () {
+        if (!navigator.sendBeacon || navigator.webdriver) return;
+        var manda = function (t, ct) {
+          try { navigator.sendBeacon(EV, 'v=1&l=' + L + '&pg=' + PG + '&t=' + t + '&ct=' + (ct || '-')); } catch (e) {}
+        };
+        var nombre = function (a) { return 'web-' + (a.getAttribute('data-ct') || 'boton'); };
+        manda('vista');
+        document.addEventListener('click', function (e) {
+          var a = e.target && e.target.closest && e.target.closest('a[data-ct]');
+          if (a) manda('clic', nombre(a));
+        }, true);
+        if (!('IntersectionObserver' in window)) return;
+        var vistos = {};
+        var io = new IntersectionObserver(function (entradas) {
+          for (var i = 0; i < entradas.length; i += 1) {
+            if (!entradas[i].isIntersecting) continue;
+            var ct = nombre(entradas[i].target);
+            io.unobserve(entradas[i].target);
+            if (vistos[ct]) continue;
+            vistos[ct] = true;
+            manda('visto', ct);
+          }
+        }, { threshold: 0.5 });
+        var arranca = function () {
+          var l = document.querySelectorAll('a[data-ct]');
+          for (var j = 0; j < l.length; j += 1) io.observe(l[j]);
+        };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', arranca);
+        else arranca();
+      })();
+    </script>
   </body>
 </html>

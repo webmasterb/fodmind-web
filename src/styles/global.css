@@ -1016,3 +1016,116 @@ details p {
   font-size: 13px;
   overflow-wrap: anywhere;
 }
+
+/* ---------- «¿Y para ti?»: la tarjeta de Mi plan con el alimento de la ficha ---------- */
+
+.cta-prueba {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.cta-banda .cta-prueba {
+  color: #fff;
+  opacity: 0.8;
+  margin-top: 16px;
+}
+
+.tarjeta-app {
+  margin: 0;
+  background: #fbfaf7;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 14px 14px 10px;
+}
+
+.tarjeta-app-rotulo {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2869b3;
+}
+
+.tarjeta-app-fila {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.tarjeta-app-emoji {
+  font-size: 22px;
+}
+
+.tarjeta-app-nombre {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.tarjeta-app-nombre small {
+  display: block;
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.tarjeta-app-dias {
+  font-size: 14px;
+  color: #b3261e;
+  white-space: nowrap;
+}
+
+.tarjeta-app figcaption {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.faq-puente {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--borde);
+}
+
+/* El QR solo tiene sentido donde la tienda está en otro aparato. */
+.cta-qr {
+  display: none;
+}
+
+@media (min-width: 721px) {
+  .cta-qr {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 22px;
+  }
+
+  .cta-qr img {
+    display: block;
+    width: 120px;
+    height: 120px;
+    border-radius: 10px;
+    background: #fff;
+    padding: 6px;
+  }
+
+  .cta-qr p {
+    margin: 0;
+    max-width: 200px;
+    text-align: left;
+    opacity: 0.85;
+  }
+}

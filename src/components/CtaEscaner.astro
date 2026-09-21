@@ -19,9 +19,11 @@ import type { Locale } from '../lib/rutas';
 
 interface Props {
   locale: Locale;
+  /** El nombre del botón en las tiendas y en los contadores: «contextual» salvo donde se prueba otro. */
+  ct?: string;
 }
 
-const { locale } = Astro.props;
+const { locale, ct = 'contextual' } = Astro.props;
 const s = t(locale);
 ---
 
@@ -30,6 +32,7 @@ const s = t(locale);
   <div>
     <p class="cta-escaner-titulo">{s.ctaEscanerTitulo}</p>
     <p>{s.ctaEscanerTexto}</p>
-    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="contextual">{s.ctaEscanear}</a>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct={ct}>{s.ctaEscanear}</a>
+    {s.ctaPrueba && <p class="cta-prueba">{s.ctaPrueba}</p>}
   </div>
 </aside>

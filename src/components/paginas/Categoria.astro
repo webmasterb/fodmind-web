@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
+import CtaTi from '../../components/CtaTi.astro';
 import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlNivelCat, alternatesCategoria, type Locale } from '../../lib/rutas';
 import { categoria } from '../../lib/datos';
 import { catName, CAT_NAMES } from '../../i18n/categorias';
@@ -45,6 +46,7 @@ const breadcrumb = {
   canonical={alternates[locale]}
   alternates={alternates}
   jsonld={breadcrumb}
+  pagina="lista"
 >
   <nav class="migas">
     <a href={urlLanding(locale)}>Fodmind</a> ›
@@ -56,6 +58,10 @@ const breadcrumb = {
     <h1>{nombre}</h1>
     <p class="texto-muted">{rellenar(s.nFoods, { n: fmt(cat.alimentos.length, locale) })} · {s.foodsIndexText}</p>
   </div>
+
+  {/* Las listas eran las páginas con más impresiones y no tenían salida propia
+      a la app (21-sep-2026). Solo en el idioma en prueba. */}
+  {s.ctaListaTitulo && <CtaTi locale={locale} ct="lista" />}
 
   {porNivel.map(
     (grupo) =>

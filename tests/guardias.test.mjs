@@ -308,11 +308,16 @@ test('strings.ts: cada clave de la interfaz está en los seis idiomas', () => {
   // cuentan las claves de primer nivel de la interfaz en cada bloque de idioma.
   const src = readFileSync(join(RAIZ, 'src', 'i18n', 'strings.ts'), 'utf8');
   const interfaz = src.slice(src.indexOf('export interface Strings {'), src.indexOf('export const STR'));
-  const claves = [...interfaz.matchAll(/^  (\w+)[?]?:/gm)].map((m) => m[1]);
+  // Las claves opcionales (`clave?:`) son la excepción a propósito: una prueba
+  // de landing vive en un solo idioma y el resto es control (21-sep-2026). Cada
+  // uso de una opcional va detrás de una condición; aquí solo se exige que
+  // exista en algún idioma, para que no quede una declarada y muerta.
+  const claves = [...interfaz.matchAll(/^  (\w+)([?]?):/gm)].map((m) => ({ clave: m[1], opcional: m[2] === '?' }));
   assert.ok(claves.length > 40, `la interfaz tiene ${claves.length} claves`);
   const cuerpo = src.slice(src.indexOf('export const STR'));
-  for (const clave of claves) {
+  for (const { clave, opcional } of claves) {
     const veces = (cuerpo.match(new RegExp(`^    ${clave}:`, 'gm')) || []).length;
-    assert.equal(veces, LANGS.length, `«${clave}» está en ${veces} idiomas, no en ${LANGS.length}`);
+    if (opcional) assert.ok(veces >= 1 && veces <= LANGS.length, `«${clave}» (opcional) está en ${veces} idiomas`);
+    else assert.equal(veces, LANGS.length, `«${clave}» está en ${veces} idiomas, no en ${LANGS.length}`);
   }
 });

@@ -35,6 +35,23 @@ export interface Strings {
   ctaEscanerTitulo: string;
   ctaEscanerTexto: string;
   ctaEscanerAlt: string;
+  /** Lo de abajo existe solo en el idioma donde se prueba (es, 21-sep-2026); el resto es control. */
+  ctaPrueba?: string;
+  qrTexto?: string;
+  ctaTiTitulo?: string;
+  ctaTiTexto?: string;
+  ctaTiBoton?: string;
+  ctaTiEjemplo?: string;
+  ctaTiSospechosos?: string;
+  ctaTiSinEl?: string;
+  ctaTiDias?: string;
+  ctaListaTitulo?: string;
+  ctaListaTexto?: string;
+  ctaListaBoton?: string;
+  faqPuente?: string;
+  faqPuenteBoton?: string;
+  provenanciaCWeb?: string;
+  provenanciaCApp?: string;
   barraApp: string;
   cerrar: string;
   badgeApple: string;
@@ -139,6 +156,23 @@ export const STR: Record<Locale, Strings> = {
     ctaEscanerTexto:
       'Apunta con la cámara a la lista de ingredientes: la app marca cada palabra FODMAP y te dice por qué. Gratis en iOS y Android.',
     ctaEscanerAlt: 'Resultado del lector de etiquetas de Fodmind: los ingredientes con FODMAP, marcados en rojo',
+    ctaPrueba: '1.843 alimentos, cada uno con su procedencia: medido, calculado o estimado. Sin cuenta. Gratis en iOS y Android.',
+    qrTexto: 'Escanea con el móvil para instalarla',
+    ctaTiTitulo: 'Eso es lo que dice la tabla. Lo que te sienta a ti lo dice tu diario.',
+    ctaTiTexto:
+      'Apunta lo que comes y cómo te encuentras: la app compara los días con {name} y los días sin, y te dice si es sospechoso o bien tolerado.',
+    ctaTiBoton: 'Ver si me sienta bien',
+    ctaTiEjemplo: 'Ejemplo. Con tu diario, las cifras son las tuyas.',
+    ctaTiSospechosos: 'Sospechosos',
+    ctaTiSinEl: 'los días sin él, 1 de cada 8',
+    ctaTiDias: '4 de 5 días',
+    ctaListaTitulo: 'Esta lista es para la mayoría. La tuya la hace tu diario.',
+    ctaListaTexto: 'La app cruza lo que comes con cómo te encuentras y separa lo que te sienta bien de lo sospechoso.',
+    ctaListaBoton: 'Hacer mi lista',
+    faqPuente: 'Lo que te sienta a ti se ve en el diario de la app: días con {name} frente a días sin.',
+    faqPuenteBoton: 'Probar con mi diario',
+    provenanciaCWeb: 'Ningún laboratorio ha publicado una medición de este alimento: el nivel es una estimación, no una medida.',
+    provenanciaCApp: 'La app marca en cada alimento si el dato es medido, calculado o estimado.',
     barraApp: 'El escáner FODMAP',
     cerrar: 'Cerrar',
     badgeApple: 'Descárgalo en el',
@@ -303,7 +337,7 @@ export const STR: Record<Locale, Strings> = {
       'Escáner de etiquetas y de platos: si fotografías la lista de ingredientes de un producto o un plato, la foto se envía a nuestro servidor para leerla mejor que tu móvil. Nuestro servidor no la guarda; el proveedor externo de reconocimiento de imagen puede conservarla hasta 30 días.',
       'El escáner de código de barras funciona en el propio móvil y no envía nada más allá de la consulta.',
       'Compras: las suscripciones se gestionan por Apple (App Store) o Google (Play Store). El estado de tu suscripción nos llega de forma anónima a través de RevenueCat para desbloquear las funciones premium. No conocemos tu identidad ni tus datos de pago.',
-      'Esta web no usa cookies de seguimiento. Las visitas se miden de forma anónima y agregada con Cloudflare Web Analytics.',
+      'Esta web no usa cookies de seguimiento. Las visitas se miden de forma anónima y agregada con Cloudflare Web Analytics, y los clics en los botones de descarga se cuentan también de forma agregada, sin identificadores.',
       'Contacto: soporte@fodmind.com',
     ],
     termsTitle: 'Términos de uso',
@@ -500,7 +534,7 @@ export const STR: Record<Locale, Strings> = {
       'Label and plate scanner: if you photograph a product’s ingredient list or a plate, the photo is sent to our server, which reads it better than your phone. Our server does not store it; the external image recognition provider may retain it for up to 30 days.',
       'The barcode scanner runs on the phone itself and sends nothing beyond the lookup.',
       'Purchases: subscriptions are handled by Apple (App Store) or Google (Play Store). Your subscription status reaches us anonymously through RevenueCat to unlock premium features. We never learn your identity or payment details.',
-      'This website uses no tracking cookies. Visits are measured anonymously and in aggregate with Cloudflare Web Analytics.',
+      'This website uses no tracking cookies. Visits are measured anonymously and in aggregate with Cloudflare Web Analytics, and taps on the download buttons are counted in aggregate too, with no identifiers.',
       'Contact: soporte@fodmind.com',
     ],
     termsTitle: 'Terms of use',
@@ -697,7 +731,7 @@ export const STR: Record<Locale, Strings> = {
       'Lecteur d’étiquettes et de plats : si vous photographiez la liste d’ingrédients d’un produit ou un plat, la photo est envoyée à notre serveur, qui la lit mieux que votre téléphone. Notre serveur ne la conserve pas ; le prestataire externe de reconnaissance d’image peut la conserver jusqu’à 30 jours.',
       'Le scanner de code-barres fonctionne sur le téléphone lui-même et n’envoie rien au-delà de la consultation.',
       'Achats : les abonnements sont gérés par Apple (App Store) ou Google (Play Store). Le statut de votre abonnement nous parvient de manière anonyme via RevenueCat pour débloquer les fonctions premium. Nous ne connaissons ni votre identité ni vos moyens de paiement.',
-      'Ce site n’utilise pas de cookies de suivi. Les visites sont mesurées de façon anonyme et agrégée avec Cloudflare Web Analytics.',
+      'Ce site n’utilise pas de cookies de suivi. Les visites sont mesurées de façon anonyme et agrégée avec Cloudflare Web Analytics, et les clics sur les boutons de téléchargement sont aussi comptés de façon agrégée, sans identifiant.',
       'Contact : soporte@fodmind.com',
     ],
     termsTitle: 'Conditions d’utilisation',
@@ -894,7 +928,7 @@ export const STR: Record<Locale, Strings> = {
       'Etiketten- und Gerichte-Scanner: Fotografierst du die Zutatenliste eines Produkts oder ein Gericht, wird das Foto an unseren Server gesendet, der es besser liest als dein Handy. Unser Server speichert es nicht; der externe Anbieter der Bilderkennung kann es bis zu 30 Tage aufbewahren.',
       'Der Barcode-Scanner läuft auf dem Handy selbst und sendet nichts über die Abfrage hinaus.',
       'Käufe: Abos werden über Apple (App Store) oder Google (Play Store) abgewickelt. Der Status deines Abos erreicht uns anonym über RevenueCat, um Premium-Funktionen freizuschalten. Deine Identität und Zahlungsdaten kennen wir nicht.',
-      'Diese Website verwendet keine Tracking-Cookies. Besuche werden anonym und aggregiert mit Cloudflare Web Analytics gemessen.',
+      'Diese Website verwendet keine Tracking-Cookies. Besuche werden anonym und aggregiert mit Cloudflare Web Analytics gemessen, und Klicks auf die Download-Buttons werden ebenfalls nur aggregiert gezählt, ohne Kennungen.',
       'Kontakt: soporte@fodmind.com',
     ],
     termsTitle: 'Nutzungsbedingungen',
@@ -1091,7 +1125,7 @@ export const STR: Record<Locale, Strings> = {
       'Lettore di etichette e piatti: se fotografi la lista degli ingredienti di un prodotto o un piatto, la foto viene inviata al nostro server, che la legge meglio del telefono. Il nostro server non la conserva; il fornitore esterno di riconoscimento immagini può conservarla fino a 30 giorni.',
       'Lo scanner di codici a barre funziona sul telefono e non invia nulla oltre la consultazione.',
       'Acquisti: gli abbonamenti sono gestiti da Apple (App Store) o Google (Play Store). Lo stato dell’abbonamento ci arriva in forma anonima tramite RevenueCat per sbloccare le funzioni premium. Non conosciamo la tua identità né i tuoi dati di pagamento.',
-      'Questo sito non usa cookie di tracciamento. Le visite vengono misurate in forma anonima e aggregata con Cloudflare Web Analytics.',
+      'Questo sito non usa cookie di tracciamento. Le visite vengono misurate in forma anonima e aggregata con Cloudflare Web Analytics, e anche i clic sui pulsanti di download vengono contati in forma aggregata, senza identificatori.',
       'Contatti: soporte@fodmind.com',
     ],
     termsTitle: 'Termini di utilizzo',
@@ -1288,7 +1322,7 @@ export const STR: Record<Locale, Strings> = {
       'Leitor de etiquetas e de pratos: se fotografares a lista de ingredientes de um produto ou um prato, a foto é enviada ao nosso servidor, que a lê melhor do que o telemóvel. O nosso servidor não a guarda; o fornecedor externo de reconhecimento de imagem pode conservá-la até 30 dias.',
       'O leitor de código de barras funciona no próprio telemóvel e não envia nada além da consulta.',
       'Compras: as subscrições são geridas pela Apple (App Store) ou pela Google (Play Store). O estado da subscrição chega-nos de forma anónima através da RevenueCat para desbloquear as funções premium. Não conhecemos a tua identidade nem os teus dados de pagamento.',
-      'Este site não usa cookies de rastreio. As visitas são medidas de forma anónima e agregada com o Cloudflare Web Analytics.',
+      'Este site não usa cookies de rastreio. As visitas são medidas de forma anónima e agregada com o Cloudflare Web Analytics, e os cliques nos botões de descarga também são contados de forma agregada, sem identificadores.',
       'Contacto: soporte@fodmind.com',
     ],
     termsTitle: 'Termos de utilização',
