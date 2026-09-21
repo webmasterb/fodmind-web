@@ -163,3 +163,24 @@ lo siguiente son reseñas, no landings.
 - Elegir Plausible o beacon propio.
 - Comprobar en qué pantalla entra hoy quien instala desde la web (onboarding con
   cuestionario en 2.5.1): el «¿Y para ti?» de la web tiene que enlazar con esa promesa.
+
+## 6. Hecho el 21-sep (fases 0 y 1, en `es`)
+
+- Contadores: `webEvento` y `webInforme` desplegadas en `europe-west1` del proyecto
+  `fodmap-guide-app` (repo de la app, `backend/functions/web-eventos.js`). Cada
+  página manda `vista`, `visto` (botón a media pantalla) y `clic` por `fetch` con
+  `keepalive`, no por `sendBeacon`: medido en Chrome, `sendBeacon` devolvía `true` y
+  no llegaba nada. Se leen con `node scripts/eventos.mjs [desde] [hasta]`; la clave
+  está en `C:/Users/bank0/fodmind-web-informe-clave.txt`.
+- Fase 1 en `es` (commit `d8d03f3` + `8283b84`): frescos → `CtaTi` (`web-ti`), envasados →
+  lector (`web-escaner`), listas (`web-lista`), QR de escritorio (`/qr/`, `web-qr`), puente
+  de la FAQ (`web-faq`), procedencia C reescrita, prueba junto a cada botón. Los otros
+  cinco idiomas siguen como estaban: `web-contextual` y sin prueba.
+- Comprobado en vivo en `/es/alimentos/acelga/`: bloques pintados, `vista` y `clic`
+  contados en Firestore; los `visto` solo se registran cuando la pestaña pinta
+  fotogramas (en una pestaña automatizada en segundo plano no salen).
+- Sin hacer: la lectura de Adquisición de Play por UTM (solo por la VM). Es el cero de
+  Android y se puede leer cuando se lea la primera quincena.
+- Lectura prevista: **5 de octubre**. `node scripts/eventos.mjs 2026-09-21` para el tramo
+  visita → botón, y ASC → Analytics → Campaigns para el tramo botón → descarga. Comparar
+  `es` contra `it` (el control con más clics).
