@@ -244,6 +244,17 @@ const RETO_MS = 3 * DIA_MS;
  * ocupa tres días más el lavado. Es una estimación —«~14 sept»— para poder
  * decir «sigue evitando esto hasta entonces», no una cita.
  */
+/**
+ * Cuándo termina la fase de eliminación que está en marcha, o null si no hay
+ * ninguna. Las semanas son las elegidas o las cuatro de `SEMANAS_ELIMINACION`
+ * (lib/perfil.ts), que aquí no se importa para no cerrar un ciclo.
+ */
+const SEMANAS_POR_DEFECTO: SemanasEliminacion = 4;
+export function finDeEliminacion(state: PlanState): number | null {
+  if (state.eliminationStartedAt === null || state.eliminationEndedAt !== null) return null;
+  return state.eliminationStartedAt + (state.eliminationWeeks ?? SEMANAS_POR_DEFECTO) * 7 * DIA_MS;
+}
+
 export function fechasEstimadas(state: PlanState, now: number): Map<string, number> {
   let base: number;
   if (state.active) {
@@ -252,6 +263,13 @@ export function fechasEstimadas(state: PlanState, now: number): Map<string, numb
   } else {
     base = Math.max(now, (state.lastEndedAt ?? 0) + WASHOUT_MS);
   }
+  // CON LA ELIMINACIÓN EN MARCHA, NINGÚN RETO ANTES DE QUE ACABE (19-sep).
+  // El día 1 de la fase, «Lo que queda» ponía el primer reto para hoy mismo
+  // y el segundo para dentro de cinco días, cuando el onboarding acababa de
+  // decir «de uno en uno, a partir de la semana 5». Se contaba desde hoy en
+  // vez de desde el fin de la fase.
+  const fin = finDeEliminacion(state);
+  if (fin !== null) base = Math.max(base, fin);
   const fechas = new Map<string, number>();
   for (const plan of challengePlans) {
     if (state.results[plan.id] !== undefined || state.active?.challengeId === plan.id) continue;

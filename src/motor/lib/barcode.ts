@@ -63,7 +63,7 @@ const BASE = 'https://world.openfoodfacts.org/api/v2/product';
  * Se identifica la app, como pide su política de uso, y sin nada del usuario:
  * ni id de dispositivo, ni cuenta, ni nada que permita seguir a nadie.
  */
-const USER_AGENT = 'Fodmind/2.3 (app movil; contacto en la ficha de la App Store)';
+const USER_AGENT = 'Fodmind/2.5 (app movil; contacto en la ficha de la App Store)';
 
 /**
  * Corto a propósito. Esto se usa en un pasillo de supermercado, muchas veces

@@ -136,12 +136,12 @@
     "pt": "A procurar o produto…"
   },
   "labelBarcodeFound": {
-    "es": "Código leído",
-    "en": "Barcode read",
-    "fr": "Code lu",
-    "de": "Code gelesen",
-    "it": "Codice letto",
-    "pt": "Código lido"
+    "es": "Etiqueta leída",
+    "en": "Label read",
+    "fr": "Étiquette lue",
+    "de": "Etikett gelesen",
+    "it": "Etichetta letta",
+    "pt": "Rótulo lido"
   },
   "labelBarcodeOtherLang": {
     "es": "La lista está en otro idioma. El análisis vale igual; repásala.",
