@@ -860,54 +860,6 @@ details p {
   color: var(--muted);
 }
 
-/* ---------- barra fija de descarga, solo móvil ---------- */
-
-.barra-app {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
-  background: rgba(250, 247, 239, 0.97);
-  border-top: 1px solid var(--borde);
-  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.08);
-}
-
-.barra-app[hidden] {
-  display: none;
-}
-
-.barra-app-texto {
-  flex: 1;
-  font-size: 13px;
-  font-weight: 700;
-  line-height: 1.25;
-}
-
-.barra-app .boton {
-  white-space: nowrap;
-}
-
-.barra-app-cerrar {
-  border: 0;
-  background: transparent;
-  color: var(--muted);
-  font-size: 24px;
-  line-height: 1;
-  padding: 4px 6px;
-  cursor: pointer;
-}
-
-@media (min-width: 721px) {
-  .barra-app {
-    display: none !important;
-  }
-}
-
 /* ---------- pie ---------- */
 
 .pie {

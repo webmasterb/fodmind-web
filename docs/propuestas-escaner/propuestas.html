@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Propuestas: tira animada del escáner</title>
+<style>
+:root {
+  --bg: #faf7ef; --card: #fff; --ink: #26251f; --muted: #6b675c;
+  --brand: #3a7d44; --brand-oscuro: #2f6337; --borde: #e7e2d3;
+  --alto: #AF3129; --medio: #845C07; --bajo: #217242;
+  --f-alto: #F9E4E1; --f-medio: #F7EDD6; --f-bajo: #E4F3E9;
+}
+* { box-sizing: border-box; }
+body { margin: 0; padding: 24px; background: #ddd8c8; font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif; color: var(--ink); }
+.rejilla { display: flex; flex-wrap: wrap; gap: 28px; }
+.prop { width: 375px; }
+.prop h2 { font-size: 15px; margin: 0 0 8px; }
+.prop h2 small { color: var(--muted); font-weight: 400; }
+
+/* ---- el móvil: la parte baja de una página cualquiera ---- */
+.movil { width: 375px; height: 330px; background: var(--bg); border-radius: 18px; overflow: hidden; position: relative; box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+.pag { padding: 18px 16px; }
+.pag .h { height: 14px; width: 70%; background: #cfc9b6; border-radius: 6px; margin-bottom: 14px; }
+.pag .l { height: 8px; background: #e2ddcc; border-radius: 4px; margin-bottom: 9px; }
+.pag .l.c { width: 62%; }
+.pag .ficha { display: flex; gap: 10px; align-items: center; margin: 14px 0; }
+.pag .ficha .foto { width: 46px; height: 46px; border-radius: 10px; background: #e9e3d2; }
+.pag .ficha .l { margin: 0 0 7px; }
+.chip { display: inline-block; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; letter-spacing: .02em; }
+.chip.alto { color: var(--alto); background: var(--f-alto); }
+.chip.medio { color: var(--medio); background: var(--f-medio); }
+.chip.bajo { color: var(--bajo); background: var(--f-bajo); }
+
+/* ---- la tira fija de abajo ---- */
+.tira { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 12px; padding: 12px 12px 14px; background: rgba(250,247,239,.97); border-top: 1px solid var(--borde); box-shadow: 0 -8px 22px rgba(0,0,0,.09); min-height: 104px; }
+.tira .txt { flex: 1; min-width: 0; }
+.tira .txt b { display: block; font-size: 14px; line-height: 1.2; }
+.tira .txt span { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.25; }
+.tira .boton { background: var(--brand); color: #fff; font-weight: 700; font-size: 13px; padding: 9px 13px; border-radius: 10px; text-decoration: none; white-space: nowrap; }
+.tira .x { position: absolute; top: 4px; right: 8px; color: var(--muted); font-size: 18px; line-height: 1; }
+.anim { position: relative; flex: none; }
+
+/* ================= A · Láser sobre el paquete ================= */
+.a .anim { width: 96px; height: 92px; }
+.a-pack { position: absolute; left: 14px; top: 4px; width: 66px; height: 84px; border-radius: 9px; background: #fff; border: 1.5px solid var(--borde); box-shadow: 0 3px 8px rgba(0,0,0,.07); overflow: hidden; }
+.a-pack .lbl { height: 6px; border-radius: 3px; background: #e7e2d3; margin: 10px 10px 0; }
+.a-pack .lbl.c { width: 28px; background: #cfc9b6; }
+.a-code { position: absolute; bottom: 9px; left: 10px; right: 10px; height: 24px; background: repeating-linear-gradient(90deg, #26251f 0 2px, transparent 2px 4px, #26251f 4px 5px, transparent 5px 8px, #26251f 8px 11px, transparent 11px 13px); }
+.a-flash { position: absolute; inset: 0; background: rgba(58,125,68,.22); opacity: 0; animation: a-flash 3s infinite; }
+.a-laser { position: absolute; left: 6px; right: 6px; height: 2px; background: var(--brand); box-shadow: 0 0 10px 3px rgba(58,125,68,.55); animation: a-laser 3s ease-in-out infinite; }
+@keyframes a-laser { 0% { top: 6px; opacity: 0; } 8% { opacity: 1; } 45% { top: 80px; opacity: 1; } 56% { top: 80px; opacity: 0; } 100% { top: 6px; opacity: 0; } }
+@keyframes a-flash { 0%, 44% { opacity: 0; } 48% { opacity: 1; } 60% { opacity: 1; } 70%, 100% { opacity: 0; } }
+.a-res { position: absolute; left: 0; right: 0; top: 0; }
+.a-res span { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.a .txt { position: relative; height: 62px; }
+.a .txt .ttl { position: absolute; left: 0; top: 0; right: 0; }
+.a-res { top: 22px; opacity: 0; transform: translateY(8px); animation: a-res 9s infinite; }
+.a-res:nth-child(3) { animation-delay: 3s; } .a-res:nth-child(4) { animation-delay: 6s; }
+@keyframes a-res { 0%, 15% { opacity: 0; transform: translateY(8px); } 19% { opacity: 1; transform: none; } 31% { opacity: 1; transform: none; } 34%, 100% { opacity: 0; transform: translateY(-6px); } }
+
+/* ================= B · Visor de la cámara ================= */
+.b .anim { width: 112px; height: 84px; }
+.b-vf { position: absolute; inset: 0; background: #1c1b18; border-radius: 12px; overflow: hidden; }
+.b-lbl { position: absolute; left: 18px; top: 14px; width: 76px; height: 56px; background: #fff; border-radius: 7px; padding: 8px; animation: b-slide 3s infinite; }
+.b-lbl i { display: block; height: 5px; border-radius: 3px; background: #e7e2d3; margin-bottom: 6px; }
+.b-lbl i.t { width: 30px; background: #cfc9b6; }
+.b-lbl i.code { height: 12px; margin-top: 7px; border-radius: 0; background: repeating-linear-gradient(90deg, #26251f 0 2px, transparent 2px 4px, #26251f 4px 5px, transparent 5px 7px); }
+@keyframes b-slide { 0% { transform: translateX(120px); } 14% { transform: none; } 82% { transform: none; } 96%, 100% { transform: translateX(-130px); } }
+.b-line { position: absolute; left: 12px; right: 12px; height: 2px; background: #7fd18b; box-shadow: 0 0 8px 2px rgba(127,209,139,.6); animation: b-line 3s infinite; }
+@keyframes b-line { 0%, 16% { top: 12px; opacity: 0; } 20% { opacity: 1; } 50% { top: 70px; opacity: 1; } 54%, 100% { top: 70px; opacity: 0; } }
+.b-esq { position: absolute; inset: 6px; pointer-events: none; }
+.b-esq i { position: absolute; width: 16px; height: 16px; border: 3px solid #fff; border-radius: 3px; }
+.b-esq i:nth-child(1) { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+.b-esq i:nth-child(2) { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+.b-esq i:nth-child(3) { left: 0; bottom: 0; border-right: 0; border-top: 0; }
+.b-esq i:nth-child(4) { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+.b-esq.col { opacity: 0; animation: b-col 9s infinite; }
+.b-esq.col i { border-color: var(--c); }
+.b-esq.col:nth-of-type(3) { animation-delay: 3s; } .b-esq.col:nth-of-type(4) { animation-delay: 6s; }
+@keyframes b-col { 0%, 17% { opacity: 0; } 19% { opacity: 1; } 27% { opacity: 1; } 30%, 100% { opacity: 0; } }
+.b-badge { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(.6); opacity: 0; font-size: 15px; font-weight: 900; padding: 5px 12px; border-radius: 999px; background: var(--f); color: var(--c); animation: b-badge 9s infinite; letter-spacing: .04em; }
+.b-badge:nth-of-type(6) { animation-delay: 3s; } .b-badge:nth-of-type(7) { animation-delay: 6s; }
+@keyframes b-badge { 0%, 17% { opacity: 0; transform: translate(-50%,-50%) scale(.6); } 19.5% { opacity: 1; transform: translate(-50%,-50%) scale(1.05); } 21% { transform: translate(-50%,-50%) scale(1); } 27% { opacity: 1; } 30%, 100% { opacity: 0; transform: translate(-50%,-50%) scale(.8); } }
+.b-nom { position: absolute; left: 0; right: 0; top: 40px; font-size: 12px; color: var(--muted); opacity: 0; animation: b-col 9s infinite; }
+.b-nom:nth-child(4) { animation-delay: 3s; } .b-nom:nth-child(5) { animation-delay: 6s; }
+.b .txt { position: relative; height: 60px; }
+.b .txt .ttl { position: absolute; left: 0; right: 0; top: 0; }
+
+/* ================= C · La cinta del súper ================= */
+.c .anim { width: 130px; height: 72px; }
+.c-banda { position: absolute; inset: 0; overflow: hidden; border-radius: 10px; background: #f1ede0; }
+.c-suelo { position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: repeating-linear-gradient(90deg, #d8d2bd 0 10px, #e4dfcc 10px 20px); animation: c-suelo 1s linear infinite; }
+@keyframes c-suelo { to { background-position: -20px 0; } }
+.c-track { position: absolute; left: 0; bottom: 10px; display: flex; gap: 22px; padding-left: 8px; animation: c-move 8s linear infinite; }
+@keyframes c-move { to { transform: translateX(-244px); } }
+.c-p { position: relative; width: 39px; height: 46px; flex: none; }
+.c-p .cuerpo { position: absolute; bottom: 0; left: 4px; right: 4px; top: 6px; background: #fff; border: 1.5px solid var(--borde); border-radius: 7px; }
+.c-p.bote .cuerpo { border-radius: 9px 9px 7px 7px; top: 10px; }
+.c-p.bote::before { content: ''; position: absolute; left: 10px; right: 10px; top: 4px; height: 8px; background: #cfc9b6; border-radius: 3px; }
+.c-p.botella .cuerpo { left: 9px; right: 9px; top: 12px; border-radius: 8px 8px 6px 6px; }
+.c-p.botella::before { content: ''; position: absolute; left: 15px; right: 15px; top: 2px; height: 12px; background: #d9d3c0; border-radius: 3px 3px 0 0; }
+.c-p.fruta .cuerpo { border-radius: 50%; top: 10px; left: 3px; right: 3px; background: #fff; }
+.c-p.fruta::before { content: ''; position: absolute; left: 50%; top: 4px; width: 3px; height: 10px; background: #3a7d44; border-radius: 2px; }
+.c-p .eti { position: absolute; left: 10px; right: 10px; top: 20px; height: 4px; background: #e7e2d3; border-radius: 2px; }
+.c-p .eti + .eti { top: 27px; width: 12px; }
+.c-punto { position: absolute; right: 0; top: 0; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2); }
+.c-clip { position: absolute; left: 0; top: 0; bottom: 0; width: 50%; overflow: hidden; }
+.c-clip .cuerpo, .c-clip .eti, .c-clip .c-p::before { visibility: hidden; }
+.c-gate { position: absolute; left: 50%; top: 4px; bottom: 6px; width: 2px; margin-left: -1px; background: var(--brand); box-shadow: 0 0 10px 3px rgba(58,125,68,.5); animation: c-gate 1s ease-in-out infinite alternate; }
+@keyframes c-gate { from { opacity: .55; } to { opacity: 1; } }
+.c-arco { position: absolute; left: 50%; top: 0; width: 34px; height: 8px; margin-left: -17px; background: var(--brand-oscuro); border-radius: 0 0 6px 6px; }
+
+/* ================= D · Del código de barras a tu ración ================= */
+.d .anim { width: 100px; height: 92px; }
+.d-code { position: absolute; left: 6px; top: 14px; width: 88px; height: 40px; background: repeating-linear-gradient(90deg, #26251f 0 2px, transparent 2px 4px, #26251f 4px 5px, transparent 5px 8px, #26251f 8px 11px, transparent 11px 13px, #26251f 13px 14px, transparent 14px 17px); }
+.d-code::after { content: '8 410123 456789'; position: absolute; left: 0; right: 0; top: 42px; font-size: 8px; letter-spacing: .12em; text-align: center; color: var(--muted); }
+.d-beam { position: absolute; left: 0; top: 30px; width: 100px; height: 3px; background: #e0342a; box-shadow: 0 0 10px 3px rgba(224,52,42,.55); border-radius: 2px; animation: d-beam .9s ease-in-out infinite alternate; transform-origin: 50% 50%; }
+@keyframes d-beam { from { transform: rotate(-4deg); opacity: .9; } to { transform: rotate(4deg); opacity: 1; } }
+.d-read { position: absolute; left: 6px; top: 14px; height: 40px; width: 0; background: rgba(58,125,68,.35); animation: d-read 3s infinite; }
+@keyframes d-read { 0%, 20% { width: 0; opacity: 1; } 55% { width: 88px; opacity: 1; } 68% { opacity: 0; } 100% { width: 0; opacity: 0; } }
+.d-beep { position: absolute; right: 2px; top: 0; font-size: 10px; font-weight: 800; color: var(--brand); opacity: 0; animation: d-beep 3s infinite; }
+@keyframes d-beep { 0%, 54% { opacity: 0; transform: translateY(4px); } 58% { opacity: 1; transform: none; } 75% { opacity: 1; } 82%, 100% { opacity: 0; } }
+.d .txt { position: relative; height: 66px; }
+.d .txt .ttl { position: absolute; top: 0; left: 0; right: 0; }
+.d-card { position: absolute; left: 0; right: 0; top: 22px; opacity: 0; transform: translateY(10px); animation: d-card 9s infinite; }
+.d-card:nth-child(3) { animation-delay: 3s; } .d-card:nth-child(4) { animation-delay: 6s; }
+.d-card b { font-size: 13px; }
+.d-card em { display: block; font-style: normal; font-size: 12px; margin-top: 4px; color: var(--ink); }
+@keyframes d-card { 0%, 18% { opacity: 0; transform: translateY(10px); } 21% { opacity: 1; transform: none; } 31% { opacity: 1; } 33.3%, 100% { opacity: 0; } }
+
+/* ================= E · Los ingredientes que pillan ================= */
+.e .anim { width: 118px; height: 90px; }
+.e-lista { position: absolute; left: 18px; top: 8px; width: 100px; background: #fff; border: 1.5px solid var(--borde); border-radius: 8px; padding: 7px 8px; font-size: 9.5px; line-height: 1.55; color: #3d3b34; box-shadow: 0 3px 8px rgba(0,0,0,.07); }
+.e-lista b { font-size: 8px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); display: block; margin-bottom: 1px; }
+.e-lista mark { background: transparent; color: inherit; border-radius: 3px; padding: 0 2px; animation: e-mark 3s infinite; }
+.e-lista mark.m2 { animation-delay: .35s; }
+@keyframes e-mark { 0%, 40% { background: transparent; color: inherit; } 46% { background: var(--f-alto); color: var(--alto); font-weight: 800; } 88% { background: var(--f-alto); color: var(--alto); font-weight: 800; } 95%, 100% { background: transparent; color: inherit; } }
+.e-lupa { position: absolute; left: 0; top: 14px; width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--brand); box-shadow: 0 0 0 4px rgba(58,125,68,.18), inset 0 0 0 30px rgba(58,125,68,.08); animation: e-lupa 3s ease-in-out infinite; }
+.e-lupa::after { content: ''; position: absolute; right: -14px; bottom: -12px; width: 6px; height: 18px; background: var(--brand); border-radius: 3px; transform: rotate(-45deg); }
+@keyframes e-lupa { 0% { transform: translate(0, 0); } 30% { transform: translate(64px, 10px); } 55% { transform: translate(38px, 32px); } 80% { transform: translate(64px, 10px); } 100% { transform: translate(0, 0); } }
+.e-num { position: absolute; right: 0; top: 0; min-width: 20px; height: 20px; border-radius: 999px; background: var(--alto); color: #fff; font-size: 11px; font-weight: 900; display: grid; place-items: center; padding: 0 6px; opacity: 0; animation: e-num 3s infinite; }
+@keyframes e-num { 0%, 42% { opacity: 0; transform: scale(.5); } 48% { opacity: 1; transform: scale(1.1); } 52% { transform: scale(1); } 88% { opacity: 1; } 95%, 100% { opacity: 0; } }
+.e .txt span.alt { color: var(--bajo); font-weight: 700; opacity: 0; animation: e-num 3s infinite; }
+</style>
+</head>
+<body>
+<div class="rejilla">
+
+<!-- ================= A ================= -->
+<div class="prop a" id="A">
+  <h2>A · El láser sobre el paquete <small>— barre el envase y suelta el veredicto</small></h2>
+  <div class="movil">
+    <div class="pag">
+      <div class="h"></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+      <div class="ficha"><div class="foto"></div><div style="flex:1"><div class="l" style="width:55%"></div><span class="chip alto">ALTO · fructanos</span></div></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+    </div>
+    <div class="tira">
+      <div class="anim">
+        <div class="a-pack"><div class="lbl c"></div><div class="lbl"></div><div class="lbl" style="width:24px"></div><div class="a-code"></div><div class="a-flash"></div><div class="a-laser"></div></div>
+      </div>
+      <div class="txt">
+        <b class="ttl">Escanea la etiqueta</b>
+        <div class="a-res"><span>Pan de molde</span><i class="chip alto">ALTO · fructanos</i></div>
+        <div class="a-res"><span>Leche sin lactosa</span><i class="chip bajo">BAJO · adelante</i></div>
+        <div class="a-res"><span>Yogur natural</span><i class="chip medio">MEDIO · ½ vaso</i></div>
+      </div>
+      <a class="boton" href="#">Escanear</a>
+      <span class="x">×</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= B ================= -->
+<div class="prop b" id="B">
+  <h2>B · El visor de la cámara <small>— la etiqueta entra, el marco se tiñe</small></h2>
+  <div class="movil">
+    <div class="pag">
+      <div class="h"></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+      <div class="ficha"><div class="foto"></div><div style="flex:1"><div class="l" style="width:55%"></div><span class="chip bajo">BAJO · ración libre</span></div></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+    </div>
+    <div class="tira">
+      <div class="anim">
+        <div class="b-vf">
+          <div class="b-lbl"><i class="t"></i><i></i><i style="width:40px"></i><i class="code"></i></div>
+          <div class="b-esq"><i></i><i></i><i></i><i></i></div>
+          <div class="b-esq col" style="--c:#217242"><i></i><i></i><i></i><i></i></div>
+          <div class="b-esq col" style="--c:#845C07"><i></i><i></i><i></i><i></i></div>
+          <div class="b-esq col" style="--c:#AF3129"><i></i><i></i><i></i><i></i></div>
+          <div class="b-line"></div>
+          <div class="b-badge" style="--c:#217242;--f:#E4F3E9">BAJO</div>
+          <div class="b-badge" style="--c:#845C07;--f:#F7EDD6">MEDIO</div>
+          <div class="b-badge" style="--c:#AF3129;--f:#F9E4E1">ALTO</div>
+        </div>
+      </div>
+      <div class="txt">
+        <b class="ttl">Apunta a la etiqueta</b>
+        <span style="position:absolute;top:19px">Veredicto en 2 segundos</span>
+        <span class="b-nom">Queso curado · 40 g</span>
+        <span class="b-nom">Hummus · 2 cucharadas</span>
+        <span class="b-nom">Cebolla frita · evitar</span>
+      </div>
+      <a class="boton" href="#">Escanear</a>
+      <span class="x">×</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= C ================= -->
+<div class="prop c" id="C">
+  <h2>C · La cinta del súper <small>— cada envase pasa por el arco y sale marcado</small></h2>
+  <div class="movil">
+    <div class="pag">
+      <div class="h"></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+      <div class="ficha"><div class="foto"></div><div style="flex:1"><div class="l" style="width:55%"></div><span class="chip medio">MEDIO · 2 cucharadas</span></div></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+    </div>
+    <div class="tira">
+      <div class="anim">
+        <div class="c-banda">
+          <div class="c-suelo"></div>
+          <div class="c-track">
+            <div class="c-p caja"><div class="cuerpo"></div><div class="eti"></div><div class="eti"></div><span class="c-punto" style="background:#AF3129"></span></div>
+            <div class="c-p bote"><div class="cuerpo"></div><div class="eti"></div><span class="c-punto" style="background:#217242"></span></div>
+            <div class="c-p botella"><div class="cuerpo"></div><span class="c-punto" style="background:#845C07"></span></div>
+            <div class="c-p fruta"><div class="cuerpo"></div><span class="c-punto" style="background:#217242"></span></div>
+            <div class="c-p caja"><div class="cuerpo"></div><div class="eti"></div><div class="eti"></div><span class="c-punto" style="background:#AF3129"></span></div>
+            <div class="c-p bote"><div class="cuerpo"></div><div class="eti"></div><span class="c-punto" style="background:#217242"></span></div>
+            <div class="c-p botella"><div class="cuerpo"></div><span class="c-punto" style="background:#845C07"></span></div>
+            <div class="c-p fruta"><div class="cuerpo"></div><span class="c-punto" style="background:#217242"></span></div>
+          </div>
+          <div class="c-clip"><div class="c-track">
+            <div class="c-p caja"><div class="cuerpo"></div><div class="eti"></div><div class="eti"></div><span class="c-punto" style="background:#AF3129"></span></div>
+            <div class="c-p bote"><div class="cuerpo"></div><div class="eti"></div><span class="c-punto" style="background:#217242"></span></div>
+            <div class="c-p botella"><div class="cuerpo"></div><span class="c-punto" style="background:#845C07"></span></div>
+            <div class="c-p fruta"><div class="cuerpo"></div><span class="c-punto" style="background:#217242"></span></div>
+            <div class="c-p caja"><div class="cuerpo"></div><div class="eti"></div><div class="eti"></div><span class="c-punto" style="background:#AF3129"></span></div>
+            <div class="c-p bote"><div class="cuerpo"></div><div class="eti"></div><span class="c-punto" style="background:#217242"></span></div>
+            <div class="c-p botella"><div class="cuerpo"></div><span class="c-punto" style="background:#845C07"></span></div>
+            <div class="c-p fruta"><div class="cuerpo"></div><span class="c-punto" style="background:#217242"></span></div>
+          </div></div>
+          <div class="c-arco"></div>
+          <div class="c-gate"></div>
+        </div>
+      </div>
+      <div class="txt">
+        <b>Todo el súper, escaneado</b>
+        <span>1.843 alimentos y cualquier envase con código de barras</span>
+      </div>
+      <a class="boton" href="#">Escanear</a>
+      <span class="x">×</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= D ================= -->
+<div class="prop d" id="D">
+  <h2>D · Del código de barras a tu ración <small>— el pitido del súper y cuánto puedes comer</small></h2>
+  <div class="movil">
+    <div class="pag">
+      <div class="h"></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+      <div class="ficha"><div class="foto"></div><div style="flex:1"><div class="l" style="width:55%"></div><span class="chip alto">ALTO · lactosa</span></div></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+    </div>
+    <div class="tira">
+      <div class="anim">
+        <div class="d-code"></div>
+        <div class="d-read"></div>
+        <div class="d-beam"></div>
+        <div class="d-beep">✓ leído</div>
+      </div>
+      <div class="txt">
+        <b class="ttl">Cuánto puedes comer</b>
+        <div class="d-card"><b>Pan de molde</b><em><i class="chip alto">ALTO</i> máx. 1 rebanada</em></div>
+        <div class="d-card"><b>Leche sin lactosa</b><em><i class="chip bajo">BAJO</i> ración libre</em></div>
+        <div class="d-card"><b>Garbanzos</b><em><i class="chip medio">MEDIO</i> máx. ¼ de taza</em></div>
+      </div>
+      <a class="boton" href="#">Escanear</a>
+      <span class="x">×</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= E ================= -->
+<div class="prop e" id="E">
+  <h2>E · Los ingredientes que pillan <small>— la lupa recorre la lista y marca los culpables</small></h2>
+  <div class="movil">
+    <div class="pag">
+      <div class="h"></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+      <div class="ficha"><div class="foto"></div><div style="flex:1"><div class="l" style="width:55%"></div><span class="chip bajo">BAJO · adelante</span></div></div>
+      <div class="l"></div><div class="l"></div><div class="l c"></div>
+    </div>
+    <div class="tira">
+      <div class="anim">
+        <div class="e-lista"><b>Ingredientes</b>Harina de <mark>trigo</mark>, agua, aceite de girasol, <mark class="m2">ajo en polvo</mark>, sal, levadura.</div>
+        <div class="e-lupa"></div>
+        <div class="e-num">2</div>
+      </div>
+      <div class="txt">
+        <b>Lee los ingredientes por ti</b>
+        <span>Dos disparadores escondidos en la letra pequeña</span>
+        <span class="alt">Alternativa: pan de espelta ✓</span>
+      </div>
+      <a class="boton" href="#">Escanear</a>
+      <span class="x">×</span>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>

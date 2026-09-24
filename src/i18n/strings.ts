@@ -52,7 +52,6 @@ export interface Strings {
   faqPuenteBoton?: string;
   provenanciaCWeb?: string;
   provenanciaCApp?: string;
-  barraApp: string;
   cerrar: string;
   badgeApple: string;
   badgePlay: string;
@@ -173,7 +172,6 @@ export const STR: Record<Locale, Strings> = {
     faqPuenteBoton: 'Probar con mi diario',
     provenanciaCWeb: 'Ningún laboratorio ha publicado una medición de este alimento: el nivel es una estimación, no una medida.',
     provenanciaCApp: 'La app marca en cada alimento si el dato es medido, calculado o estimado.',
-    barraApp: 'El escáner FODMAP',
     cerrar: 'Cerrar',
     badgeApple: 'Descárgalo en el',
     badgePlay: 'Disponible en',
@@ -370,7 +368,6 @@ export const STR: Record<Locale, Strings> = {
     ctaEscanerTexto:
       'Point the camera at the ingredient list: the app marks every FODMAP word and tells you why. Free on iOS and Android.',
     ctaEscanerAlt: 'Result from the Fodmind label reader: the FODMAP ingredients, marked in red',
-    barraApp: 'The FODMAP scanner',
     cerrar: 'Close',
     badgeApple: 'Download on the',
     badgePlay: 'Get it on',
@@ -567,7 +564,6 @@ export const STR: Record<Locale, Strings> = {
     ctaEscanerTexto:
       'Visez la liste des ingrédients avec l’appareil photo : l’app repère chaque mot FODMAP et vous dit pourquoi. Gratuite sur iOS et Android.',
     ctaEscanerAlt: 'Résultat du lecteur d’étiquettes Fodmind : les ingrédients FODMAP, marqués en rouge',
-    barraApp: 'Le scanner FODMAP',
     cerrar: 'Fermer',
     badgeApple: 'Télécharger dans l’',
     badgePlay: 'Disponible sur',
@@ -764,7 +760,6 @@ export const STR: Record<Locale, Strings> = {
     ctaEscanerTexto:
       'Halte die Kamera auf die Zutatenliste: Die App markiert jedes FODMAP-Wort und sagt dir, warum. Gratis für iOS und Android.',
     ctaEscanerAlt: 'Ergebnis des Fodmind-Etiketten-Lesers: die FODMAP-Zutaten, rot markiert',
-    barraApp: 'Der FODMAP-Scanner',
     cerrar: 'Schließen',
     badgeApple: 'Laden im',
     badgePlay: 'Jetzt bei',
@@ -961,7 +956,6 @@ export const STR: Record<Locale, Strings> = {
     ctaEscanerTexto:
       'Inquadra la lista degli ingredienti: l’app segna ogni parola FODMAP e ti dice perché. Gratis su iOS e Android.',
     ctaEscanerAlt: 'Risultato del lettore di etichette Fodmind: gli ingredienti FODMAP, segnati in rosso',
-    barraApp: 'Lo scanner FODMAP',
     cerrar: 'Chiudi',
     badgeApple: 'Scarica su',
     badgePlay: 'Disponibile su',
@@ -1158,7 +1152,6 @@ export const STR: Record<Locale, Strings> = {
     ctaEscanerTexto:
       'Aponta a câmara à lista de ingredientes: a app marca cada palavra FODMAP e diz-te porquê. Grátis em iOS e Android.',
     ctaEscanerAlt: 'Resultado do leitor de rótulos Fodmind: os ingredientes FODMAP, marcados a vermelho',
-    barraApp: 'O scanner FODMAP',
     cerrar: 'Fechar',
     badgeApple: 'Descarregar na',
     badgePlay: 'Disponível no',

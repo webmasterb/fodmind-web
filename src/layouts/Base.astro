@@ -3,7 +3,7 @@ import { LOCALES, LOCALE_TAG, LOCALE_RAIZ, urlLanding, urlAlimentos, urlGuia, ur
 import { t, APP_ID, APPLE_PT, PAQUETE_ANDROID, enlaceAppStore, enlacePlay } from '../i18n/strings';
 import { texto } from '../lib/datos';
 import CtaApp from '../components/CtaApp.astro';
-import BarraApp from '../components/BarraApp.astro';
+import TiraEscaner from '../components/TiraEscaner.astro';
 import '../styles/global.css';
 
 interface Props {
@@ -220,7 +220,7 @@ const nav = [
         </div>
       </div>
     </footer>
-    <BarraApp locale={locale} />
+    <TiraEscaner locale={locale} />
     <!--
       Medición de visitas. La política de privacidad ya decía «las visitas se
       miden de forma anónima y agregada con Cloudflare Web Analytics» y el

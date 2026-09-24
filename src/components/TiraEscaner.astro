@@ -1,0 +1,311 @@
+---
+/**
+ * LA TIRA FIJA DE ABAJO, CON EL ESCÁNER EN MOVIMIENTO: cinco animaciones, una
+ * por visitante, en todas las páginas y desde el primer segundo.
+ *
+ * Sustituye a la barra que salía al bajar (BarraApp, hasta el 25-sep-2026):
+ * el visitante que llega desde el buscador lee la respuesta y no sabe que hay
+ * una app que hace eso mismo en el súper. Esta tira se lo enseña sin que
+ * tenga que bajar: el láser sobre el paquete (a), el visor de la cámara (b),
+ * la cinta del súper (c), el código de barras con la ración (d) y la lupa
+ * sobre los ingredientes (e).
+ *
+ * Es una prueba: cada visitante recibe una letra al azar, la guarda en
+ * localStorage y la ve igual en todas las páginas. Los tres contadores de
+ * Base.astro la cuentan solos por su `data-ct` («web-tira-a»…«web-tira-e»);
+ * `node scripts/eventos.mjs` saca los clics por cada cien vistos de cada
+ * letra. La X la cierra para el resto de la sesión, como hacía la barra.
+ *
+ * La letra se decide en un script que va ANTES del HTML de las tiras, así el
+ * CSS ya sabe cuál enseñar cuando las pinta y no hay salto ni parpadeo; sin
+ * JS no se ve ninguna. Los productos y sus veredictos son los del catálogo
+ * (foods.json), no inventados: pan de trigo alto con 25 g seguros, leche sin
+ * lactosa sin límite, hummus moderado a 40 g, cornflakes moderados a 30 g.
+ */
+import { TIRA, type Nivel } from '../i18n/tira';
+import { t } from '../i18n/strings';
+import type { Locale } from '../lib/rutas';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const s = t(locale);
+const x = TIRA[locale];
+const COLOR: Record<Nivel, string> = { bajo: '#217242', medio: '#845C07', alto: '#AF3129' };
+const FONDO: Record<Nivel, string> = { bajo: '#E4F3E9', medio: '#F7EDD6', alto: '#F9E4E1' };
+const cinta = [
+  { forma: 'caja', nivel: 'alto' },
+  { forma: 'bote', nivel: 'bajo' },
+  { forma: 'botella', nivel: 'medio' },
+  { forma: 'fruta', nivel: 'bajo' },
+] as const;
+const cintaDoble = [...cinta, ...cinta];
+---
+
+<script is:inline>
+  (function () {
+    var v = null;
+    try {
+      if (sessionStorage.getItem('tira') === 'no') return;
+      v = localStorage.getItem('tira-v');
+      if (!/^[a-e]$/.test(v || '')) {
+        v = 'abcde'.charAt(Math.floor(Math.random() * 5));
+        localStorage.setItem('tira-v', v);
+      }
+    } catch (e) {
+      if (!v) v = 'abcde'.charAt(Math.floor(Math.random() * 5));
+    }
+    document.documentElement.setAttribute('data-tira', v);
+  })();
+</script>
+
+<div class="tira tira-a" data-v="a">
+  <div class="tira-cuerpo">
+    <div class="tira-anim">
+      <div class="ta-pack"><i class="ta-lbl c"></i><i class="ta-lbl"></i><i class="ta-lbl corta"></i><i class="ta-code"></i><i class="ta-flash"></i><i class="ta-laser"></i></div>
+    </div>
+    <div class="tira-txt">
+      <b class="tira-titulo">{x.a.titulo}</b>
+      <div class="tira-ciclo">
+        {x.a.productos.map((p) => (
+          <div class="ta-res"><span>{p.nombre}</span><i class="tira-chip" style={`color:${COLOR[p.nivel]};background:${FONDO[p.nivel]}`}>{p.chip}</i></div>
+        ))}
+      </div>
+    </div>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-a">{x.boton}</a>
+    <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
+  </div>
+</div>
+
+<div class="tira tira-b" data-v="b">
+  <div class="tira-cuerpo">
+    <div class="tira-anim">
+      <div class="tb-vf">
+        <div class="tb-lbl"><i class="t"></i><i></i><i class="m"></i><i class="code"></i></div>
+        <div class="tb-esq"><i></i><i></i><i></i><i></i></div>
+        {x.b.productos.map((p) => (
+          <div class="tb-esq col" style={`--c:${COLOR[p.nivel]}`}><i></i><i></i><i></i><i></i></div>
+        ))}
+        <div class="tb-line"></div>
+        {x.b.productos.map((p) => (
+          <div class="tb-badge" style={`color:${COLOR[p.nivel]};background:${FONDO[p.nivel]}`}>{x.nivel[p.nivel]}</div>
+        ))}
+      </div>
+    </div>
+    <div class="tira-txt">
+      <b class="tira-titulo">{x.b.titulo}</b>
+      <span class="tira-sub">{x.b.texto}</span>
+      <div class="tira-ciclo tb-ciclo">
+        {x.b.productos.map((p) => <span class="tb-nom">{p.nombre}</span>)}
+      </div>
+    </div>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-b">{x.boton}</a>
+    <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
+  </div>
+</div>
+
+<div class="tira tira-c" data-v="c">
+  <div class="tira-cuerpo">
+    <div class="tira-anim">
+      <div class="tc-banda">
+        <div class="tc-suelo"></div>
+        <div class="tc-track">
+          {cintaDoble.map((p) => (
+            <div class={`tc-p ${p.forma}`}><i class="cuerpo"></i><i class="eti"></i><i class="eti"></i><span class="tc-punto" style={`background:${COLOR[p.nivel]}`}></span></div>
+          ))}
+        </div>
+        <div class="tc-clip"><div class="tc-track">
+          {cintaDoble.map((p) => (
+            <div class={`tc-p ${p.forma}`}><i class="cuerpo"></i><i class="eti"></i><i class="eti"></i><span class="tc-punto" style={`background:${COLOR[p.nivel]}`}></span></div>
+          ))}
+        </div></div>
+        <div class="tc-arco"></div>
+        <div class="tc-gate"></div>
+      </div>
+    </div>
+    <div class="tira-txt">
+      <b class="tira-titulo libre">{x.c.titulo}</b>
+      <span class="tira-sub libre">{x.c.texto}</span>
+    </div>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-c">{x.boton}</a>
+    <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
+  </div>
+</div>
+
+<div class="tira tira-d" data-v="d">
+  <div class="tira-cuerpo">
+    <div class="tira-anim">
+      <div class="td-code"></div>
+      <div class="td-read"></div>
+      <div class="td-beam"></div>
+      <div class="td-beep">✓</div>
+    </div>
+    <div class="tira-txt">
+      <b class="tira-titulo">{x.d.titulo}</b>
+      <div class="tira-ciclo">
+        {x.d.productos.map((p) => (
+          <div class="td-card"><b>{p.nombre}</b><em><i class="tira-chip" style={`color:${COLOR[p.nivel]};background:${FONDO[p.nivel]}`}>{x.nivel[p.nivel]}</i> {p.racion}</em></div>
+        ))}
+      </div>
+    </div>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-d">{x.boton}</a>
+    <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
+  </div>
+</div>
+
+<div class="tira tira-e" data-v="e">
+  <div class="tira-cuerpo">
+    <div class="tira-anim">
+      <div class="te-lista"><b>{x.e.etiqueta}</b>{x.e.ingredientes.map((seg, i) => (i % 2 ? <mark class={i === 3 ? 'm2' : ''}>{seg}</mark> : seg))}</div>
+      <div class="te-lupa"></div>
+      <div class="te-num">2</div>
+    </div>
+    <div class="tira-txt">
+      <b class="tira-titulo libre">{x.e.titulo}</b>
+      <span class="tira-sub libre">{x.e.texto}</span>
+      <span class="te-alt">{x.e.alternativa}</span>
+    </div>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-e">{x.boton}</a>
+    <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
+  </div>
+</div>
+
+<script is:inline>
+  document.addEventListener('click', function (e) {
+    var b = e.target && e.target.closest && e.target.closest('.tira-x');
+    if (!b) return;
+    document.documentElement.removeAttribute('data-tira');
+    try { sessionStorage.setItem('tira', 'no'); } catch (err) { /* sin almacenamiento, sin memoria */ }
+  });
+</script>
+
+<style is:global>
+  /* ---------- la tira del escáner ---------- */
+  .tira { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: none; padding: 12px 12px calc(14px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--borde); box-shadow: 0 -8px 22px rgba(0, 0, 0, 0.09); }
+  html[data-tira='a'] .tira[data-v='a'], html[data-tira='b'] .tira[data-v='b'], html[data-tira='c'] .tira[data-v='c'], html[data-tira='d'] .tira[data-v='d'], html[data-tira='e'] .tira[data-v='e'] { display: block; }
+  html[data-tira] body { padding-bottom: 136px; }
+  .tira-cuerpo { position: relative; display: flex; align-items: center; gap: 12px; max-width: 600px; margin: 0 auto; }
+  .tira-anim { position: relative; flex: none; }
+  .tira-txt { flex: 1; min-width: 0; }
+  .tira-titulo { display: block; font-size: 14px; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tira-sub { display: block; font-size: 12px; color: var(--muted); margin-top: 3px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tira-titulo.libre, .tira-sub.libre { white-space: normal; }
+  .tira-ciclo { position: relative; height: 42px; margin-top: 5px; }
+  .tira-chip { display: inline-block; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.02em; font-style: normal; }
+  .tira .boton { white-space: nowrap; font-size: 13px; padding: 9px 13px; }
+  .tira-x { position: absolute; top: -8px; right: -4px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; padding: 4px 6px; cursor: pointer; }
+
+  /* a · el láser sobre el paquete */
+  .tira-a .tira-anim { width: 96px; height: 92px; }
+  .ta-pack { position: absolute; left: 14px; top: 4px; width: 66px; height: 84px; border-radius: 9px; background: #fff; border: 1.5px solid var(--borde); box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07); overflow: hidden; }
+  .ta-lbl { display: block; height: 6px; border-radius: 3px; background: #e7e2d3; margin: 10px 10px 0; }
+  .ta-lbl.c { width: 28px; background: #cfc9b6; }
+  .ta-lbl.corta { width: 24px; }
+  .ta-code { position: absolute; bottom: 9px; left: 10px; right: 10px; height: 24px; background: repeating-linear-gradient(90deg, #26251f 0 2px, transparent 2px 4px, #26251f 4px 5px, transparent 5px 8px, #26251f 8px 11px, transparent 11px 13px); }
+  .ta-flash { position: absolute; inset: 0; background: rgba(58, 125, 68, 0.22); opacity: 0; animation: ta-flash 3s infinite; }
+  .ta-laser { position: absolute; left: 6px; right: 6px; height: 2px; background: var(--brand); box-shadow: 0 0 10px 3px rgba(58, 125, 68, 0.55); animation: ta-laser 3s ease-in-out infinite; }
+  @keyframes ta-laser { 0% { top: 6px; opacity: 0; } 8% { opacity: 1; } 45% { top: 80px; opacity: 1; } 56% { top: 80px; opacity: 0; } 100% { top: 6px; opacity: 0; } }
+  @keyframes ta-flash { 0%, 44% { opacity: 0; } 48%, 60% { opacity: 1; } 70%, 100% { opacity: 0; } }
+  .ta-res { position: absolute; left: 0; right: 0; top: 0; opacity: 0; transform: translateY(8px); animation: ta-res 9s infinite; }
+  .ta-res:nth-child(2) { animation-delay: 3s; }
+  .ta-res:nth-child(3) { animation-delay: 6s; }
+  .ta-res span { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  @keyframes ta-res { 0%, 15% { opacity: 0; transform: translateY(8px); } 19%, 31% { opacity: 1; transform: none; } 34%, 100% { opacity: 0; transform: translateY(-6px); } }
+
+  /* b · el visor de la cámara */
+  .tira-b .tira-anim { width: 112px; height: 84px; }
+  .tb-vf { position: absolute; inset: 0; background: #1c1b18; border-radius: 12px; overflow: hidden; }
+  .tb-lbl { position: absolute; left: 18px; top: 14px; width: 76px; height: 56px; background: #fff; border-radius: 7px; padding: 8px; animation: tb-slide 3s infinite; }
+  .tb-lbl i { display: block; height: 5px; border-radius: 3px; background: #e7e2d3; margin-bottom: 6px; }
+  .tb-lbl i.t { width: 30px; background: #cfc9b6; }
+  .tb-lbl i.m { width: 40px; }
+  .tb-lbl i.code { height: 12px; margin-top: 7px; border-radius: 0; background: repeating-linear-gradient(90deg, #26251f 0 2px, transparent 2px 4px, #26251f 4px 5px, transparent 5px 7px); }
+  @keyframes tb-slide { 0% { transform: translateX(120px); } 14%, 82% { transform: none; } 96%, 100% { transform: translateX(-130px); } }
+  .tb-line { position: absolute; left: 12px; right: 12px; height: 2px; background: #7fd18b; box-shadow: 0 0 8px 2px rgba(127, 209, 139, 0.6); animation: tb-line 3s infinite; }
+  @keyframes tb-line { 0%, 16% { top: 12px; opacity: 0; } 20% { opacity: 1; } 50% { top: 70px; opacity: 1; } 54%, 100% { top: 70px; opacity: 0; } }
+  .tb-esq { position: absolute; inset: 6px; pointer-events: none; }
+  .tb-esq i { position: absolute; width: 16px; height: 16px; border: 3px solid #fff; border-radius: 3px; }
+  .tb-esq i:nth-child(1) { left: 0; top: 0; border-right: 0; border-bottom: 0; }
+  .tb-esq i:nth-child(2) { right: 0; top: 0; border-left: 0; border-bottom: 0; }
+  .tb-esq i:nth-child(3) { left: 0; bottom: 0; border-right: 0; border-top: 0; }
+  .tb-esq i:nth-child(4) { right: 0; bottom: 0; border-left: 0; border-top: 0; }
+  .tb-esq.col { opacity: 0; animation: tb-col 9s infinite; }
+  .tb-esq.col i { border-color: var(--c); }
+  .tb-esq.col:nth-of-type(3) { animation-delay: 3s; }
+  .tb-esq.col:nth-of-type(4) { animation-delay: 6s; }
+  @keyframes tb-col { 0%, 17% { opacity: 0; } 19%, 27% { opacity: 1; } 30%, 100% { opacity: 0; } }
+  .tb-badge { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) scale(0.6); opacity: 0; font-size: 15px; font-weight: 900; padding: 5px 12px; border-radius: 999px; animation: tb-badge 9s infinite; letter-spacing: 0.04em; white-space: nowrap; }
+  .tb-badge:nth-of-type(6) { animation-delay: 3s; }
+  .tb-badge:nth-of-type(7) { animation-delay: 6s; }
+  @keyframes tb-badge { 0%, 17% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); } 19.5% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); } 21% { transform: translate(-50%, -50%) scale(1); } 27% { opacity: 1; } 30%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } }
+  .tb-ciclo { height: 18px; margin-top: 4px; }
+  .tb-nom { position: absolute; left: 0; right: 0; top: 0; font-size: 12px; color: var(--muted); opacity: 0; animation: tb-col 9s infinite; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .tb-nom:nth-child(2) { animation-delay: 3s; }
+  .tb-nom:nth-child(3) { animation-delay: 6s; }
+
+  /* c · la cinta del súper */
+  .tira-c .tira-anim { width: 130px; height: 72px; }
+  .tc-banda { position: absolute; inset: 0; overflow: hidden; border-radius: 10px; background: #f1ede0; }
+  .tc-suelo { position: absolute; left: 0; right: 0; bottom: 0; height: 10px; background: repeating-linear-gradient(90deg, #d8d2bd 0 10px, #e4dfcc 10px 20px); animation: tc-suelo 1s linear infinite; }
+  @keyframes tc-suelo { to { background-position: -20px 0; } }
+  .tc-track { position: absolute; left: 0; bottom: 10px; display: flex; gap: 22px; padding-left: 8px; animation: tc-move 8s linear infinite; }
+  @keyframes tc-move { to { transform: translateX(-244px); } }
+  .tc-p { position: relative; width: 39px; height: 46px; flex: none; }
+  .tc-p .cuerpo { position: absolute; bottom: 0; left: 4px; right: 4px; top: 6px; background: #fff; border: 1.5px solid var(--borde); border-radius: 7px; }
+  .tc-p.bote .cuerpo { border-radius: 9px 9px 7px 7px; top: 10px; }
+  .tc-p.bote::before { content: ''; position: absolute; left: 10px; right: 10px; top: 4px; height: 8px; background: #cfc9b6; border-radius: 3px; }
+  .tc-p.botella .cuerpo { left: 9px; right: 9px; top: 12px; border-radius: 8px 8px 6px 6px; }
+  .tc-p.botella::before { content: ''; position: absolute; left: 15px; right: 15px; top: 2px; height: 12px; background: #d9d3c0; border-radius: 3px 3px 0 0; }
+  .tc-p.botella .eti { display: none; }
+  .tc-p.fruta .cuerpo { border-radius: 50%; top: 10px; left: 3px; right: 3px; }
+  .tc-p.fruta::before { content: ''; position: absolute; left: 50%; top: 4px; width: 3px; height: 10px; background: var(--brand); border-radius: 2px; }
+  .tc-p.fruta .eti { display: none; }
+  .tc-p .eti { position: absolute; left: 10px; right: 10px; top: 20px; height: 4px; background: #e7e2d3; border-radius: 2px; }
+  .tc-p .eti + .eti { top: 27px; width: 12px; }
+  .tc-p.bote .eti + .eti { display: none; }
+  .tc-punto { position: absolute; right: 0; top: 0; width: 14px; height: 14px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); }
+  .tc-clip { position: absolute; left: 0; top: 0; bottom: 0; width: 50%; overflow: hidden; }
+  .tc-clip .cuerpo, .tc-clip .eti, .tc-clip .tc-p::before { visibility: hidden; }
+  .tc-gate { position: absolute; left: 50%; top: 4px; bottom: 6px; width: 2px; margin-left: -1px; background: var(--brand); box-shadow: 0 0 10px 3px rgba(58, 125, 68, 0.5); animation: tc-gate 1s ease-in-out infinite alternate; }
+  @keyframes tc-gate { from { opacity: 0.55; } to { opacity: 1; } }
+  .tc-arco { position: absolute; left: 50%; top: 0; width: 34px; height: 8px; margin-left: -17px; background: var(--brand-oscuro); border-radius: 0 0 6px 6px; }
+
+  /* d · del código de barras a tu ración */
+  .tira-d .tira-anim { width: 100px; height: 92px; }
+  .td-code { position: absolute; left: 6px; top: 14px; width: 88px; height: 40px; background: repeating-linear-gradient(90deg, #26251f 0 2px, transparent 2px 4px, #26251f 4px 5px, transparent 5px 8px, #26251f 8px 11px, transparent 11px 13px, #26251f 13px 14px, transparent 14px 17px); }
+  .td-code::after { content: '8 410123 456789'; position: absolute; left: 0; right: 0; top: 42px; font-size: 8px; letter-spacing: 0.12em; text-align: center; color: var(--muted); }
+  .td-beam { position: absolute; left: 0; top: 30px; width: 100px; height: 3px; background: #e0342a; box-shadow: 0 0 10px 3px rgba(224, 52, 42, 0.55); border-radius: 2px; animation: td-beam 0.9s ease-in-out infinite alternate; }
+  @keyframes td-beam { from { transform: rotate(-4deg); opacity: 0.9; } to { transform: rotate(4deg); opacity: 1; } }
+  .td-read { position: absolute; left: 6px; top: 14px; height: 40px; width: 0; background: rgba(58, 125, 68, 0.35); animation: td-read 3s infinite; }
+  @keyframes td-read { 0%, 20% { width: 0; opacity: 1; } 55% { width: 88px; opacity: 1; } 68% { opacity: 0; } 100% { width: 0; opacity: 0; } }
+  .td-beep { position: absolute; right: 2px; top: 0; font-size: 13px; font-weight: 900; color: var(--brand); opacity: 0; animation: td-beep 3s infinite; }
+  @keyframes td-beep { 0%, 54% { opacity: 0; transform: translateY(4px); } 58%, 75% { opacity: 1; transform: none; } 82%, 100% { opacity: 0; } }
+  .td-card { position: absolute; left: 0; right: 0; top: 0; opacity: 0; transform: translateY(10px); animation: td-card 9s infinite; }
+  .td-card:nth-child(2) { animation-delay: 3s; }
+  .td-card:nth-child(3) { animation-delay: 6s; }
+  .td-card b { display: block; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .td-card em { display: block; font-style: normal; font-size: 12px; margin-top: 4px; white-space: nowrap; }
+  @keyframes td-card { 0%, 18% { opacity: 0; transform: translateY(10px); } 21%, 31% { opacity: 1; transform: none; } 33.3%, 100% { opacity: 0; } }
+
+  /* e · la lupa sobre los ingredientes */
+  .tira-e .tira-anim { width: 118px; padding-left: 18px; }
+  .te-lista { position: relative; width: 100px; background: #fff; border: 1.5px solid var(--borde); border-radius: 8px; padding: 7px 8px; font-size: 9.5px; line-height: 1.55; color: #3d3b34; box-shadow: 0 3px 8px rgba(0, 0, 0, 0.07); }
+  .te-lista b { font-size: 8px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); display: block; margin-bottom: 1px; }
+  .te-lista mark { background: transparent; color: inherit; border-radius: 3px; padding: 0 2px; animation: te-mark 3s infinite; }
+  .te-lista mark.m2 { animation-delay: 0.35s; }
+  @keyframes te-mark { 0%, 40% { background: transparent; color: inherit; } 46%, 88% { background: #F9E4E1; color: #AF3129; font-weight: 800; } 95%, 100% { background: transparent; color: inherit; } }
+  .te-lupa { position: absolute; left: 0; top: 14px; width: 40px; height: 40px; border-radius: 50%; border: 3px solid var(--brand); box-shadow: 0 0 0 4px rgba(58, 125, 68, 0.18), inset 0 0 0 30px rgba(58, 125, 68, 0.08); animation: te-lupa 3s ease-in-out infinite; pointer-events: none; }
+  .te-lupa::after { content: ''; position: absolute; right: -14px; bottom: -12px; width: 6px; height: 18px; background: var(--brand); border-radius: 3px; transform: rotate(-45deg); }
+  @keyframes te-lupa { 0% { transform: translate(0, 0); } 30% { transform: translate(64px, 10px); } 55% { transform: translate(38px, 32px); } 80% { transform: translate(64px, 10px); } 100% { transform: translate(0, 0); } }
+  .te-num { position: absolute; right: 0; top: -6px; min-width: 20px; height: 20px; border-radius: 999px; background: #AF3129; color: #fff; font-size: 11px; font-weight: 900; display: grid; place-items: center; padding: 0 6px; opacity: 0; animation: te-num 3s infinite; }
+  @keyframes te-num { 0%, 42% { opacity: 0; transform: scale(0.5); } 48% { opacity: 1; transform: scale(1.1); } 52%, 88% { opacity: 1; transform: scale(1); } 95%, 100% { opacity: 0; } }
+  .te-alt { display: block; margin-top: 3px; font-size: 12px; color: #217242; font-weight: 700; opacity: 0; animation: te-num 3s infinite; }
+
+  /* Sin movimiento: cada tira se queda quieta en su momento de veredicto, con un solo producto. */
+  @media (prefers-reduced-motion: reduce) {
+    .tira *, .tira *::before, .tira *::after { animation-play-state: paused !important; animation-delay: -2.2s !important; }
+    .ta-res:nth-child(n + 2), .td-card:nth-child(n + 2), .tb-nom:nth-child(n + 2), .tb-esq.col:nth-of-type(n + 3), .tb-badge:nth-of-type(n + 6) { display: none; }
+  }
+</style>

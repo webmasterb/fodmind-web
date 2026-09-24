@@ -69,3 +69,33 @@ for (const l of Object.keys(total).sort()) {
     if (filas.length) console.table(filas);
   }
 }
+
+// LA PRUEBA DE LA TIRA DEL ESCÁNER (desde el 25-sep-2026): cinco animaciones,
+// una por visitante, sumadas en todos los idiomas y páginas. Como cada letra
+// se reparte al azar, «vistos» dice a cuántos les tocó y la última columna
+// decide: clics por cada cien que la vieron. Lectura prevista el 2-oct-2026.
+const tira = {};
+for (const paginas of Object.values(total)) {
+  for (const tipos of Object.values(paginas)) {
+    for (const [t, botones] of Object.entries(tipos)) {
+      for (const [ct, n] of Object.entries(botones)) {
+        if (!ct.startsWith('web-tira-')) continue;
+        tira[ct] ??= { visto: 0, clic: 0 };
+        if (t in tira[ct]) tira[ct][t] += n;
+      }
+    }
+  }
+}
+if (Object.keys(tira).length) {
+  console.log('\nLa tira del escáner, todos los idiomas y páginas:');
+  console.table(
+    Object.keys(tira)
+      .sort()
+      .map((ct) => ({
+        tira: ct.slice('web-tira-'.length).toUpperCase(),
+        vistos: tira[ct].visto,
+        clics: tira[ct].clic,
+        'clics por 100 vistos': tira[ct].visto ? ((100 * tira[ct].clic) / tira[ct].visto).toFixed(2) : '—',
+      })),
+  );
+}
