@@ -19,11 +19,14 @@ export type Nivel = 'bajo' | 'medio' | 'alto';
 export interface TiraStrings {
   boton: string;
   nivel: Record<Nivel, string>;
-  a: { titulo: string; productos: { nombre: string; chip: string; nivel: Nivel }[] };
-  b: { titulo: string; texto: string; productos: { nombre: string; nivel: Nivel }[] };
-  c: { titulo: string; texto: string };
-  d: { titulo: string; productos: { nombre: string; racion: string; nivel: Nivel }[] };
-  /** `ingredientes` alterna texto y marca: los índices impares son los que la lupa señala. */
+  a: { productos: { nombre: string; chip: string; nivel: Nivel }[] };
+  b: { productos: { nombre: string; nivel: Nivel }[] };
+  c: { texto: string };
+  d: { productos: { nombre: string; racion: string; nivel: Nivel }[] };
+  /**
+   * `titulo` es el titular grande de las cinco variantes cuando la página no tiene
+   * alimento. `ingredientes` alterna texto y marca: los impares los señala la lupa.
+   */
   e: { titulo: string; etiqueta: string; ingredientes: string[]; alternativa: string };
 }
 
@@ -32,7 +35,6 @@ export const TIRA: Record<Locale, TiraStrings> = {
     boton: 'Escanear',
     nivel: { bajo: 'BAJO', medio: 'MEDIO', alto: 'ALTO' },
     a: {
-      titulo: 'Escanea la etiqueta',
       productos: [
         { nombre: 'Pan de trigo', chip: 'ALTO · fructanos', nivel: 'alto' },
         { nombre: 'Leche sin lactosa', chip: 'BAJO · sin límite', nivel: 'bajo' },
@@ -40,17 +42,14 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     b: {
-      titulo: 'Apunta a la etiqueta',
-      texto: 'Veredicto en 2 segundos',
       productos: [
         { nombre: 'Manchego · sin límite', nivel: 'bajo' },
         { nombre: 'Cornflakes · máx. 30 g', nivel: 'medio' },
         { nombre: 'Cebolla frita · evitar', nivel: 'alto' },
       ],
     },
-    c: { titulo: 'Todo el súper, escaneado', texto: '1.843 alimentos y cualquier envase con código de barras' },
+    c: { texto: '1.843 alimentos y cualquier envase con código de barras' },
     d: {
-      titulo: 'Cuánto puedes comer',
       productos: [
         { nombre: 'Pan de trigo', racion: 'máx. 25 g', nivel: 'alto' },
         { nombre: 'Leche sin lactosa', racion: 'ración libre', nivel: 'bajo' },
@@ -68,7 +67,6 @@ export const TIRA: Record<Locale, TiraStrings> = {
     boton: 'Scan',
     nivel: { bajo: 'LOW', medio: 'MEDIUM', alto: 'HIGH' },
     a: {
-      titulo: 'Scan the label',
       productos: [
         { nombre: 'Wheat bread', chip: 'HIGH · fructans', nivel: 'alto' },
         { nombre: 'Lactose-free milk', chip: 'LOW · no limit', nivel: 'bajo' },
@@ -76,17 +74,14 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     b: {
-      titulo: 'Point at the label',
-      texto: 'Verdict in 2 seconds',
       productos: [
         { nombre: 'Manchego · no limit', nivel: 'bajo' },
         { nombre: 'Cornflakes · max. 30 g', nivel: 'medio' },
         { nombre: 'Fried onion · avoid', nivel: 'alto' },
       ],
     },
-    c: { titulo: 'The whole store, scanned', texto: '1,843 foods and any pack with a barcode' },
+    c: { texto: '1,843 foods and any pack with a barcode' },
     d: {
-      titulo: 'How much you can eat',
       productos: [
         { nombre: 'Wheat bread', racion: 'max. 25 g', nivel: 'alto' },
         { nombre: 'Lactose-free milk', racion: 'free serving', nivel: 'bajo' },
@@ -104,7 +99,6 @@ export const TIRA: Record<Locale, TiraStrings> = {
     boton: 'Scanner',
     nivel: { bajo: 'FAIBLE', medio: 'MOYEN', alto: 'ÉLEVÉ' },
     a: {
-      titulo: 'Scannez l’étiquette',
       productos: [
         { nombre: 'Pain de blé', chip: 'ÉLEVÉ · fructanes', nivel: 'alto' },
         { nombre: 'Lait sans lactose', chip: 'FAIBLE · sans limite', nivel: 'bajo' },
@@ -112,17 +106,14 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     b: {
-      titulo: 'Visez l’étiquette',
-      texto: 'Verdict en 2 secondes',
       productos: [
         { nombre: 'Manchego · sans limite', nivel: 'bajo' },
         { nombre: 'Cornflakes · max. 30 g', nivel: 'medio' },
         { nombre: 'Oignons frits · à éviter', nivel: 'alto' },
       ],
     },
-    c: { titulo: 'Tout le supermarché, scanné', texto: '1 843 aliments et tout emballage à code-barres' },
+    c: { texto: '1 843 aliments et tout emballage à code-barres' },
     d: {
-      titulo: 'Votre portion sûre',
       productos: [
         { nombre: 'Pain de blé', racion: 'max. 25 g', nivel: 'alto' },
         { nombre: 'Lait sans lactose', racion: 'portion libre', nivel: 'bajo' },
@@ -140,7 +131,6 @@ export const TIRA: Record<Locale, TiraStrings> = {
     boton: 'Scannen',
     nivel: { bajo: 'NIEDRIG', medio: 'MITTEL', alto: 'HOCH' },
     a: {
-      titulo: 'Etikett scannen',
       productos: [
         { nombre: 'Weizenbrot', chip: 'HOCH · Fruktane', nivel: 'alto' },
         { nombre: 'Laktosefreie Milch', chip: 'NIEDRIG · ohne Limit', nivel: 'bajo' },
@@ -148,17 +138,14 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     b: {
-      titulo: 'Aufs Etikett zielen',
-      texto: 'Urteil in 2 Sekunden',
       productos: [
         { nombre: 'Manchego · ohne Limit', nivel: 'bajo' },
         { nombre: 'Cornflakes · max. 30 g', nivel: 'medio' },
         { nombre: 'Röstzwiebeln · meiden', nivel: 'alto' },
       ],
     },
-    c: { titulo: 'Der ganze Supermarkt, gescannt', texto: '1.843 Lebensmittel und jede Packung mit Barcode' },
+    c: { texto: '1.843 Lebensmittel und jede Packung mit Barcode' },
     d: {
-      titulo: 'Deine sichere Menge',
       productos: [
         { nombre: 'Weizenbrot', racion: 'max. 25 g', nivel: 'alto' },
         { nombre: 'Laktosefreie Milch', racion: 'ohne Limit', nivel: 'bajo' },
@@ -176,7 +163,6 @@ export const TIRA: Record<Locale, TiraStrings> = {
     boton: 'Scansiona',
     nivel: { bajo: 'BASSO', medio: 'MEDIO', alto: 'ALTO' },
     a: {
-      titulo: 'Scansiona l’etichetta',
       productos: [
         { nombre: 'Pane di frumento', chip: 'ALTO · fruttani', nivel: 'alto' },
         { nombre: 'Latte senza lattosio', chip: 'BASSO · senza limiti', nivel: 'bajo' },
@@ -184,17 +170,14 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     b: {
-      titulo: 'Inquadra l’etichetta',
-      texto: 'Verdetto in 2 secondi',
       productos: [
         { nombre: 'Manchego · senza limiti', nivel: 'bajo' },
         { nombre: 'Cornflakes · max 30 g', nivel: 'medio' },
         { nombre: 'Cipolla fritta · da evitare', nivel: 'alto' },
       ],
     },
-    c: { titulo: 'Tutto il supermercato, scansionato', texto: '1.843 alimenti e qualsiasi confezione con codice a barre' },
+    c: { texto: '1.843 alimenti e qualsiasi confezione con codice a barre' },
     d: {
-      titulo: 'Quanto puoi mangiare',
       productos: [
         { nombre: 'Pane di frumento', racion: 'max 25 g', nivel: 'alto' },
         { nombre: 'Latte senza lattosio', racion: 'porzione libera', nivel: 'bajo' },
@@ -212,7 +195,6 @@ export const TIRA: Record<Locale, TiraStrings> = {
     boton: 'Ler rótulo',
     nivel: { bajo: 'BAIXO', medio: 'MÉDIO', alto: 'ALTO' },
     a: {
-      titulo: 'Lê o rótulo',
       productos: [
         { nombre: 'Pão de trigo', chip: 'ALTO · frutanos', nivel: 'alto' },
         { nombre: 'Leite sem lactose', chip: 'BAIXO · sem limite', nivel: 'bajo' },
@@ -220,17 +202,14 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     b: {
-      titulo: 'Aponta ao rótulo',
-      texto: 'Sabes em 2 segundos',
       productos: [
         { nombre: 'Manchego · sem limite', nivel: 'bajo' },
         { nombre: 'Cornflakes · máx. 30 g', nivel: 'medio' },
         { nombre: 'Cebola frita · evitar', nivel: 'alto' },
       ],
     },
-    c: { titulo: 'Todo o supermercado, lido', texto: '1.843 alimentos e qualquer embalagem com código de barras' },
+    c: { texto: '1.843 alimentos e qualquer embalagem com código de barras' },
     d: {
-      titulo: 'Quanto podes comer',
       productos: [
         { nombre: 'Pão de trigo', racion: 'máx. 25 g', nivel: 'alto' },
         { nombre: 'Leite sem lactose', racion: 'porção livre', nivel: 'bajo' },

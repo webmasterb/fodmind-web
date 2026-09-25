@@ -55,9 +55,13 @@ arriba como pastilla: junto al botón grande, tocar la esquina del botón la cer
 Comprobado con toques en la esquina del botón y en la X, a 360 y 320 px, en las cinco. La E
 cambia su titular por una pregunta grande (19 px) según el nivel, con el nombre en una
 etiqueta encima: alto «¿Por qué te sienta mal?», moderado «Sí, pero ¿cuánto?», bajo «Luz
-verde. ¿Y el resto?»; sin alimento, «¿Qué esconde tu compra?». Ojo al leer: desde aquí la E
-es la única con titular grande, así que si gana puede ser por el titular y no por la
-animación.
+verde. ¿Y el resto?»; sin alimento, «¿Qué esconde tu compra?».
+
+**El mismo titular grande en las cinco (25-sep, por petición de Julen).** Etiqueta con el
+nombre y la pregunta de su nivel, igual en todas; debajo, una sola línea propia de cada
+animación: a nivel y nombre, b ración y nombre, c el veredicto, d nivel, ración y nombre,
+e la alternativa. Así la prueba compara animaciones y no frases. Los títulos por variante
+de antes («en el súper», «en 2 segundos», «tu ración segura», «y 1842 más») salen.
 
 **Arreglo en la B el 25-sep.** Los turnos de lo que rota iban por `nth-of-type` y en el
 visor no coincidían: marco de un color, dos veredictos superpuestos y el nombre de otro

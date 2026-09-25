@@ -17,23 +17,32 @@
  */
 import { foods, resolverSustitutos } from './datos';
 import { urlAlimento, type Locale } from './rutas';
-import { fmt, fmtPorcion, rellenar } from './formatos';
+import { fmtPorcion, rellenar } from './formatos';
 import type { Alimento, FodmapLevel, FodmapType } from './tipos';
 import { TIRA, type Nivel } from '../i18n/tira';
 import { TIRA_FOCO } from '../i18n/tira-foco';
 
 export type { Nivel };
 
+/**
+ * Lo que pinta la tira. El titular es uno solo para las cinco variantes —la
+ * etiqueta con el nombre y la pregunta grande según el nivel—, así la prueba
+ * compara animaciones y no textos. Cada variante añade debajo una línea suya.
+ */
 export interface VistaTira {
-  a: { titulo: string; filas: { nombre: string; chip: string; nivel: Nivel }[] };
-  b: { titulo: string; texto?: string; filas: { nombre: string; racion: string; nivel: Nivel }[] };
-  c: { titulo: string; texto?: string; nivel?: Nivel; racion?: string };
-  d: { titulo: string; filas: { nombre: string; racion: string; nivel: Nivel }[] };
+  /** El nombre del alimento, en la etiqueta pequeña de encima del titular. Sin alimento no hay. */
+  nombre?: string;
+  /** El titular grande: una pregunta según el nivel, que pide el toque. */
+  titulo: string;
+  /** a: nivel y nombre de lo que va «escaneando». */
+  a: { filas: { nombre: string; nivel: Nivel }[] };
+  /** b: ración y nombre, con el veredicto en el visor. */
+  b: { filas: { nombre: string; racion: string; nivel: Nivel }[] };
+  /** c: el veredicto del alimento de la página, o el texto general. */
+  c: { texto?: string; nivel?: Nivel; racion?: string };
+  /** d: nivel, ración y nombre. */
+  d: { filas: { nombre: string; racion: string; nivel: Nivel }[] };
   e: {
-    /** El nombre del alimento, en la etiqueta pequeña de encima del titular. Sin alimento no hay. */
-    nombre?: string;
-    /** El titular grande: una pregunta según el nivel, que pide el toque. */
-    titulo: string;
     etiqueta: string;
     /** El texto de la etiqueta dibujada, en trozos: los que llevan `marca` los señala la lupa. */
     trozos: { t: string; marca?: Nivel }[];
@@ -207,20 +216,21 @@ export function racionTira(f: Alimento, locale: Locale): string {
   return rellenar(p.hasta, { r: `${fmtPorcion(f.safeServingG, locale)} ${f.servingUnit ?? 'g'}` });
 }
 
-function minuscula(s: string, locale: Locale): string {
-  return locale === 'de' || s === s.toUpperCase() ? s : s.charAt(0).toLowerCase() + s.slice(1);
-}
-
 export function vistaTira(locale: Locale, alimentos?: Alimento[]): VistaTira {
   const g = TIRA[locale];
   if (!alimentos || alimentos.length === 0) {
     return {
-      a: { titulo: g.a.titulo, filas: g.a.productos.map((p) => ({ nombre: p.nombre, chip: p.chip, nivel: p.nivel })) },
-      b: { titulo: g.b.titulo, texto: g.b.texto, filas: g.b.productos.map((p) => { const [nombre, racion = ''] = p.nombre.split(' · '); return { nombre, racion, nivel: p.nivel }; }) },
-      c: { titulo: g.c.titulo, texto: g.c.texto },
-      d: { titulo: g.d.titulo, filas: g.d.productos },
+      titulo: g.e.titulo,
+      a: { filas: g.a.productos.map((p) => ({ nombre: p.nombre, nivel: p.nivel })) },
+      b: {
+        filas: g.b.productos.map((p) => {
+          const [nombre, racion = ''] = p.nombre.split(' · ');
+          return { nombre, racion, nivel: p.nivel };
+        }),
+      },
+      c: { texto: g.c.texto },
+      d: { filas: g.d.productos },
       e: {
-        titulo: g.e.titulo,
         etiqueta: g.e.etiqueta,
         trozos: g.e.ingredientes.map((t, i) => (i % 2 ? { t, marca: 'alto' as Nivel } : { t })).filter((x) => x.t),
         num: 2,
@@ -232,14 +242,9 @@ export function vistaTira(locale: Locale, alimentos?: Alimento[]): VistaTira {
 
   const p = TIRA_FOCO[locale];
   const [f] = alimentos;
-  const x = nombreTitulo(f, locale);
   const nivel = NIVEL[f.level];
   const palabra = (a: Alimento) => g.nivel[NIVEL[a.level]];
-  const filas = alimentos.slice(0, 3);
-  const chipA = (a: Alimento) =>
-    a.level === 'high' && a.fodmaps.length
-      ? `${palabra(a)} · ${minuscula(p.fodmap[a.fodmaps[0]], locale)}`
-      : `${palabra(a)} · ${racionTira(a, locale)}`;
+  const filas = alimentos.slice(0, 3).map((a) => ({ nombre: a.names[locale], racion: racionTira(a, locale), nivel: NIVEL[a.level] }));
 
   const presentes = ORDEN_FODMAP.filter((t) => f.fodmaps.includes(t));
   const trozos: VistaTira['e']['trozos'] = [];
@@ -253,19 +258,13 @@ export function vistaTira(locale: Locale, alimentos?: Alimento[]): VistaTira {
     : `${palabra(f)} · ${racionTira(f, locale)}${f.level === 'low' ? ' ✓' : ''}`;
 
   return {
-    a: { titulo: rellenar(p.a, { x }), filas: filas.map((a) => ({ nombre: a.names[locale], chip: chipA(a), nivel: NIVEL[a.level] })) },
-    b: {
-      titulo: rellenar(p.b, { x }),
-      filas: filas.map((a) => ({ nombre: a.names[locale], racion: racionTira(a, locale), nivel: NIVEL[a.level] })),
-    },
-    c: { titulo: rellenar(p.c, { x, n: fmt(foods.length - 1, locale) }), nivel, racion: racionTira(f, locale) },
-    d: {
-      titulo: rellenar(p.d, { x }),
-      filas: filas.map((a) => ({ nombre: a.names[locale], racion: racionTira(a, locale), nivel: NIVEL[a.level] })),
-    },
+    nombre: nombreTitulo(f, locale),
+    titulo: p.gancho[nivel],
+    a: { filas: filas.map(({ nombre, nivel: n }) => ({ nombre, nivel: n })) },
+    b: { filas },
+    c: { nivel, racion: racionTira(f, locale) },
+    d: { filas },
     e: {
-      nombre: x,
-      titulo: p.eGancho[nivel],
       etiqueta: p.eEtiqueta,
       trozos,
       num: presentes.length,
@@ -275,3 +274,5 @@ export function vistaTira(locale: Locale, alimentos?: Alimento[]): VistaTira {
   };
 }
 
+/** Para los tests: las plantillas por idioma. */
+export { TIRA_FOCO };

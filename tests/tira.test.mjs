@@ -32,12 +32,14 @@ async function modulo() {
 }
 
 const textos = (v) => [
-  v.a.titulo, ...v.a.filas.flatMap((f) => [f.nombre, f.chip]),
-  v.b.titulo, v.b.texto ?? '', ...v.b.filas.flatMap((f) => [f.nombre, f.racion]),
-  v.c.titulo, v.c.texto ?? '', v.c.racion ?? '',
-  v.d.titulo, ...v.d.filas.flatMap((f) => [f.nombre, f.racion]),
-  v.e.titulo, v.e.nombre ?? '', v.e.etiqueta, ...v.e.trozos.map((t) => t.t), v.e.pie,
+  v.nombre ?? '', v.titulo,
+  ...v.a.filas.map((f) => f.nombre),
+  ...v.b.filas.flatMap((f) => [f.nombre, f.racion]),
+  v.c.texto ?? '', v.c.racion ?? '',
+  ...v.d.filas.flatMap((f) => [f.nombre, f.racion]),
+  v.e.etiqueta, ...v.e.trozos.map((t) => t.t), v.e.pie,
 ];
+const GANCHO = { high: 'alto', moderate: 'medio', low: 'bajo' };
 
 test('tira: cada ficha, en los seis idiomas, nombra su alimento y no deja huecos', async () => {
   const m = await modulo();
@@ -50,19 +52,20 @@ test('tira: cada ficha, en los seis idiomas, nombra su alimento y no deja huecos
       if (v.a.filas[0].nombre !== f.names[l]) malos.push(`${l} ${f.id}: la primera fila no es el alimento`);
       const corto = m.nombreTitulo(f, l);
       if (!f.names[l].startsWith(corto.replace(/…$/, ''))) malos.push(`${l} ${f.id}: el título no empieza como el nombre: «${corto}»`);
-      for (const t of [v.a.titulo, v.b.titulo, v.c.titulo, v.d.titulo, v.e.nombre]) if (!t.includes(corto)) malos.push(`${l} ${f.id}: «${t}»`);
+      if (v.nombre !== corto) malos.push(`${l} ${f.id}: la etiqueta dice «${v.nombre}»`);
+      if (v.titulo !== m.TIRA_FOCO[l].gancho[GANCHO[f.level]]) malos.push(`${l} ${f.id}: el titular no es el de su nivel`);
     }
   }
   assert.deepEqual(malos.slice(0, 10), [], `${malos.length} fallos`);
 });
 
-test('tira: dos fichas distintas nunca llevan el mismo título', async () => {
+test('tira: dos fichas distintas nunca llevan la misma etiqueta de nombre', async () => {
   const m = await modulo();
   const repetidos = [];
   for (const l of LOCALES) {
     const vistos = new Map();
     for (const f of foods) {
-      const titulo = m.vistaTira(l, m.focoFicha(f)).d.titulo;
+      const titulo = m.vistaTira(l, m.focoFicha(f)).nombre;
       const otro = vistos.get(titulo);
       if (otro && otro.names[l] !== f.names[l]) repetidos.push(`${l}: «${titulo}» en ${otro.id} y ${f.id}`);
       vistos.set(titulo, f);
@@ -95,7 +98,8 @@ test('tira: la ración sale con el separador decimal de cada idioma', async () =
 
 test('tira: sin alimentos dice lo general; la guía y el blog llevan el suyo', async () => {
   const m = await modulo();
-  assert.equal(m.vistaTira('es').a.titulo, 'Escanea la etiqueta');
+  assert.equal(m.vistaTira('es').titulo, '¿Qué esconde tu compra?');
+  assert.equal(m.vistaTira('es').nombre, undefined);
   for (const art of guia) assert.equal(m.focoGuia(art.id).length, 3, `guía ${art.id} sin alimento`);
   const post = readFileSync(join(RAIZ, 'src', 'content', 'blog', 'es', 'lactosa-o-fodmap.md'), 'utf8');
   assert.equal(m.focoPost(post, 'es')[0]?.id, 'cow-milk');
