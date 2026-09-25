@@ -209,6 +209,16 @@ const cintaDoble = [...cinta, ...cinta];
     ajusta();
     window.addEventListener('resize', ajusta);
     if ('ResizeObserver' in window) new ResizeObserver(ajusta).observe(tira);
+    // TODA LA TIRA ES EL BOTÓN, menos la X. El toque se reenvía al enlace de
+    // verdad con .click(): así pasa por los mismos oyentes de Base.astro (el
+    // que pone la tienda o el intent de Android y el contador de clics) y
+    // cuenta una sola vez. Dentro del gesto del usuario, el navegador deja
+    // abrir la tienda o la app igual que con el botón.
+    var boton = tira.querySelector('a[data-ct]');
+    tira.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('a, .tira-x')) return;
+      boton.click();
+    });
     tira.querySelector('.tira-x').addEventListener('click', function () {
       raiz.removeAttribute('data-tira');
       raiz.style.removeProperty('--tira-alto');
@@ -219,7 +229,7 @@ const cintaDoble = [...cinta, ...cinta];
 
 <style is:global>
   /* ---------- la tira del escáner ---------- */
-  .tira { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: none; padding: 12px 12px calc(14px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--borde); box-shadow: 0 -8px 22px rgba(0, 0, 0, 0.09); }
+  .tira { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; display: none; cursor: pointer; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; padding: 12px 12px calc(14px + env(safe-area-inset-bottom)); background: var(--bg); border-top: 1px solid var(--borde); box-shadow: 0 -8px 22px rgba(0, 0, 0, 0.09); }
   html[data-tira='a'] .tira[data-v='a'], html[data-tira='b'] .tira[data-v='b'], html[data-tira='c'] .tira[data-v='c'], html[data-tira='d'] .tira[data-v='d'], html[data-tira='e'] .tira[data-v='e'] { display: block; }
   html[data-tira] body { padding-bottom: var(--tira-alto, 140px); }
   .tira-cuerpo { position: relative; display: flex; align-items: center; gap: 12px; max-width: 600px; margin: 0 auto; }
@@ -231,6 +241,9 @@ const cintaDoble = [...cinta, ...cinta];
   .tira-ciclo { position: relative; height: 42px; margin-top: 5px; }
   .tira-chip { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.02em; font-style: normal; }
   .tira .boton { flex: none; white-space: nowrap; font-size: 13px; padding: 9px 13px; }
+  .tira:hover .boton-primario { background: var(--brand-oscuro); }
+  .tira:active { background: #f3eee0; }
+  .tira:active .boton { transform: scale(0.97); }
   .tira-x { position: absolute; top: -10px; right: -6px; border: 0; background: transparent; color: var(--muted); font-size: 22px; line-height: 1; padding: 4px 6px; cursor: pointer; }
   /* Los turnos de lo que rota: 0, 3 y 6 s de un ciclo de 9. */
   .tira .t2 { animation-delay: 3s; }

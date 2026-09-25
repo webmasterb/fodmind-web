@@ -109,3 +109,8 @@ test('tira: lo que rota lleva su turno por clase, no por posición', () => {
   const src = readFileSync(join(RAIZ, 'src', 'components', 'TiraEscaner.astro'), 'utf8');
   assert.ok(!/(tb-esq\.col|tb-badge|tb-nom|ta-res|td-card):nth-/.test(src), 'turnos por nth-*: el visor desincroniza marco, veredicto y nombre');
 });
+
+test('tira: un toque en cualquier sitio de la tira, menos la X, es el botón', () => {
+  const src = readFileSync(join(RAIZ, 'src', 'components', 'TiraEscaner.astro'), 'utf8');
+  assert.ok(src.includes("closest('a, .tira-x')") && src.includes('boton.click()'), 'la tira ya no reenvía el toque al enlace');
+});
