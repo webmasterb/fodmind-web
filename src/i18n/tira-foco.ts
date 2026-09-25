@@ -19,9 +19,9 @@ export interface TiraFoco {
   b: string;
   c: string;
   d: string;
-  e: string;
+  /** El titular grande de la variante e, según el nivel del alimento: una pregunta que pide el toque. */
+  eGancho: Record<'alto' | 'medio' | 'bajo', string>;
   eEtiqueta: string;
-  eNinguno: string;
   alternativa: string;
   hasta: string;
   evitar: string;
@@ -36,9 +36,8 @@ export const TIRA_FOCO: Record<Locale, TiraFoco> = {
     b: '{x}, en 2 segundos',
     c: '{x} y {n} más',
     d: '{x}: tu ración segura',
-    e: '{x}: qué FODMAP lleva',
+    eGancho: { alto: '¿Por qué te sienta mal?', medio: 'Sí, pero ¿cuánto?', bajo: 'Luz verde. ¿Y el resto?' },
     eEtiqueta: 'FODMAP',
-    eNinguno: 'Ninguno a vigilar',
     alternativa: 'Alternativa: {x} ✓',
     hasta: 'hasta {r}',
     evitar: 'evitar',
@@ -51,9 +50,8 @@ export const TIRA_FOCO: Record<Locale, TiraFoco> = {
     b: '{x}, in 2 seconds',
     c: '{x} and {n} more',
     d: '{x}: your safe serving',
-    e: '{x}: which FODMAPs',
+    eGancho: { alto: 'Why does it upset you?', medio: 'Yes, but how much?', bajo: 'All clear. And the rest?' },
     eEtiqueta: 'FODMAPs',
-    eNinguno: 'None to watch',
     alternativa: 'Alternative: {x} ✓',
     hasta: 'up to {r}',
     evitar: 'avoid',
@@ -66,9 +64,8 @@ export const TIRA_FOCO: Record<Locale, TiraFoco> = {
     b: '{x} en 2 secondes',
     c: '{x} et {n} autres',
     d: '{x} : portion sûre',
-    e: '{x} : quels FODMAP',
+    eGancho: { alto: 'Pourquoi ça vous gêne ?', medio: 'Oui, mais combien ?', bajo: 'Feu vert. Et le reste ?' },
     eEtiqueta: 'FODMAP',
-    eNinguno: 'Aucun à surveiller',
     alternativa: 'Alternative : {x} ✓',
     hasta: 'jusqu’à {r}',
     evitar: 'à éviter',
@@ -81,9 +78,8 @@ export const TIRA_FOCO: Record<Locale, TiraFoco> = {
     b: '{x} in 2 Sekunden',
     c: '{x} und {n} weitere',
     d: '{x}: sichere Menge',
-    e: '{x}: welche FODMAPs',
+    eGancho: { alto: 'Warum Bauchweh?', medio: 'Ja, aber wie viel?', bajo: 'Grünes Licht. Und sonst?' },
     eEtiqueta: 'FODMAPs',
-    eNinguno: 'Keine zu beachten',
     alternativa: 'Alternative: {x} ✓',
     hasta: 'bis {r}',
     evitar: 'meiden',
@@ -96,9 +92,8 @@ export const TIRA_FOCO: Record<Locale, TiraFoco> = {
     b: '{x} in 2 secondi',
     c: '{x} e altri {n}',
     d: '{x}: porzione sicura',
-    e: '{x}: quali FODMAP',
+    eGancho: { alto: 'Perché ti fa male?', medio: 'Sì, ma quanto?', bajo: 'Via libera. E il resto?' },
     eEtiqueta: 'FODMAP',
-    eNinguno: 'Nessuno da controllare',
     alternativa: 'Alternativa: {x} ✓',
     hasta: 'fino a {r}',
     evitar: 'da evitare',
@@ -111,9 +106,8 @@ export const TIRA_FOCO: Record<Locale, TiraFoco> = {
     b: '{x} em 2 segundos',
     c: '{x} e mais {n}',
     d: '{x}: porção segura',
-    e: '{x}: que FODMAP tem',
+    eGancho: { alto: 'Porque te faz mal?', medio: 'Sim, mas quanto?', bajo: 'Luz verde. E o resto?' },
     eEtiqueta: 'FODMAP',
-    eNinguno: 'Nenhum a vigiar',
     alternativa: 'Alternativa: {x} ✓',
     hasta: 'até {r}',
     evitar: 'evitar',

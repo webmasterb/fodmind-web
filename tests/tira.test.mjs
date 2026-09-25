@@ -36,7 +36,7 @@ const textos = (v) => [
   v.b.titulo, v.b.texto ?? '', ...v.b.filas.flatMap((f) => [f.nombre, f.racion]),
   v.c.titulo, v.c.texto ?? '', v.c.racion ?? '',
   v.d.titulo, ...v.d.filas.flatMap((f) => [f.nombre, f.racion]),
-  v.e.titulo, v.e.texto, v.e.etiqueta, ...v.e.trozos.map((t) => t.t), v.e.pie,
+  v.e.titulo, v.e.nombre ?? '', v.e.etiqueta, ...v.e.trozos.map((t) => t.t), v.e.pie,
 ];
 
 test('tira: cada ficha, en los seis idiomas, nombra su alimento y no deja huecos', async () => {
@@ -50,7 +50,7 @@ test('tira: cada ficha, en los seis idiomas, nombra su alimento y no deja huecos
       if (v.a.filas[0].nombre !== f.names[l]) malos.push(`${l} ${f.id}: la primera fila no es el alimento`);
       const corto = m.nombreTitulo(f, l);
       if (!f.names[l].startsWith(corto.replace(/…$/, ''))) malos.push(`${l} ${f.id}: el título no empieza como el nombre: «${corto}»`);
-      for (const t of [v.a.titulo, v.b.titulo, v.c.titulo, v.d.titulo, v.e.titulo]) if (!t.includes(corto)) malos.push(`${l} ${f.id}: «${t}»`);
+      for (const t of [v.a.titulo, v.b.titulo, v.c.titulo, v.d.titulo, v.e.nombre]) if (!t.includes(corto)) malos.push(`${l} ${f.id}: «${t}»`);
     }
   }
   assert.deepEqual(malos.slice(0, 10), [], `${malos.length} fallos`);

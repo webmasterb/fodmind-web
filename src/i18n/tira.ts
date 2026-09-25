@@ -24,7 +24,7 @@ export interface TiraStrings {
   c: { titulo: string; texto: string };
   d: { titulo: string; productos: { nombre: string; racion: string; nivel: Nivel }[] };
   /** `ingredientes` alterna texto y marca: los índices impares son los que la lupa señala. */
-  e: { titulo: string; texto: string; etiqueta: string; ingredientes: string[]; alternativa: string };
+  e: { titulo: string; etiqueta: string; ingredientes: string[]; alternativa: string };
 }
 
 export const TIRA: Record<Locale, TiraStrings> = {
@@ -58,8 +58,7 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     e: {
-      titulo: 'Lee los ingredientes por ti',
-      texto: 'Dos disparadores escondidos en la letra pequeña',
+      titulo: '¿Qué esconde tu compra?',
       etiqueta: 'Ingredientes',
       ingredientes: ['', 'Harina de trigo', ', agua, aceite de girasol, ', 'ajo en polvo', ', sal, levadura.'],
       alternativa: 'Alternativa: espelta de masa madre ✓',
@@ -95,8 +94,7 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     e: {
-      titulo: 'Reads the ingredients for you',
-      texto: 'Two triggers hidden in the small print',
+      titulo: 'What’s hiding in your cart?',
       etiqueta: 'Ingredients',
       ingredientes: ['', 'Wheat flour', ', water, sunflower oil, ', 'garlic powder', ', salt, yeast.'],
       alternativa: 'Alternative: sourdough spelt ✓',
@@ -132,8 +130,7 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     e: {
-      titulo: 'Lit les ingrédients pour vous',
-      texto: 'Deux déclencheurs cachés en petits caractères',
+      titulo: 'Que cache votre panier ?',
       etiqueta: 'Ingrédients',
       ingredientes: ['', 'Farine de blé', ', eau, huile de tournesol, ', 'ail en poudre', ', sel, levure.'],
       alternativa: 'Alternative : épeautre au levain ✓',
@@ -169,8 +166,7 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     e: {
-      titulo: 'Liest die Zutaten für dich',
-      texto: 'Zwei Auslöser, versteckt im Kleingedruckten',
+      titulo: 'Was steckt im Einkauf?',
       etiqueta: 'Zutaten',
       ingredientes: ['', 'Weizenmehl', ', Wasser, Sonnenblumenöl, ', 'Knoblauchpulver', ', Salz, Hefe.'],
       alternativa: 'Alternative: Dinkel-Sauerteig ✓',
@@ -206,8 +202,7 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     e: {
-      titulo: 'Legge gli ingredienti per te',
-      texto: 'Due trigger nascosti nei caratteri piccoli',
+      titulo: 'Cosa nasconde la spesa?',
       etiqueta: 'Ingredienti',
       ingredientes: ['', 'Farina di grano', ', acqua, olio di girasole, ', 'aglio in polvere', ', sale, lievito.'],
       alternativa: 'Alternativa: farro a lievitazione naturale ✓',
@@ -243,8 +238,7 @@ export const TIRA: Record<Locale, TiraStrings> = {
       ],
     },
     e: {
-      titulo: 'Lê os ingredientes por ti',
-      texto: 'Dois gatilhos escondidos nas letras pequenas',
+      titulo: 'O que esconde o carrinho?',
       etiqueta: 'Ingredientes',
       ingredientes: ['', 'Farinha de trigo', ', água, óleo de girassol, ', 'alho em pó', ', sal, fermento.'],
       alternativa: 'Alternativa: espelta de fermentação natural ✓',

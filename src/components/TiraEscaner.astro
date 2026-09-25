@@ -52,6 +52,9 @@ const COLOR: Record<Nivel, string> = { bajo: '#217242', medio: '#845C07', alto: 
 const FONDO: Record<Nivel, string> = { bajo: '#E4F3E9', medio: '#F7EDD6', alto: '#F9E4E1' };
 const chip = (n: Nivel) => `color:${COLOR[n]};background:${FONDO[n]}`;
 const turno = (i: number) => `t${i + 1}`;
+// El icono del botón: el marco del visor con la línea del láser.
+const ICONO =
+  '<svg class="tira-ico" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5.5A1.5 1.5 0 0 1 5.5 4H8M16 4h2.5A1.5 1.5 0 0 1 20 5.5V8M20 16v2.5a1.5 1.5 0 0 1-1.5 1.5H16M8 20H5.5A1.5 1.5 0 0 1 4 18.5V16"/><path d="M7 12h10"/></svg>';
 const primeraMarca = v.e.trozos.findIndex((x) => x.marca);
 const cinta = [
   { forma: 'caja', nivel: 'alto' },
@@ -92,7 +95,7 @@ const cintaDoble = [...cinta, ...cinta];
         ))}
       </div>
     </div>
-    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-a">{boton}</a>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-a"><Fragment set:html={ICONO} /><span>{boton}</span></a>
     <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
   </div>
 </div>
@@ -119,7 +122,7 @@ const cintaDoble = [...cinta, ...cinta];
         {v.b.filas.map((p, i) => <span class={`tb-nom ${turno(i)}`}><b>{p.nombre}</b><em>{p.racion}</em></span>)}
       </div>
     </div>
-    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-b">{boton}</a>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-b"><Fragment set:html={ICONO} /><span>{boton}</span></a>
     <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
   </div>
 </div>
@@ -148,7 +151,7 @@ const cintaDoble = [...cinta, ...cinta];
       {v.c.nivel && <span class="tc-veredicto"><i class="tira-chip" style={chip(v.c.nivel)}>{nivelTxt[v.c.nivel]}</i> {v.c.racion}</span>}
       {v.c.texto && <span class="tira-sub">{v.c.texto}</span>}
     </div>
-    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-c">{boton}</a>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-c"><Fragment set:html={ICONO} /><span>{boton}</span></a>
     <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
   </div>
 </div>
@@ -169,7 +172,7 @@ const cintaDoble = [...cinta, ...cinta];
         ))}
       </div>
     </div>
-    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-d">{boton}</a>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-d"><Fragment set:html={ICONO} /><span>{boton}</span></a>
     <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
   </div>
 </div>
@@ -184,11 +187,11 @@ const cintaDoble = [...cinta, ...cinta];
       <div class={`te-num${v.e.num ? '' : ' ok'}`}>{v.e.num || '✓'}</div>
     </div>
     <div class="tira-txt">
-      <b class="tira-titulo">{v.e.titulo}</b>
-      <span class="tira-sub una">{v.e.texto}</span>
+      {v.e.nombre && <span class="te-nombre">{v.e.nombre}</span>}
+      <b class="tira-titulo te-gancho">{v.e.titulo}</b>
       <span class="te-alt" style={`color:${COLOR[v.e.pieNivel]}`}>{v.e.pie}</span>
     </div>
-    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-e">{boton}</a>
+    <a class="boton boton-primario" href="#descargar" data-descarga data-abrir data-ct="tira-e"><Fragment set:html={ICONO} /><span>{boton}</span></a>
     <button type="button" class="tira-x" aria-label={s.cerrar}>×</button>
   </div>
 </div>
@@ -240,7 +243,11 @@ const cintaDoble = [...cinta, ...cinta];
   .tira-sub.una { -webkit-line-clamp: 1; }
   .tira-ciclo { position: relative; height: 42px; margin-top: 5px; }
   .tira-chip { display: inline-block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.02em; font-style: normal; }
-  .tira .boton { flex: none; white-space: nowrap; font-size: 13px; padding: 9px 13px; }
+  /* EL BOTÓN, grande: en móvil es un bloque alto con el icono encima, por
+     encima de los 44 px de zona táctil que piden Apple y Google; en iPad y
+     ordenador va en fila. */
+  .tira .boton { flex: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; min-width: 94px; min-height: 64px; padding: 9px 14px; border-radius: 16px; font-size: 15px; font-weight: 800; line-height: 1.1; white-space: nowrap; box-shadow: 0 4px 12px rgba(47, 99, 55, 0.28); transition: transform 0.12s ease, background 0.12s ease; }
+  .tira-ico { width: 24px; height: 24px; flex: none; }
   .tira:hover .boton-primario { background: var(--brand-oscuro); }
   .tira:active { background: #f3eee0; }
   .tira:active .boton { transform: scale(0.97); }
@@ -349,19 +356,31 @@ const cintaDoble = [...cinta, ...cinta];
   .te-num.ok { background: #217242; }
   @keyframes te-num { 0%, 42% { opacity: 0; transform: scale(0.5); } 48% { opacity: 1; transform: scale(1.1); } 52%, 88% { opacity: 1; transform: scale(1); } 95%, 100% { opacity: 0; } }
   .te-alt { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 3px; font-size: 12px; line-height: 1.25; font-weight: 700; opacity: 0; animation: te-num 3s infinite; }
+  .te-nombre { display: block; font-size: 11px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--brand); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .tira-e .te-gancho { font-size: 19px; line-height: 1.12; font-weight: 800; letter-spacing: -0.01em; }
 
   /* ---------- pantallas ---------- */
+  /* En la banda del móvil la X sale al borde de arriba, como una pastilla:
+     junto al botón grande, el pulgar que iba a escanear cerraba la tira. */
+  @media (max-width: 699px) {
+    .tira-x { top: -30px; right: 0; width: 28px; height: 28px; padding: 0; display: grid; place-items: center; font-size: 17px; background: var(--bg); border: 1px solid var(--borde); border-radius: 50%; box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08); }
+    .tira-x::after { content: ''; position: absolute; inset: -10px -8px 0 -8px; }
+  }
   /* Móviles estrechos: la animación cede sitio al texto y al botón. */
   @media (max-width: 400px) {
     .tira { padding-left: 10px; padding-right: 10px; }
     .tira-cuerpo { gap: 10px; }
     .tira-anim { zoom: 0.84; }
+    .tira-e .tira-anim { zoom: 0.76; }
     .tira-titulo { font-size: 13px; }
   }
   @media (max-width: 350px) {
     .tira-anim { zoom: 0.7; }
     .tira-cuerpo { gap: 8px; }
-    .tira .boton { font-size: 12px; padding: 8px 10px; }
+    .tira .boton { min-width: 82px; min-height: 58px; padding: 8px 10px; font-size: 13.5px; }
+    .tira-ico { width: 21px; height: 21px; }
+    .tira-e .te-gancho { font-size: 17px; }
+    .tira-e .tira-anim { zoom: 0.66; }
     .tira-titulo { font-size: 12.5px; }
     .tira-chip { font-size: 10px; padding: 2px 6px; letter-spacing: 0; }
   }
@@ -369,6 +388,7 @@ const cintaDoble = [...cinta, ...cinta];
   @media (min-width: 700px) {
     .tira { left: 50%; right: auto; bottom: calc(16px + env(safe-area-inset-bottom)); width: min(640px, calc(100% - 40px)); transform: translateX(-50%); padding: 14px 20px; border: 1px solid var(--borde); border-radius: 20px; box-shadow: 0 14px 40px rgba(38, 37, 31, 0.16), 0 2px 6px rgba(38, 37, 31, 0.06); }
     .tira-cuerpo { max-width: none; gap: 16px; zoom: 1.12; }
+    .tira .boton { flex-direction: row; gap: 8px; min-height: 50px; padding: 12px 22px; border-radius: 999px; font-size: 16px; }
     .tira-x { top: -8px; right: -10px; }
   }
   @media (min-width: 1280px) {

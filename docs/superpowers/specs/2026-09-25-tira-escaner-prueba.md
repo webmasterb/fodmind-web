@@ -48,6 +48,17 @@ clic en el contador. Comprobado tocando título, animación, hueco y botón con 
 y ordenador. Cambia lo que cuenta como clic desde el primer día de la lectura, igual para
 las cinco.
 
+**Botón grande y titular grande en la E (25-sep, por petición de Julen).** El botón de las
+cinco es un bloque de 94×64 px en móvil con el icono del visor encima del texto (antes
+81×36) y una píldora de 50 px de alto en iPad y ordenador. La X del móvil sale al borde de
+arriba como pastilla: junto al botón grande, tocar la esquina del botón la cerraba.
+Comprobado con toques en la esquina del botón y en la X, a 360 y 320 px, en las cinco. La E
+cambia su titular por una pregunta grande (19 px) según el nivel, con el nombre en una
+etiqueta encima: alto «¿Por qué te sienta mal?», moderado «Sí, pero ¿cuánto?», bajo «Luz
+verde. ¿Y el resto?»; sin alimento, «¿Qué esconde tu compra?». Ojo al leer: desde aquí la E
+es la única con titular grande, así que si gana puede ser por el titular y no por la
+animación.
+
 **Arreglo en la B el 25-sep.** Los turnos de lo que rota iban por `nth-of-type` y en el
 visor no coincidían: marco de un color, dos veredictos superpuestos y el nombre de otro
 producto. Van por clase (t1-t3) y el test lo vigila. Como la B estuvo así unas horas y el

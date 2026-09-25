@@ -16,7 +16,7 @@
  * FODMAP y sustitutos. Nada que la ficha de al lado contradiga.
  */
 import { foods, resolverSustitutos } from './datos';
-import { LOCALE_TAG, urlAlimento, type Locale } from './rutas';
+import { urlAlimento, type Locale } from './rutas';
 import { fmt, fmtPorcion, rellenar } from './formatos';
 import type { Alimento, FodmapLevel, FodmapType } from './tipos';
 import { TIRA, type Nivel } from '../i18n/tira';
@@ -30,8 +30,10 @@ export interface VistaTira {
   c: { titulo: string; texto?: string; nivel?: Nivel; racion?: string };
   d: { titulo: string; filas: { nombre: string; racion: string; nivel: Nivel }[] };
   e: {
+    /** El nombre del alimento, en la etiqueta pequeña de encima del titular. Sin alimento no hay. */
+    nombre?: string;
+    /** El titular grande: una pregunta según el nivel, que pide el toque. */
     titulo: string;
-    texto: string;
     etiqueta: string;
     /** El texto de la etiqueta dibujada, en trozos: los que llevan `marca` los señala la lupa. */
     trozos: { t: string; marca?: Nivel }[];
@@ -219,7 +221,6 @@ export function vistaTira(locale: Locale, alimentos?: Alimento[]): VistaTira {
       d: { titulo: g.d.titulo, filas: g.d.productos },
       e: {
         titulo: g.e.titulo,
-        texto: g.e.texto,
         etiqueta: g.e.etiqueta,
         trozos: g.e.ingredientes.map((t, i) => (i % 2 ? { t, marca: 'alto' as Nivel } : { t })).filter((x) => x.t),
         num: 2,
@@ -246,10 +247,6 @@ export function vistaTira(locale: Locale, alimentos?: Alimento[]): VistaTira {
     trozos.push(presentes.includes(t) ? { t: p.fodmap[t], marca: nivel } : { t: p.fodmap[t] });
     trozos.push({ t: i === ORDEN_FODMAP.length - 1 ? '.' : ', ' });
   });
-  const lista = new Intl.ListFormat(LOCALE_TAG[locale], { type: 'conjunction' });
-  const texto = presentes.length
-    ? lista.format(presentes.map((t, i) => (i === 0 ? p.fodmap[t] : minuscula(p.fodmap[t], locale))))
-    : p.eNinguno;
   const alt = alimentos.slice(1).find((a) => RANGO[a.level] < RANGO[f.level]);
   const pie = alt
     ? rellenar(p.alternativa, { x: alt.names[locale] })
@@ -267,8 +264,8 @@ export function vistaTira(locale: Locale, alimentos?: Alimento[]): VistaTira {
       filas: filas.map((a) => ({ nombre: a.names[locale], racion: racionTira(a, locale), nivel: NIVEL[a.level] })),
     },
     e: {
-      titulo: rellenar(p.e, { x }),
-      texto,
+      nombre: x,
+      titulo: p.eGancho[nivel],
       etiqueta: p.eEtiqueta,
       trozos,
       num: presentes.length,
