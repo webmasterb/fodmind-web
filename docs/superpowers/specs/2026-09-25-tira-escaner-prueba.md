@@ -42,6 +42,7 @@ apaisado; el hueco al final de la página se mide en vivo. Comprobado a 320, 360
 844×390, 768, 1024, 1366 y 1920: texto y botón no se tocan en ninguna. Único límite
 conocido: con los nombres más largos a 320 px dos títulos pierden el final.
 
+**Toda la tira es el botón (25-sep).** Un toque en cualquier sitio salvo la X se reenvía alenlace con `.click()`: mismo destino (tienda, app en Android, banda en escritorio) y un soloclic en el contador. Comprobado tocando título, animación, hueco y botón con iPhone, Androidy ordenador. Cambia lo que cuenta como clic desde el primer día de la lectura, igual paralas cinco.
 **Arreglo en la B el 25-sep.** Los turnos de lo que rota iban por `nth-of-type` y en el
 visor no coincidían: marco de un color, dos veredictos superpuestos y el nombre de otro
 producto. Van por clase (t1-t3) y el test lo vigila. Como la B estuvo así unas horas y el
