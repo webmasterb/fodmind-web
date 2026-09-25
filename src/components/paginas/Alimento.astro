@@ -12,6 +12,7 @@ import { resolverSustitutos, citasDeNota, texto, foods, guia } from '../../lib/d
 import { NIVEL_TEXTOS } from '../../i18n/niveles';
 import { guiaSlug } from '../../i18n/guia-slugs';
 import { fmt, fmtPorcion, rellenar } from '../../lib/formatos';
+import { focoFicha } from '../../lib/tira';
 import type { Alimento } from '../../lib/tipos';
 
 interface Props {
@@ -144,6 +145,7 @@ const jsonld = [
   alternates={alternates}
   jsonld={jsonld}
   pagina="ficha"
+  tira={focoFicha(food)}
 >
   <nav class="migas">
     <a href={urlLanding(locale)}>Fodmind</a> ›

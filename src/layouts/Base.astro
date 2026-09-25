@@ -4,6 +4,7 @@ import { t, APP_ID, APPLE_PT, PAQUETE_ANDROID, enlaceAppStore, enlacePlay } from
 import { texto } from '../lib/datos';
 import CtaApp from '../components/CtaApp.astro';
 import TiraEscaner from '../components/TiraEscaner.astro';
+import type { Alimento } from '../lib/tipos';
 import '../styles/global.css';
 
 interface Props {
@@ -16,9 +17,11 @@ interface Props {
   noindex?: boolean;
   /** Qué tipo de página es, para los contadores: los eventos se agrupan por esto. */
   pagina?: 'ficha' | 'lista' | 'indice' | 'landing' | 'escaner' | 'guia' | 'blog' | 'otra';
+  /** Los alimentos de la página para la tira del escáner: el suyo primero. Sin ellos, la tira dice lo general. */
+  tira?: Alimento[];
 }
 
-const { locale, title, description, canonical, alternates, jsonld, noindex, pagina = 'otra' } = Astro.props;
+const { locale, title, description, canonical, alternates, jsonld, noindex, pagina = 'otra', tira } = Astro.props;
 // Los contadores de la web viven en una Cloud Function del proyecto de la app
 // (backend/functions/web-eventos.js): vista, «llegó al botón» y clic, por
 // idioma, tipo de página y botón. Sin identificadores ni cookies.
@@ -220,7 +223,7 @@ const nav = [
         </div>
       </div>
     </footer>
-    <TiraEscaner locale={locale} />
+    <TiraEscaner locale={locale} alimentos={tira} />
     <!--
       Medición de visitas. La política de privacidad ya decía «las visitas se
       miden de forma anónima y agregada con Cloudflare Web Analytics» y el

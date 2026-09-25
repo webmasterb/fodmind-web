@@ -4,6 +4,7 @@ import TarjetaAlimento from '../../components/TarjetaAlimento.astro';
 import CtaTi from '../../components/CtaTi.astro';
 import { CAT_SLUG, urlLanding, urlAlimentos, urlCategoria, urlNivelCat, alternatesCategoria, type Locale } from '../../lib/rutas';
 import { categoria } from '../../lib/datos';
+import { focoCategoria } from '../../lib/tira';
 import { catName, CAT_NAMES } from '../../i18n/categorias';
 import { t } from '../../i18n/strings';
 import { fmt, rellenar } from '../../lib/formatos';
@@ -47,6 +48,7 @@ const breadcrumb = {
   alternates={alternates}
   jsonld={breadcrumb}
   pagina="lista"
+  tira={focoCategoria(catId)}
 >
   <nav class="migas">
     <a href={urlLanding(locale)}>Fodmind</a> ›
